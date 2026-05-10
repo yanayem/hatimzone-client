@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function AdminLoginPage() {
     const [identifier, setIdentifier] = useState("");
@@ -40,13 +41,13 @@ export default function AdminLoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl w-full max-w-md">
 
-                <h1 className="text-xl font-bold mb-5">Admin Login</h1>
+                <h1 className="text-xl text-gray-800 font-bold mb-5">Admin Login</h1>
 
                 <input
                     placeholder="Username or Phone"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    className="w-full p-3 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full text-gray-800 placeholder:text-gray-600 p-3 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                 />
 
                 <input
@@ -54,7 +55,7 @@ export default function AdminLoginPage() {
                     placeholder="Password / Temp Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3 border mb-3"
+                    className="w-full text-gray-800 placeholder:text-gray-600 p-3 border mb-3"
                 />
 
                 <button className="w-full bg-black text-white p-3">
@@ -63,9 +64,9 @@ export default function AdminLoginPage() {
 
                 {/* 🔥 Forgot password link */}
                 <p className="text-center mt-3 text-sm">
-                    <a href="/admin/forgot-password" className="text-blue-500">
+                    <Link href="/admin/forgot-password" title="Forgot Password" id="forgot-password-link" className="text-blue-500 hover:underline">
                         Forgot Password?
-                    </a>
+                    </Link>
                 </p>
 
                 {message && (

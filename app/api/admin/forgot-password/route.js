@@ -22,33 +22,34 @@ export async function POST(req) {
             });
         }
 
-        const admin = await Admin.findOne({ phone: phone.trim() });
+        const cleanPhone = String(phone).trim();
+        const admin = await Admin.findOne({ phone: cleanPhone });
 
         if (!admin) {
             return NextResponse.json({
                 success: false,
-                message: "Admin with this phone number not found",
+                message: "❌ Phone number not found in system. Please check and try again.",
             });
         }
 
-        // 2. generate temp password (reliable 8-char string)
-        const tempPass = Math.random().toString(36).substring(2, 10).toUpperCase();
-        const hashedPassword = await bcrypt.hash(tempPass, 10);
+        // Generate a random temporary password
+        const tempPassword = Math.random().toString(36).slice(-8);
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
         await Admin.findByIdAndUpdate(admin._id, {
             password: hashedPassword,
-            isTempPassword: true,
+            isTempPassword: true, // Mark as temporary so they are forced to change it
             passwordChanged: false,
         });
 
         return NextResponse.json({
             success: true,
-            message: `Temporary password for admin "${admin.username}" is: ${tempPass}`,
-            tempPassword: tempPass,
-            username: admin.username,
+            message: `✅ Password reset successfully! Your new temporary password is: ${tempPassword}\n\nPlease login and change it immediately in settings.`,
+            tempPassword, // Return it so the UI can show it if needed, but the message already has it
         });
     } catch (error) {
         console.error("Forgot password error:", error);
         return NextResponse.json({ success: false, message: "Server error" });
     }
 }
+

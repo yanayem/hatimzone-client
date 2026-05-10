@@ -138,7 +138,7 @@ export default function AdminSettings() {
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full text-gray-800 p-3 border rounded-xl focus:ring-2 focus:ring-black outline-none"
+                        className="w-full text-gray-800 placeholder:text-gray-600 p-3 border rounded-xl focus:ring-2 focus:ring-black outline-none"
                     />
                 </div>
 

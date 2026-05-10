@@ -5,8 +5,10 @@ export async function middleware(request) {
   const token = request.cookies.get('adminToken')?.value;
   const { pathname } = request.nextUrl;
 
-  // Protect all /admin routes except the login page and public APIs
-  if (pathname.startsWith('/admin') && pathname !== '/admin') {
+  // Protect all /admin routes except the login page and forgot password page
+  const publicPaths = ['/admin', '/admin/forgot-password'];
+  
+  if (pathname.startsWith('/admin') && !publicPaths.includes(pathname)) {
     if (!token) {
       return NextResponse.redirect(new URL('/admin', request.url));
     }

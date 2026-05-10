@@ -41,7 +41,9 @@ export default function AdminLayout({ children }) {
       }
     };
 
-    if (pathname !== '/admin') {
+    const publicPaths = ['/admin', '/admin/forgot-password'];
+    
+    if (!publicPaths.includes(pathname)) {
       checkAuth();
     } else {
       setLoading(false);
@@ -70,8 +72,8 @@ export default function AdminLayout({ children }) {
     { name: 'Settings', href: '/admin/settings', icon: FiSettings },
   ];
 
-  // If we are on the login page, don't show the sidebar/header
-  if (pathname === '/admin') {
+  // If we are on the login page or forgot password page, don't show the sidebar/header
+  if (pathname === '/admin' || pathname === '/admin/forgot-password') {
     return <>{children}</>;
   }
 
