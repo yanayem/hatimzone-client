@@ -59,7 +59,7 @@ export async function PUT(req, { params }) {
         const { id } = await params;
         const body = await req.json();
 
-        const { name, description, price, discountPrice, category, stockQuantity, stockStatus, sizes, tags, images } = body;
+        const { name, description, price, discountPrice, category, stockQuantity, stockStatus, sizes, tags, images, isNewArrival, isTopSelling, isFeatured } = body;
 
         const updatedProduct = await Product.findByIdAndUpdate(id, {
             name,
@@ -72,6 +72,9 @@ export async function PUT(req, { params }) {
             sizes: Array.isArray(sizes) ? sizes : String(sizes).split(',').map(s => s.trim()).filter(Boolean),
             tags: Array.isArray(tags) ? tags : [],
             images,
+            isNewArrival: Boolean(isNewArrival),
+            isTopSelling: Boolean(isTopSelling),
+            isFeatured: Boolean(isFeatured),
         }, { new: true });
 
         if (!updatedProduct) {

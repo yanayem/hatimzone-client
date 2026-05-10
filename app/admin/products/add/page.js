@@ -15,7 +15,10 @@ const AddProductPage = () => {
     stockQuantity: "",
     stockStatus: "In Stock",
     sizes: "",
-    tags: [], // Selected tags
+    tags: [],
+    isNewArrival: false,
+    isTopSelling: false,
+    isFeatured: false,
   });
 
   const [images, setImages] = useState([]);
@@ -24,11 +27,14 @@ const AddProductPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const availableTags = ["Featured", "Top Selling", "New Arrival", "Best Deal", "Limited Edition"];
+  const availableTags = ["Best Deal", "Limited Edition", "Special Offer", "Summer Collection", "Winter Collection"];
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === "checkbox" ? checked : value 
+    }));
   };
 
   const handleTagToggle = (tag) => {
@@ -104,7 +110,7 @@ const AddProductPage = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="mb-6 max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800">Add New Product</h1>
-        <p className="text-gray-500">Enter full details to create your product</p>
+        <p className="text-gray-500">Configure your product listings and marketing flags</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto border border-gray-200">
@@ -140,10 +146,44 @@ const AddProductPage = () => {
                 rows="4"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe your product features, materials, and care instructions..."
+                placeholder="Describe your product features..."
                 className="w-full text-gray-800 placeholder:text-gray-600 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition"
               ></textarea>
             </div>
+          </div>
+
+          {/* Marketing Flags */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+             <label className="flex items-center gap-3 cursor-pointer group">
+                <input 
+                    type="checkbox" 
+                    name="isNewArrival"
+                    checked={formData.isNewArrival}
+                    onChange={handleChange}
+                    className="w-5 h-5 rounded accent-black"
+                />
+                <span className="text-sm font-bold text-gray-700 group-hover:text-black transition">New Arrival</span>
+             </label>
+             <label className="flex items-center gap-3 cursor-pointer group">
+                <input 
+                    type="checkbox" 
+                    name="isTopSelling"
+                    checked={formData.isTopSelling}
+                    onChange={handleChange}
+                    className="w-5 h-5 rounded accent-black"
+                />
+                <span className="text-sm font-bold text-gray-700 group-hover:text-black transition">Top Selling</span>
+             </label>
+             <label className="flex items-center gap-3 cursor-pointer group">
+                <input 
+                    type="checkbox" 
+                    name="isFeatured"
+                    checked={formData.isFeatured}
+                    onChange={handleChange}
+                    className="w-5 h-5 rounded accent-black"
+                />
+                <span className="text-sm font-bold text-gray-700 group-hover:text-black transition">Featured Product</span>
+             </label>
           </div>
 
           {/* Section 2: Pricing & Category */}
@@ -231,7 +271,7 @@ const AddProductPage = () => {
             </div>
 
             <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Sizes (Comma Separated)</label>
+              <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Sizes</label>
               <input
                 type="text"
                 name="sizes"
@@ -245,7 +285,7 @@ const AddProductPage = () => {
 
           {/* Section 4: Tags */}
           <div>
-            <label className="block mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest">Product Tags</label>
+            <label className="block mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest">Additional Tags</label>
             <div className="flex flex-wrap gap-2">
               {availableTags.map((tag) => (
                 <button
@@ -277,7 +317,7 @@ const AddProductPage = () => {
               />
               <div className="w-full border-2 border-dashed border-gray-200 rounded-2xl px-4 py-10 bg-gray-50 flex flex-col items-center justify-center group-hover:border-black transition">
                 <span className="text-3xl mb-2">🖼️</span>
-                <span className="font-bold text-gray-800">Click to upload multiple images</span>
+                <span className="font-bold text-gray-800">Click to upload images</span>
                 <span className="text-xs text-gray-400 mt-1">Supports JPG, PNG, WEBP</span>
               </div>
             </div>

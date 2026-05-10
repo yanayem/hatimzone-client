@@ -10,7 +10,7 @@ const ProductSchema = new mongoose.Schema(
         slug: {
             type: String,
             unique: true,
-            sparse: true, // Allows nulls if multiple exist, though we will generate it
+            sparse: true,
         },
         description: {
             type: String,
@@ -49,6 +49,18 @@ const ProductSchema = new mongoose.Schema(
         images: {
             type: [String],
             required: true,
+        },
+        isNewArrival: {
+            type: Boolean,
+            default: false,
+        },
+        isTopSelling: {
+            type: Boolean,
+            default: false,
+        },
+        isFeatured: {
+            type: Boolean,
+            default: false,
         },
         isAvailable: {
             type: Boolean,

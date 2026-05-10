@@ -31,7 +31,10 @@ export async function POST(req) {
             stockStatus, 
             sizes, 
             tags, 
-            images 
+            images,
+            isNewArrival,
+            isTopSelling,
+            isFeatured
         } = body;
 
         if (!name || !price || !images || images.length === 0) {
@@ -52,6 +55,9 @@ export async function POST(req) {
             sizes: Array.isArray(sizes) ? sizes : String(sizes).split(',').map(s => s.trim()).filter(Boolean),
             tags: Array.isArray(tags) ? tags : [],
             images,
+            isNewArrival: Boolean(isNewArrival),
+            isTopSelling: Boolean(isTopSelling),
+            isFeatured: Boolean(isFeatured),
         });
 
         return NextResponse.json({
