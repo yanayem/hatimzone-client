@@ -14,8 +14,12 @@ const ProductsPage = () => {
       try {
         const res = await fetch("/api/admin/products");
         const data = await res.json();
+        
         if (data.success) {
-          setProducts(data.products);
+          // The new API structure returns items inside a 'data' object
+          // Support both data.products (old) and data.data.items (new) for compatibility
+          const productList = data.data?.items || data.products || [];
+          setProducts(productList);
         } else {
           setError(data.message || "Failed to load products");
         }
@@ -45,10 +49,10 @@ const ProductsPage = () => {
     }
   };
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase()) || 
-    p.category.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = Array.isArray(products) ? products.filter(p => 
+    p.name?.toLowerCase().includes(search.toLowerCase()) || 
+    p.category?.toLowerCase().includes(search.toLowerCase())
+  ) : [];
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

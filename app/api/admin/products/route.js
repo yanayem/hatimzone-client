@@ -1,100 +1,96 @@
-import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import jwt from "jsonwebtoken";
+import Category from "@/models/Category";
+import { 
+  checkAdminAuth, 
+  successResponse, 
+  errorResponse, 
+  getPaginationParams, 
+  buildPaginationResponse,
+  validators 
+} from "@/lib/api-utils";
 
-export async function POST(req) {
-    try {
-        const token = req.cookies.get('adminToken')?.value;
-        if (!token) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+/**
+ * GET: List products with pagination and filters
+ */
+export async function GET(req) {
+  try {
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const { page, limit, skip } = getPaginationParams(req);
 
-        try {
-            jwt.verify(token, process.env.JWT_SECRET);
-        } catch (error) {
-            return NextResponse.json({ success: false, message: "Invalid session" }, { status: 401 });
-        }
+    // Filters
+    const query = {};
+    const category = searchParams.get("category");
+    const subCategory = searchParams.get("subCategory");
+    const search = searchParams.get("search");
+    const isNewArrival = searchParams.get("isNewArrival") === "true";
+    const isTopSelling = searchParams.get("isTopSelling") === "true";
+    const isFeatured = searchParams.get("isFeatured") === "true";
 
-        await connectDB();
-        const body = await req.json();
-        
-        const { 
-            name, brand, description, price, discountPrice, 
-            category, subCategory, stockQuantity, 
-            specifications, material, color, bulbType, wattage, powerSource, warranty,
-            dimensions, deliveryCost, tags, images, videos, variants, usageInstructions,
-            isNewArrival, isTopSelling, isFeatured, relatedProducts
-        } = body;
-
-        if (!name || !price || !images || images.length === 0) {
-            return NextResponse.json({ 
-                success: false, 
-                message: "Missing required fields (name, price, or images)" 
-            }, { status: 400 });
-        }
-
-        const newProduct = await Product.create({
-            name,
-            brand: brand || "Generic",
-            description,
-            price: Number(price),
-            discountPrice: Number(discountPrice || 0),
-            category,
-            subCategory: subCategory || "",
-            stockQuantity: Number(stockQuantity || 0),
-            specifications: specifications || {},
-            material: material || "Metal / Glass / Wood",
-            color: color || "Black",
-            bulbType: bulbType || "LED",
-            wattage: wattage || "",
-            powerSource: powerSource || "Electric",
-            warranty: warranty || "1 Year Warranty",
-            dimensions: dimensions || { length: "", width: "", height: "" },
-            deliveryCost: deliveryCost || { insideDhaka: 60, outsideDhaka: 120 },
-            tags: Array.isArray(tags) ? tags : [],
-            images,
-            videos: Array.isArray(videos) ? videos : [],
-            variants: Array.isArray(variants) ? variants : [],
-            usageInstructions: Array.isArray(usageInstructions) ? usageInstructions : [],
-            relatedProducts: Array.isArray(relatedProducts) ? relatedProducts : [],
-            isNewArrival: Boolean(isNewArrival),
-            isTopSelling: Boolean(isTopSelling),
-            isFeatured: Boolean(isFeatured),
-        });
-
-        return NextResponse.json({
-            success: true,
-            message: "Product added successfully!",
-            product: newProduct,
-        });
-    } catch (error) {
-        console.error("Add product error:", error);
-        return NextResponse.json({ 
-            success: false, 
-            message: error.message || "Server error while adding product" 
-        }, { status: 500 });
+    if (category) query.category = category;
+    if (subCategory) query.subCategory = subCategory;
+    if (isNewArrival) query.isNewArrival = true;
+    if (isTopSelling) query.isTopSelling = true;
+    if (isFeatured) query.isFeatured = true;
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } }
+      ];
     }
+
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const total = await Product.countDocuments(query);
+
+    return successResponse(buildPaginationResponse(products, total, page, limit));
+  } catch (err) {
+    return errorResponse(err.message);
+  }
 }
 
-export async function GET(req) {
-    try {
-        await connectDB();
-        const { searchParams } = new URL(req.url);
-        const limit = searchParams.get("limit");
-        const category = searchParams.get("category");
-        const isFeatured = searchParams.get("featured");
+/**
+ * POST: Create a new product (Admin Only)
+ */
+export async function POST(req) {
+  try {
+    // 1. Auth Check
+    const auth = await checkAdminAuth(req);
+    if (!auth.valid) return errorResponse(auth.error, 401);
 
-        let query = {};
-        if (category) query.category = category;
-        if (isFeatured === "true") query.isFeatured = true;
+    await connectDB();
+    const body = await req.json();
 
-        let findQuery = Product.find(query).sort({ createdAt: -1 });
-        if (limit) findQuery = findQuery.limit(Number(limit));
-
-        const products = await findQuery;
-        
-        return NextResponse.json({ success: true, products });
-    } catch (error) {
-        console.error("Fetch products error:", error);
-        return NextResponse.json({ success: false, message: "Failed to fetch products" }, { status: 500 });
+    // 2. Validation
+    if (!validators.isValidString(body.name, 3)) {
+      return errorResponse("Product name must be at least 3 characters", 400);
     }
+    if (!validators.isValidPrice(body.price)) {
+      return errorResponse("Price must be a positive number", 400);
+    }
+    if (!validators.isValidImageArray(body.images)) {
+      return errorResponse("At least one valid image URL is required", 400);
+    }
+    if (!body.category) {
+      return errorResponse("Category is required", 400);
+    }
+
+    // 3. Verify Category Exists
+    const categoryExists = await Category.findOne({ name: body.category });
+    if (!categoryExists) {
+      return errorResponse(`Category '${body.category}' does not exist`, 400);
+    }
+
+    // 4. Create Product
+    const product = await Product.create(body);
+
+    return successResponse(product, "Product created successfully", 201);
+  } catch (err) {
+    return errorResponse(err.message);
+  }
 }

@@ -42,9 +42,10 @@ export async function POST(req) {
             });
         }
 
+        const secret = process.env.JWT_SECRET || "fallback_secret";
         const token = jwt.sign(
             { id: admin._id, email: admin.email },
-            process.env.JWT_SECRET,
+            secret,
             { expiresIn: "7d" }
         );
 

@@ -79,14 +79,14 @@ export default function Navbar() {
 
             {/* DROPDOWN */}
             {openDropdown === "collections" && (
-              <ul className="absolute left-1/2 top-full mt-2 w-max bg-blue-600 shadow-2xl border border-pink-200 rounded-b-xl p-6 flex gap-8 flex-wrap max-w-[90vw] -translate-x-1/2 z-[99999]">
+              <ul className="absolute left-1/2 top-full mt-2 w-max bg-pink-600 shadow-2xl border border-blue-200 rounded-b-xl p-6 flex gap-8 flex-wrap max-w-[90vw] -translate-x-1/2 z-[99999]">
                 
                 {categories.map((cat, cIdx) => (
                   <li key={cIdx} className="min-w-[180px]">
                     
                     <Link
                       href={`/shop?category=${encodeURIComponent(cat.name)}`}
-                      className="font-semibold mb-3 block bg-amber-800 text-pink-600 hover:text-pink-500 uppercase text-xs tracking-wider"
+                      className="font-semibold mb-3 block bg-amber-800 text-blue-600 hover:text-blue-500 uppercase text-xs tracking-wider"
                     >
                       {cat.name}
                     </Link>
@@ -98,7 +98,7 @@ export default function Navbar() {
                             href={`/shop?category=${encodeURIComponent(
                               cat.name
                             )}&sub=${encodeURIComponent(subItem)}`}
-                            className="block text-sm py-1.5 px-3 rounded text-gray-200 hover:bg-pink-50 hover:text-black hover:border-l-2 hover:border-pink-400 transition-all"
+                            className="block text-sm py-1.5 px-3 rounded text-blue-600 hover:bg-blue-50 hover:text-pink-600 hover:border-l-2 hover:border-blue-400 transition-all"
                           >
                             {subItem}
                           </Link>
@@ -109,7 +109,7 @@ export default function Navbar() {
                 ))}
 
                 {categories.length === 0 && (
-                  <p className="text-xs text-gray-200 uppercase font-bold italic py-4">
+                  <p className="text-xs text-blue-600 uppercase font-bold italic py-4">
                     New Collections Soon
                   </p>
                 )}

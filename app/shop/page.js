@@ -264,7 +264,7 @@ export default async function ShopPage({ searchParams }) {
           ${p.discountPrice > 0 ? p.discountPrice : p.price}
         </div>
         <Link
-          href={`/product/${p._id}`}
+          href={`/product/${p.slug}`}
           className="block mt-3 text-center border py-2 rounded hover:bg-gray-100"
         >
           View Details

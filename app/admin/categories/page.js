@@ -19,9 +19,14 @@ const CategoriesAdminPage = () => {
     try {
       const res = await fetch("/api/admin/categories");
       const data = await res.json();
-      if (data.success) setCategories(data.categories);
+      if (data.success) {
+        // Handle both old structure (data.categories) and new (data.data)
+        setCategories(data.data || data.categories || []);
+      } else {
+        setError(data.message || "Failed to load categories");
+      }
     } catch (err) {
-      setError("Failed to fetch categories");
+      setError("Failed to fetch categories. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -119,52 +124,56 @@ const CategoriesAdminPage = () => {
         <div className="space-y-4">
           {loading ? (
             <div className="text-center py-10 text-gray-400">Loading...</div>
-          ) : categories.map((cat) => (
-            <div key={cat._id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-800 uppercase tracking-tight">{cat.name}</h3>
-                <button onClick={() => handleDeleteCategory(cat._id)} className="text-red-500 text-sm font-bold hover:underline">
-                  Delete Category
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {cat.subCategories?.map((sub, i) => (
-                    <div key={i} className="bg-gray-100 px-3 py-1.5 rounded-lg flex items-center gap-2 group">
-                      <span className="text-sm font-medium text-gray-700">{sub}</span>
-                      <button 
-                        onClick={() => handleRemoveSubCategory(cat._id, cat.subCategories, sub)}
-                        className="text-gray-400 hover:text-red-500 transition"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Add sub-category (e.g. Chair)"
-                    className="flex-1 text-sm border rounded-lg px-3 py-2 outline-none focus:border-black text-gray-800"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddSubCategory(cat._id, cat.subCategories);
-                      }
-                    }}
-                    onChange={(e) => setNewSub(e.target.value)}
-                  />
-                  <button 
-                    onClick={() => handleAddSubCategory(cat._id, cat.subCategories)}
-                    className="text-sm font-bold bg-gray-50 px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
-                  >
-                    + Add
+          ) : Array.isArray(categories) && categories.length > 0 ? (
+            categories.map((cat) => (
+              <div key={cat._id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-bold text-gray-800 uppercase tracking-tight">{cat.name}</h3>
+                  <button onClick={() => handleDeleteCategory(cat._id)} className="text-red-500 text-sm font-bold hover:underline">
+                    Delete Category
                   </button>
                 </div>
+
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    {cat.subCategories?.map((sub, i) => (
+                      <div key={i} className="bg-gray-100 px-3 py-1.5 rounded-lg flex items-center gap-2 group">
+                        <span className="text-sm font-medium text-gray-700">{sub}</span>
+                        <button 
+                          onClick={() => handleRemoveSubCategory(cat._id, cat.subCategories, sub)}
+                          className="text-gray-400 hover:text-red-500 transition"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Add sub-category (e.g. Chair)"
+                      className="flex-1 text-sm border rounded-lg px-3 py-2 outline-none focus:border-black text-gray-800"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleAddSubCategory(cat._id, cat.subCategories);
+                        }
+                      }}
+                      onChange={(e) => setNewSub(e.target.value)}
+                    />
+                    <button 
+                      onClick={() => handleAddSubCategory(cat._id, cat.subCategories)}
+                      className="text-sm font-bold bg-gray-50 px-4 py-2 rounded-lg border hover:bg-gray-100 transition"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="text-center py-10 text-gray-400">No categories found.</div>
+          )}
         </div>
       </div>
     </div>

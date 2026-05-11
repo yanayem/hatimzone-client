@@ -10,7 +10,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="bg-gray-200 text-gray-800">
-        <Navbar />
+       <div z-index="10">
+         <Navbar />
+       </div>
         <main>{children}</main>
       </body>
     </html>

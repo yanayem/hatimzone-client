@@ -13,7 +13,8 @@ export async function POST(req) {
 
         let decoded;
         try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const secret = process.env.JWT_SECRET || "fallback_secret";
+            decoded = jwt.verify(token, secret);
         } catch (err) {
             return NextResponse.json({ success: false, message: "Invalid token" }, { status: 401 });
         }

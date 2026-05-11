@@ -10,7 +10,8 @@ export async function GET(req) {
             return NextResponse.json({ success: false }, { status: 401 });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const secret = process.env.JWT_SECRET || "fallback_secret";
+        const decoded = jwt.verify(token, secret);
 
         await connectDB();
         const admin = await Admin.findById(decoded.id);
