@@ -43,9 +43,6 @@ export default async function ShopPage({ searchParams }) {
   if (selectedBrands.length)
     filter.brand = { $in: selectedBrands };
 
-  if (selectedSubCategories.length)
-    filter.subCategory = { $in: selectedSubCategories };
-
   if (q)
     filter.name = { $regex: q, $options: "i" };
 
@@ -60,13 +57,12 @@ export default async function ShopPage({ searchParams }) {
   if (sort === "price-low") sortOption = { price: 1 };
   if (sort === "price-high") sortOption = { price: -1 };
 
-  const [products, totalProducts, categories, brands, subCategories] =
+  const [products, totalProducts, categories, brands] =
     await Promise.all([
       Product.find(filter).sort(sortOption).skip(skip).limit(limit),
       Product.countDocuments(filter),
       Product.distinct("category"),
       Product.distinct("brand"),
-      Product.distinct("subCategory"),
     ]);
 
   const getToggleUrl = (key, value) => {
@@ -148,32 +144,6 @@ export default async function ShopPage({ searchParams }) {
             </div>
           </div>
 
-          {/* SUB-CATEGORY */}
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-xs font-bold uppercase text-gray-500">
-                Sub-Categories
-              </h3>
-              <Link href="/shop" className="text-xs text-red-500 font-bold">
-                Reset
-              </Link>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {subCategories.filter(Boolean).map((sub, i) => (
-                <Link
-                  key={i}
-                  href={getToggleUrl("subCategory", sub)}
-                  className={`text-xs px-2 py-1 border rounded transition ${
-                    selectedSubCategories.includes(sub) ? "bg-black text-white" : "hover:bg-gray-100"
-                  }`}
-                >
-                  {sub}
-                </Link>
-              ))}
-            </div>
-          </div>
-
           {/* BRAND */}
           <div>
             <div className="flex justify-between items-center mb-2">
@@ -238,42 +208,51 @@ export default async function ShopPage({ searchParams }) {
             <SortSelect currentSort={sort} />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-  {products.map((p) => (
-    <div key={p._id} className="bg-white border rounded-lg p-3 flex flex-col">
-      
-      {/* IMAGE (CONTAINED) */}
-      <div className="w-full h-48 bg-gray-50 overflow-hidden rounded-lg flex items-center justify-center">
-        <img
-          src={p.images?.[0] || "https://placehold.co/400x500"}
-          alt={p.name}
-          className="object-contain w-full h-full transition duration-500"
-        />
-      </div>
-
-      {/* INFO */}
-      <div className="mt-3">
-        <div className="text-xs text-gray-500 flex justify-between">
-          <span>{p.brand}</span>
-          <span>{p.category}</span>
-          <span className="text-gray-300 mx-1">/</span>
-          <span>{p.subCategory}</span>
-        </div>
-        <h3 className="font-semibold mt-2 line-clamp-2">{p.name}</h3>
-        <div className="mt-2 font-bold">
-          ${p.discountPrice > 0 ? p.discountPrice : p.price}
-        </div>
-        <Link
-          href={`/product/${p.slug}`}
-          className="block mt-3 text-center border py-2 rounded hover:bg-gray-100"
-        >
-          View Details
-        </Link>
-      </div>
-    </div>
-  ))}
-</div>
-
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((p) => (
+              <div key={p._id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col group">
+                <Link href={`/product/${p.slug}`} className="block relative aspect-square bg-gray-50 overflow-hidden">
+                  <img
+                    src={p.images?.[0] || "https://placehold.co/400x500"}
+                    alt={p.name}
+                    className="object-contain w-full h-full transition duration-500 group-hover:scale-110 p-4"
+                  />
+                  {p.discountPrice > 0 && (
+                    <span className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full uppercase">
+                      Sale
+                    </span>
+                  )}
+                </Link>
+                
+                <div className="p-4 flex flex-col flex-1">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 flex justify-between">
+                    <span>{p.brand}</span>
+                    <span>{p.category}</span>
+                  </div>
+                  <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition h-5">
+                    {p.name}
+                  </h3>
+                  <div className="mt-3 flex items-center gap-2">
+                    <span className="text-xl font-black text-gray-900">
+                      ৳{p.discountPrice > 0 ? p.discountPrice : p.price}
+                    </span>
+                    {p.discountPrice > 0 && (
+                      <span className="text-xs text-gray-400 line-through">
+                        ৳{p.price}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <Link
+                    href={`/product/${p.slug}`}
+                    className="mt-4 block text-center bg-gray-900 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-black transition shadow-lg shadow-gray-100"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
 
         </main>
       </div>

@@ -145,58 +145,49 @@ export default async function HomePage() {
 // Fixed ProductCard Component
 function ProductCard({ product }) {
   const hasDiscount = product.discountPrice > 0;
-  const discountPercent = hasDiscount ? Math.round(((product.price - product.discountPrice) / product.price) * 100) : 0;
 
   return (
-    <Link href={`/product/${product.slug}`} className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 border border-gray-100 hover:border-gray-200 flex flex-col h-full hover:-translate-y-2">
-      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+    <Link href={`/product/${product.slug}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full">
+      <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center">
         <img
           src={product.images?.[0] || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 p-4"
           alt={product.name}
           loading="lazy"
         />
         
         {hasDiscount && (
-          <div className="absolute top-4 left-4 bg-gradient-to-r from-red-600 to-red-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg">
-            -{discountPercent}%
+          <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-full uppercase shadow-lg">
+            Sale
           </div>
         )}
 
         {product.isNewArrival && (
-          <div className="absolute top-4 right-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg">
-            NEW
+          <div className="absolute top-3 right-3 bg-blue-600 text-white text-[10px] font-black px-2 py-1 rounded-full uppercase shadow-lg">
+            New
           </div>
         )}
-
-        <button className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-black p-4 rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 hover:bg-white hover:scale-110">
-          🛒
-        </button>
       </div>
 
-      <div className="p-6 flex flex-col flex-1 justify-between">
+      <div className="p-5 flex flex-col flex-1 justify-between">
         <div>
-          <div className="flex justify-between items-start mb-3">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{product.brand || 'Generic'}</span>
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{product.category}</span>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{product.brand || 'Generic'}</span>
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{product.category}</span>
           </div>
-          <h3 className="font-bold text-xl text-gray-900 mb-4 line-clamp-2 group-hover:text-pink-600 transition-colors duration-300 leading-tight">
+          <h3 className="font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-blue-600 transition-colors h-5 leading-tight">
             {product.name}
           </h3>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {hasDiscount ? (
-              <>
-                <span className="text-2xl font-black text-black">৳{product.discountPrice}</span>
-                <span className="text-sm text-gray-400 line-through font-medium">৳{product.price}</span>
-              </>
-            ) : (
-              <span className="text-2xl font-black text-black">৳{product.price}</span>
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-black text-black">৳{hasDiscount ? product.discountPrice : product.price}</span>
+            {hasDiscount && (
+              <span className="text-xs text-gray-400 line-through font-medium">৳{product.price}</span>
             )}
           </div>
-          <div className="text-yellow-400 text-xl">⭐⭐⭐⭐⭐</div>
+          <div className="text-xs font-bold text-blue-600 group-hover:underline">View →</div>
         </div>
       </div>
     </Link>

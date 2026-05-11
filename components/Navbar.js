@@ -10,9 +10,11 @@ import {
   HiChevronDown,
   HiOutlineSearch,
 } from "react-icons/hi";
+import { useCart } from "@/components/CartContext";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { cart, wishlist } = useCart();
 
   const [categories, setCategories] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -25,7 +27,7 @@ export default function Navbar() {
         const res = await fetch("/api/admin/categories");
         const data = await res.json();
         if (data.success) {
-          setCategories(data.categories);
+          setCategories(data.data);
         }
       } catch (err) {
         console.error("Category fetch error:", err);
@@ -36,111 +38,85 @@ export default function Navbar() {
 
   return (
     <header className="w-full bg-white border-b border-gray-100 sticky top-0 z-[999]">
-      
-      {/* LEVEL 1: TOP MENU BAR */}
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-20 relative">
         
-        {/* LOGO */}
         <Link href="/" className="text-xl font-black text-black uppercase tracking-wider">
           HatimZone
         </Link>
 
-        {/* TOP MENU LINKS - MANUALLY HANDLED AS REQUESTED */}
         <nav className="hidden md:flex items-center gap-8 h-full">
-          
-          {/* HOME */}
-          <Link href="/" className="font-bold text-black uppercase text-sm hover:text-pink-600 transition-colors">
+          <Link href="/" className="font-bold text-gray-800 uppercase text-[13px] hover:text-blue-600 transition-colors">
             Home
           </Link>
-
-          {/* SHOP */}
-          <Link href="/shop" className="font-bold text-black uppercase text-sm hover:text-pink-600 transition-colors">
+          <Link href="/shop" className="font-bold text-gray-800 uppercase text-[13px] hover:text-blue-600 transition-colors">
             Shop
           </Link>
 
-          {/* COLLECTIONS (DROPDOWN) */}
           <div
             className="h-full flex items-center relative"
             onMouseEnter={() => setOpenDropdown("collections")}
             onMouseLeave={() => setOpenDropdown(null)}
           >
             <button
-              className={`font-bold uppercase text-sm flex items-center gap-1 transition-colors ${
-                openDropdown === "collections" ? "text-pink-600" : "text-black"
+              className={`font-bold uppercase text-[13px] flex items-center gap-1 transition-colors ${
+                openDropdown === "collections" ? "text-blue-600" : "text-gray-800"
               }`}
             >
               Collections
-              <HiChevronDown
-                className={`transition-transform duration-200 ${
-                  openDropdown === "collections" ? "rotate-180" : ""
-                }`}
-              />
+              <HiChevronDown className={`transition-transform duration-200 ${openDropdown === "collections" ? "rotate-180" : ""}`} />
             </button>
 
-            {/* DROPDOWN */}
             {openDropdown === "collections" && (
-              <ul className="absolute left-1/2 top-full mt-2 w-max bg-pink-600 shadow-2xl border border-blue-200 rounded-b-xl p-6 flex gap-8 flex-wrap max-w-[90vw] -translate-x-1/2 z-[99999]">
-                
+              <ul className="absolute left-1/2 top-full mt-0 w-max bg-white shadow-2xl border border-gray-100 rounded-b-2xl p-6 flex gap-10 flex-wrap max-w-[90vw] -translate-x-1/2 z-[99999]">
                 {categories.map((cat, cIdx) => (
-                  <li key={cIdx} className="min-w-[180px]">
-                    
+                  <li key={cIdx} className="min-w-[160px]">
                     <Link
                       href={`/shop?category=${encodeURIComponent(cat.name)}`}
-                      className="font-semibold mb-3 block bg-amber-800 text-blue-600 hover:text-blue-500 uppercase text-xs tracking-wider"
+                      className="font-black mb-3 block text-gray-900 uppercase text-xs tracking-widest border-b pb-2 hover:text-blue-600 transition"
                     >
                       {cat.name}
                     </Link>
-
-                    <ul className="flex flex-col gap-1">
-                      {cat.subCategories?.map((subItem, sIdx) => (
-                        <li key={sIdx}>
-                          <Link
-                            href={`/shop?category=${encodeURIComponent(
-                              cat.name
-                            )}&sub=${encodeURIComponent(subItem)}`}
-                            className="block text-sm py-1.5 px-3 rounded text-blue-600 hover:bg-blue-50 hover:text-pink-600 hover:border-l-2 hover:border-blue-400 transition-all"
-                          >
-                            {subItem}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
                   </li>
                 ))}
-
                 {categories.length === 0 && (
-                  <p className="text-xs text-blue-600 uppercase font-bold italic py-4">
-                    New Collections Soon
-                  </p>
+                  <p className="text-xs text-gray-400 font-bold italic py-4">New Collections Soon</p>
                 )}
               </ul>
             )}
           </div>
 
-          <Link href="/contact" className="font-bold text-black uppercase text-sm hover:text-pink-600 transition-colors">
+          <Link href="/contact" className="font-bold text-gray-800 uppercase text-[13px] hover:text-blue-600 transition-colors">
             Support
           </Link>
         </nav>
 
-        {/* SEARCH & ICONS */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <div className="relative hidden sm:block mr-2">
-            <HiOutlineSearch className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input 
               type="text" 
               placeholder="Search..." 
-              className="pl-9 pr-4 py-1.5 w-48 bg-gray-50 border border-gray-200 rounded-full text-xs focus:outline-none focus:border-pink-300"
+              className="pl-9 pr-4 py-2 w-44 bg-gray-50 border border-transparent rounded-full text-xs focus:outline-none focus:bg-white focus:border-gray-200 transition-all"
             />
           </div>
-          <Link href="/wishlist" className="hover:text-pink-600">
-            <HiOutlineHeart className="w-6 h-6 text-gray-800" />
+          <Link href="/wishlist" className="relative group">
+            <HiOutlineHeart className="w-6 h-6 text-gray-800 group-hover:text-blue-600 transition" />
+            {wishlist.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-black">
+                {wishlist.length}
+              </span>
+            )}
           </Link>
-          <Link href="/cart" className="relative hover:text-pink-600">
-            <HiOutlineShoppingBag className="w-6 h-6 text-gray-800" />
-            <span className="absolute -top-1.5 -right-1.5 bg-pink-600 text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-bold">2</span>
+          <Link href="/cart" className="relative group">
+            <HiOutlineShoppingBag className="w-6 h-6 text-gray-800 group-hover:text-blue-600 transition" />
+            {cart.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[9px] rounded-full w-4 h-4 flex items-center justify-center font-black">
+                {cart.length}
+              </span>
+            )}
           </Link>
-          <Link href="/account" className="hover:text-pink-600">
-            <HiOutlineUser className="w-6 h-6 text-gray-800" />
+          <Link href="/account" className="group">
+            <HiOutlineUser className="w-6 h-6 text-gray-800 group-hover:text-blue-600 transition" />
           </Link>
         </div>
 

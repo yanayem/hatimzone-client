@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { CartProvider } from "@/components/CartContext";
 
 export const metadata = {
   title: "Hatim Zone",
@@ -9,11 +10,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-gray-200 text-gray-800">
-       <div z-index="10">
-         <Navbar />
-       </div>
-        <main>{children}</main>
+      <body className="bg-gray-100 text-gray-900">
+        <CartProvider>
+          <div className="relative z-50">
+            <Navbar />
+          </div>
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </CartProvider>
       </body>
     </html>
   );

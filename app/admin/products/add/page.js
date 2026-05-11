@@ -25,7 +25,6 @@ const AddProductPage = () => {
     price: "",
     discountPrice: "",
     category: "",
-    subCategory: "",
     stockQuantity: "",
     material: "",
     color: "",
@@ -70,11 +69,10 @@ const AddProductPage = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => {
-      const updated = { ...prev, [name]: type === "checkbox" ? checked : value };
-      if (name === "category") updated.subCategory = "";
-      return updated;
-    });
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === "checkbox" ? checked : value 
+    }));
   };
 
   const handleDeliveryChange = (e) => {
@@ -369,8 +367,7 @@ const AddProductPage = () => {
                             <option key={i} value={c.name}>{c.name}</option>
                         ))}
                     </select>
-                    <input name="subCategory" value={formData.subCategory} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition" placeholder="Sub-category" />
-                    <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition" placeholder="Tags" />
+                    <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition" placeholder="Tags (comma separated)" />
                 </div>
             </div>
 
