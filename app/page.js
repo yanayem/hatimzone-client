@@ -16,12 +16,12 @@ export default async function HomePage() {
     <div className="bg-gray-50 text-gray-900 min-h-screen">
 
       {/* HERO SECTION - Premium Look */}
-      <section className="relative h-[500px] flex items-center justify-center overflow-hidden bg-black text-white">
-        <div className="absolute inset-0 opacity-40">
+      <section className="relative h-[500px] flex items-center justify-center overflow-hidden bg-black text-white z-0">
+        <div className="absolute inset-0 opacity-40 z-[-10]">
            <img 
             src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=1974&auto=format&fit=crop" 
             alt="Hero" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover z-[-10]"
            />
         </div>
         <div className="relative z-10 text-center px-6 max-w-3xl">

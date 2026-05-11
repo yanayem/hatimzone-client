@@ -1,19 +1,15 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import { jwtVerify } from 'jose';
+import jwt from "jsonwebtoken";
 
 export async function POST(req) {
     try {
-        // Auth check (simple)
         const token = req.cookies.get('adminToken')?.value;
-        if (!token) {
-            return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
-        }
+        if (!token) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
 
         try {
-            const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-            await jwtVerify(token, secret);
+            jwt.verify(token, process.env.JWT_SECRET);
         } catch (error) {
             return NextResponse.json({ success: false, message: "Invalid session" }, { status: 401 });
         }
@@ -22,25 +18,11 @@ export async function POST(req) {
         const body = await req.json();
         
         const { 
-            name, 
-            brand,
-            description, 
-            price, 
-            discountPrice, 
-            category, 
-            subCategory,
-            stockQuantity, 
-            stockStatus, 
-            specifications,
-            material,
-            warranty,
-            dimensions,
-            deliveryCost,
-            tags, 
-            images,
-            isNewArrival,
-            isTopSelling,
-            isFeatured
+            name, brand, description, price, discountPrice, 
+            category, subCategory, stockQuantity, 
+            specifications, material, color, bulbType, wattage, powerSource, warranty,
+            dimensions, deliveryCost, tags, images, videos, variants, usageInstructions,
+            isNewArrival, isTopSelling, isFeatured, relatedProducts
         } = body;
 
         if (!name || !price || !images || images.length === 0) {
@@ -59,14 +41,21 @@ export async function POST(req) {
             category,
             subCategory: subCategory || "",
             stockQuantity: Number(stockQuantity || 0),
-            stockStatus,
             specifications: specifications || {},
-            material: material || "Solid Wood / Laminated Board",
-            warranty: warranty || "1 Year Service Warranty",
+            material: material || "Metal / Glass / Wood",
+            color: color || "Black",
+            bulbType: bulbType || "LED",
+            wattage: wattage || "",
+            powerSource: powerSource || "Electric",
+            warranty: warranty || "1 Year Warranty",
             dimensions: dimensions || { length: "", width: "", height: "" },
             deliveryCost: deliveryCost || { insideDhaka: 60, outsideDhaka: 120 },
             tags: Array.isArray(tags) ? tags : [],
             images,
+            videos: Array.isArray(videos) ? videos : [],
+            variants: Array.isArray(variants) ? variants : [],
+            usageInstructions: Array.isArray(usageInstructions) ? usageInstructions : [],
+            relatedProducts: Array.isArray(relatedProducts) ? relatedProducts : [],
             isNewArrival: Boolean(isNewArrival),
             isTopSelling: Boolean(isTopSelling),
             isFeatured: Boolean(isFeatured),
@@ -86,28 +75,26 @@ export async function POST(req) {
     }
 }
 
-// GET all products
 export async function GET(req) {
     try {
         await connectDB();
-        const products = await Product.find().sort({ createdAt: -1 });
-        
-        // Map old data to new format for display
-        const sanitizedProducts = products.map(p => {
-            const obj = p.toObject();
-            return {
-                ...obj,
-                price: obj.price || 0,
-                discountPrice: obj.discountPrice || 0,
-                stockQuantity: obj.stockQuantity !== undefined ? obj.stockQuantity : (obj.stock !== undefined ? obj.stock : 0),
-                tags: Array.isArray(obj.tags) ? obj.tags : [],
-                images: Array.isArray(obj.images) ? obj.images : [],
-                stockStatus: obj.stockStatus || ( (obj.stockQuantity ?? obj.stock ?? 0) > 0 ? "In Stock" : "Out of Stock" )
-            };
-        });
+        const { searchParams } = new URL(req.url);
+        const limit = searchParams.get("limit");
+        const category = searchParams.get("category");
+        const isFeatured = searchParams.get("featured");
 
-        return NextResponse.json({ success: true, products: sanitizedProducts });
+        let query = {};
+        if (category) query.category = category;
+        if (isFeatured === "true") query.isFeatured = true;
+
+        let findQuery = Product.find(query).sort({ createdAt: -1 });
+        if (limit) findQuery = findQuery.limit(Number(limit));
+
+        const products = await findQuery;
+        
+        return NextResponse.json({ success: true, products });
     } catch (error) {
+        console.error("Fetch products error:", error);
         return NextResponse.json({ success: false, message: "Failed to fetch products" }, { status: 500 });
     }
 }

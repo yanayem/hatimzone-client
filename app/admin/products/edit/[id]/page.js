@@ -1,25 +1,27 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 
-const EditProductPage = ({ params }) => {
+const EditProductPage = () => {
   const router = useRouter();
-  const { id } = use(params);
+  const { id } = useParams();
   
   const [formData, setFormData] = useState({
     name: "",
-    brand: "Generic",
+    brand: "",
     description: "",
     price: "",
     discountPrice: "",
     category: "",
     subCategory: "",
     stockQuantity: "",
-    stockStatus: "In Stock",
-    tags: [],
-    material: "Solid Wood / Laminated Board",
-    warranty: "1 Year Service Warranty",
+    material: "",
+    color: "",
+    bulbType: "",
+    wattage: "",
+    powerSource: "",
+    warranty: "",
     isNewArrival: false,
     isTopSelling: false,
     isFeatured: false,
@@ -28,88 +30,76 @@ const EditProductPage = ({ params }) => {
   const [dimensions, setDimensions] = useState({ length: "", width: "", height: "" });
   const [deliveryCost, setDeliveryCost] = useState({ insideDhaka: 60, outsideDhaka: 120 });
   const [specifications, setSpecifications] = useState([{ key: "", value: "" }]);
+  const [variants, setVariants] = useState([{ size: "", color: "", material: "", stock: 0, additionalPrice: 0 }]);
+  const [usageInstructions, setUsageInstructions] = useState([""]);
+  const [videos, setVideos] = useState([""]);
   
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
+  const [existingImages, setExistingImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("/api/admin/categories");
-        const data = await res.json();
-        if (data.success) setCategories(data.categories);
-      } catch (err) {
-        console.error("Failed to fetch categories");
-      }
-    };
-    fetchCategories();
-  }, []);
+        // Fetch Categories
+        const catRes = await fetch("/api/admin/categories");
+        const catData = await catRes.json();
+        if (catData.success) setCategories(catData.categories);
 
-  const availableTags = ["Best Deal", "Limited Edition", "Special Offer", "Summer Collection", "Winter Collection"];
-
-  // Fetch product data
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(`/api/admin/products/${id}`);
-        const data = await res.json();
-        if (data.success) {
-          const p = data.product;
-          setFormData({
-            name: p.name || "",
-            brand: p.brand || "Generic",
-            description: p.description || "",
-            price: p.price || "",
-            discountPrice: p.discountPrice || "",
-            category: p.category || "",
-            subCategory: p.subCategory || "",
-            stockQuantity: p.stockQuantity || "",
-            stockStatus: p.stockStatus || "In Stock",
-            tags: p.tags || [],
-            material: p.material || "Solid Wood / Laminated Board",
-            warranty: p.warranty || "1 Year Service Warranty",
-            isNewArrival: p.isNewArrival || false,
-            isTopSelling: p.isTopSelling || false,
-            isFeatured: p.isFeatured || false,
-          });
-          
-          setDimensions(p.dimensions || { length: "", width: "", height: "" });
-          setDeliveryCost(p.deliveryCost || { insideDhaka: 60, outsideDhaka: 120 });
-
-          if (p.specifications) {
-            const specArray = Object.entries(p.specifications).map(([key, value]) => ({ key, value }));
-            setSpecifications(specArray.length > 0 ? specArray : [{ key: "", value: "" }]);
-          } else {
-            setSpecifications([{ key: "", value: "" }]);
-          }
-
-          setImagePreviews(p.images || []);
-        } else {
-          setError(data.message || "Failed to load product");
+        // Fetch Product
+        const prodRes = await fetch(`/api/admin/products/${id}`);
+        const prodData = await prodRes.json();
+        if (prodData.success) {
+            const p = prodData.product;
+            setFormData({
+                name: p.name || "",
+                brand: p.brand || "",
+                description: p.description || "",
+                price: p.price || "",
+                discountPrice: p.discountPrice || "",
+                category: p.category || "",
+                subCategory: p.subCategory || "",
+                stockQuantity: p.stockQuantity || "",
+                material: p.material || "",
+                color: p.color || "",
+                bulbType: p.bulbType || "",
+                wattage: p.wattage || "",
+                powerSource: p.powerSource || "",
+                warranty: p.warranty || "",
+                isNewArrival: !!p.isNewArrival,
+                isTopSelling: !!p.isTopSelling,
+                isFeatured: !!p.isFeatured,
+            });
+            setDimensions(p.dimensions || { length: "", width: "", height: "" });
+            setDeliveryCost(p.deliveryCost || { insideDhaka: 60, outsideDhaka: 120 });
+            
+            const specs = Object.entries(p.specifications || {}).map(([key, value]) => ({ key, value }));
+            setSpecifications(specs.length > 0 ? specs : [{ key: "", value: "" }]);
+            
+            setVariants(p.variants?.length > 0 ? p.variants : [{ size: "", color: "", material: "", stock: 0, additionalPrice: 0 }]);
+            setUsageInstructions(p.usageInstructions?.length > 0 ? p.usageInstructions : [""]);
+            setVideos(p.videos?.length > 0 ? p.videos : [""]);
+            setExistingImages(p.images || []);
         }
       } catch (err) {
-        setError("Error loading product data");
+        setError("Failed to load data");
       } finally {
-        setFetching(false);
+        setLoading(false);
       }
     };
-
-    fetchProduct();
+    fetchData();
   }, [id]);
 
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => {
       const updated = { ...prev, [name]: type === "checkbox" ? checked : value };
-      
-      // Auto-reset subcategory when category changes (only if it's a manual change, not initial load)
-      if (name === "category") {
-        updated.subCategory = "";
-      }
-      
+      if (name === "category") updated.subCategory = "";
       return updated;
     });
   };
@@ -124,23 +114,24 @@ const EditProductPage = ({ params }) => {
     setDeliveryCost(prev => ({ ...prev, [name]: Number(value) }));
   };
 
-  const handleSpecChange = (index, field, value) => {
-    const newSpecs = [...specifications];
-    newSpecs[index][field] = value;
-    setSpecifications(newSpecs);
-  };
-
-  const addSpec = () => setSpecifications([...specifications, { key: "", value: "" }]);
-  const removeSpec = (index) => setSpecifications(specifications.filter((_, i) => i !== index));
-
-  const handleTagToggle = (tag) => {
-    setFormData((prev) => {
-      const tags = prev.tags.includes(tag)
-        ? prev.tags.filter((t) => t !== tag)
-        : [...prev.tags, tag];
-      return { ...prev, tags };
+  const handleVariantChange = (index, field, value) => {
+    setVariants(prev => {
+        const updated = [...prev];
+        updated[index][field] = field === 'stock' || field === 'additionalPrice' ? Number(value) : value;
+        return updated;
     });
   };
+
+  const handleSpecChange = (index, field, value) => {
+    setSpecifications(prev => {
+        const updated = [...prev];
+        updated[index][field] = value;
+        return updated;
+    });
+  };
+
+  const addListItem = (setter, defaultValue = "") => setter(prev => [...prev, defaultValue]);
+  const removeListItem = (index, setter) => setter(prev => prev.filter((_, i) => i !== index));
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -149,12 +140,13 @@ const EditProductPage = ({ params }) => {
     setImagePreviews((prev) => [...prev, ...newPreviews]);
   };
 
-  const removeImage = (index) => {
-    if (index >= imagePreviews.length - images.length) {
-        const fileIndex = index - (imagePreviews.length - images.length);
-        setImages((prev) => prev.filter((_, i) => i !== fileIndex));
-    }
+  const removeNewImage = (index) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingImage = (index) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const fileToBase64 = (file) => {
@@ -168,15 +160,19 @@ const EditProductPage = ({ params }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSaving(true);
     setError("");
     setSuccess("");
 
-    try {
-      const base64NewImages = await Promise.all(images.map((img) => fileToBase64(img)));
-      const existingImages = imagePreviews.filter(url => typeof url === 'string' && url.startsWith('data:image'));
-      const allImages = [...existingImages, ...base64NewImages];
+    if (images.length === 0 && existingImages.length === 0) {
+      setError("Please upload at least one image");
+      setSaving(false);
+      return;
+    }
 
+    try {
+      const base64Images = await Promise.all(images.map((img) => fileToBase64(img)));
+      
       const specsObj = {};
       specifications.forEach(s => {
         if (s.key.trim()) specsObj[s.key.trim()] = s.value.trim();
@@ -187,10 +183,16 @@ const EditProductPage = ({ params }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          price: Number(formData.price),
+          discountPrice: Number(formData.discountPrice || 0),
+          stockQuantity: Number(formData.stockQuantity || 0),
           dimensions,
           deliveryCost,
           specifications: specsObj,
-          images: allImages,
+          variants: variants.filter(v => v.size || v.color || v.material),
+          usageInstructions: usageInstructions.filter(i => i.trim()),
+          videos: videos.filter(v => v.trim()),
+          images: [...existingImages, ...base64Images],
         }),
       });
 
@@ -198,201 +200,129 @@ const EditProductPage = ({ params }) => {
 
       if (data.success) {
         setSuccess("Product updated successfully!");
-        setTimeout(() => router.push("/admin/products"), 1500);
+        setTimeout(() => router.push("/admin/products"), 2000);
       } else {
         setError(data.message || "Failed to update product");
       }
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  if (fetching) return <div className="p-20 text-center animate-pulse">Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Syncing...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="mb-6 max-w-4xl mx-auto flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50 p-6 pb-24">
+       <div className="mb-8 max-w-5xl mx-auto flex justify-between items-end border-b pb-6">
         <div>
-            <h1 className="text-3xl font-bold text-gray-800">Edit Product</h1>
-            <p className="text-gray-500">Update full specs and dimensions</p>
+            <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase">Edit Product</h1>
+            <p className="text-gray-500 font-medium">Update "{formData.name}"</p>
         </div>
-        <button onClick={() => router.back()} className="text-gray-400 hover:text-black transition">✕ Close</button>
+        <button onClick={() => router.back()} className="bg-white border p-3 rounded-2xl hover:bg-gray-50 transition shadow-sm font-bold text-gray-400 hover:text-black">✕ Cancel</button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto border border-gray-200">
-        <form onSubmit={handleSubmit} className="space-y-10">
-          
-          {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100">{error}</div>}
-          {success && <div className="bg-green-50 text-green-600 p-4 rounded-xl text-sm border border-green-100">{success}</div>}
+      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
+                {error && <div className="bg-red-50 text-red-600 p-4 rounded-3xl text-sm font-bold border border-red-100">{error}</div>}
+                {success && <div className="bg-green-50 text-green-600 p-4 rounded-3xl text-sm font-bold border border-green-100">{success}</div>}
 
-          {/* Section 1: Basic Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-black rounded-full"></span> General Information
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Product Title</label>
-                    <input type="text" name="name" required value={formData.name} onChange={handleChange} placeholder="e.g. Minimalist Wooden Chair" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition" />
-                </div>
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Brand Name</label>
-                    <input type="text" name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Hatim Furniture" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition" />
-                </div>
-            </div>
-
-            <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Description</label>
-              <textarea name="description" required rows="4" value={formData.description} onChange={handleChange} placeholder="Enter a detailed description of the product..." className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition"></textarea>
-            </div>
-          </div>
-
-          {/* Material & Warranty */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Material</label>
-                <input type="text" name="material" value={formData.material} onChange={handleChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition" />
-            </div>
-            <div>
-                <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Warranty</label>
-                <input type="text" name="warranty" value={formData.warranty} onChange={handleChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition" />
-            </div>
-          </div>
-
-          {/* Dimensions */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-orange-500 rounded-full"></span> Dimensions
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Length</label>
-                    <input type="text" name="length" value={dimensions.length} onChange={handleDimensionChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-black transition" />
-                </div>
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Width</label>
-                    <input type="text" name="width" value={dimensions.width} onChange={handleDimensionChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-black transition" />
-                </div>
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Height</label>
-                    <input type="text" name="height" value={dimensions.height} onChange={handleDimensionChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-black transition" />
-                </div>
-            </div>
-          </div>
-
-          {/* Shipping Cost */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-              <span className="w-1.5 h-6 bg-green-500 rounded-full"></span> Shipping Costs
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Inside Dhaka</label>
-                    <input type="number" name="insideDhaka" value={deliveryCost.insideDhaka} onChange={handleDeliveryChange} placeholder="60" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-black transition" />
-                </div>
-                <div>
-                    <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Outside Dhaka</label>
-                    <input type="number" name="outsideDhaka" value={deliveryCost.outsideDhaka} onChange={handleDeliveryChange} placeholder="120" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-black transition" />
-                </div>
-            </div>
-          </div>
-
-          {/* Marketing Flags */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-             <label className="flex items-center gap-3 cursor-pointer group">
-                <input type="checkbox" name="isNewArrival" checked={formData.isNewArrival} onChange={handleChange} className="w-5 h-5 rounded accent-black" />
-                <span className="text-sm font-bold text-gray-700 group-hover:text-black transition">New Arrival</span>
-             </label>
-             <label className="flex items-center gap-3 cursor-pointer group">
-                <input type="checkbox" name="isTopSelling" checked={formData.isTopSelling} onChange={handleChange} className="w-5 h-5 rounded accent-black" />
-                <span className="text-sm font-bold text-gray-700 group-hover:text-black transition">Top Selling</span>
-             </label>
-             <label className="flex items-center gap-3 cursor-pointer group">
-                <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="w-5 h-5 rounded accent-black" />
-                <span className="text-sm font-bold text-gray-700 group-hover:text-black transition">Featured</span>
-             </label>
-          </div>
-
-          {/* Pricing & Category */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest text-center">Price</label>
-              <input type="number" name="price" required value={formData.price} onChange={handleChange} placeholder="5000" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black" />
-            </div>
-            <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest text-center">Sale Price</label>
-              <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder="4500" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Category</label>
-                <select name="category" required value={formData.category} onChange={handleChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition bg-white">
-                  <option value="">Select Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat._id} value={cat.name}>{cat.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Sub-Category</label>
-                <select name="subCategory" required value={formData.subCategory} onChange={handleChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition bg-white">
-                  <option value="">Select Sub-Category</option>
-                  {categories.find(c => c.name === formData.category)?.subCategories.map(sub => (
-                    <option key={sub} value={sub}>{sub}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Specifications */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <span className="w-1.5 h-6 bg-blue-500 rounded-full"></span> Other Specifications
-                </h3>
-                <button type="button" onClick={addSpec} className="text-xs font-bold text-blue-600 hover:underline">+ Add Row</button>
-            </div>
-            <div className="space-y-3">
-                {specifications.map((spec, i) => (
-                    <div key={i} className="flex gap-3 items-center">
-                        <input type="text" placeholder="Key" value={spec.key} onChange={(e) => handleSpecChange(i, "key", e.target.value)} className="flex-1 text-gray-800 border border-gray-300 rounded-xl px-4 py-2 text-sm outline-none" />
-                        <input type="text" placeholder="Value" value={spec.value} onChange={(e) => handleSpecChange(i, "value", e.target.value)} className="flex-1 text-gray-800 border border-gray-300 rounded-xl px-4 py-2 text-sm outline-none" />
-                        <button type="button" onClick={() => removeSpec(i)} className="text-red-400 p-2">✕</button>
+                {/* BASIC INFO */}
+                <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 space-y-6">
+                    <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                        <span className="w-2 h-8 bg-black rounded-full"></span> General Information
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="md:col-span-2">
+                            <label className="block mb-2 text-xs font-black text-gray-400 uppercase tracking-widest">Product Title</label>
+                            <input type="text" name="name" required value={formData.name} onChange={handleChange} placeholder="e.g. Modern Glass Chandelier" className="w-full text-gray-800 border-0 bg-gray-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-black transition font-medium" />
+                        </div>
+                        <div>
+                            <label className="block mb-2 text-xs font-black text-gray-400 uppercase tracking-widest">Brand</label>
+                            <input type="text" name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Hatim Furniture" className="w-full text-gray-800 border-0 bg-gray-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-black transition font-medium" />
+                        </div>
+                        <div>
+                            <label className="block mb-2 text-xs font-black text-gray-400 uppercase tracking-widest">Warranty</label>
+                            <input type="text" name="warranty" value={formData.warranty} onChange={handleChange} placeholder="e.g. 1 Year Warranty" className="w-full text-gray-800 border-0 bg-gray-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-black transition font-medium" />
+                        </div>
                     </div>
-                ))}
+
+                    <div>
+                        <label className="block mb-2 text-xs font-black text-gray-400 uppercase tracking-widest">Description</label>
+                        <textarea name="description" required rows="6" value={formData.description} onChange={handleChange} placeholder="Detailed product story..." className="w-full text-gray-800 border-0 bg-gray-50 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-black transition font-medium"></textarea>
+                    </div>
+                </section>
+
+                {/* VARIANTS */}
+                <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 space-y-6">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                            <span className="w-2 h-8 bg-purple-500 rounded-full"></span> Variants
+                        </h3>
+                        <button type="button" onClick={() => addListItem(setVariants, { size: "", color: "", material: "", stock: 0, additionalPrice: 0 })} className="text-xs font-black bg-purple-50 text-purple-600 px-4 py-2 rounded-full uppercase tracking-widest hover:bg-purple-100 transition">+ Add</button>
+                    </div>
+                    <div className="space-y-4">
+                        {variants.map((v, i) => (
+                            <div key={i} className="grid grid-cols-2 md:grid-cols-5 gap-3 p-4 bg-gray-50 rounded-2xl relative">
+                                <input placeholder="Size" value={v.size} onChange={(e) => handleVariantChange(i, 'size', e.target.value)} className="bg-white rounded-xl px-3 py-2 text-sm outline-none" />
+                                <input placeholder="Color" value={v.color} onChange={(e) => handleVariantChange(i, 'color', e.target.value)} className="bg-white rounded-xl px-3 py-2 text-sm outline-none" />
+                                <input placeholder="Material" value={v.material} onChange={(e) => handleVariantChange(i, 'material', e.target.value)} className="bg-white rounded-xl px-3 py-2 text-sm outline-none" />
+                                <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => handleVariantChange(i, 'stock', e.target.value)} className="bg-white rounded-xl px-3 py-2 text-sm outline-none" />
+                                <input type="number" placeholder="+Price" value={v.additionalPrice} onChange={(e) => handleVariantChange(i, 'additionalPrice', e.target.value)} className="bg-white rounded-xl px-3 py-2 text-sm outline-none" />
+                                <button type="button" onClick={() => removeListItem(i, setVariants)} className="absolute -top-2 -right-2 bg-white text-red-500 w-6 h-6 rounded-full shadow-sm border flex items-center justify-center text-xs">✕</button>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                <button type="submit" disabled={saving} className="w-full bg-black text-white py-6 rounded-[2rem] font-black text-xl shadow-2xl hover:scale-[1.01] transition-all disabled:opacity-50">
+                    {saving ? "📦 UPDATING..." : "🚀 SAVE CHANGES"}
+                </button>
+            </form>
+        </div>
+
+        {/* SIDEBAR */}
+        <div className="space-y-8">
+            <div className="bg-black text-white p-8 rounded-[2.5rem] shadow-2xl">
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] mb-6 opacity-50">Pricing & Stock</h3>
+                <div className="space-y-6">
+                    <div>
+                        <label className="block text-[10px] font-black uppercase tracking-widest mb-2 opacity-50">Base Price</label>
+                        <input type="number" name="price" value={formData.price} onChange={handleChange} placeholder="0.00" className="w-full bg-white/10 border-0 rounded-2xl px-5 py-4 text-2xl font-black outline-none" />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] font-black uppercase tracking-widest mb-2 opacity-50">Total Stock</label>
+                        <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} placeholder="0" className="w-full bg-white/10 border-0 rounded-2xl px-5 py-4 text-xl font-black outline-none" />
+                    </div>
+                </div>
             </div>
-          </div>
 
-          {/* Media */}
-          <div>
-            <label className="block mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest text-center">Images</label>
-            <div className="relative group">
-              <input type="file" multiple accept="image/*" onChange={handleImageChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-              <div className="w-full border-2 border-dashed border-gray-200 rounded-2xl px-4 py-10 bg-gray-50 flex flex-col items-center justify-center group-hover:border-black transition">
-                <span className="font-bold text-gray-800">Add more images</span>
-              </div>
+            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
+                <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 text-center">Media Assets</h3>
+                <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase text-gray-400">Existing Images</p>
+                    <div className="grid grid-cols-3 gap-2">
+                        {existingImages.map((img, i) => (
+                            <div key={i} className="relative aspect-square rounded-xl overflow-hidden group">
+                                <img src={img} className="w-full h-full object-cover" />
+                                <button type="button" onClick={() => removeExistingImage(i)} className="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center font-bold">✕</button>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <p className="text-[10px] font-black uppercase text-gray-400 pt-4 border-t">Upload New</p>
+                    <div className="relative group">
+                        <input type="file" multiple accept="image/*" onChange={handleImageChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                        <div className="w-full border-2 border-dashed border-gray-100 rounded-3xl py-10 flex flex-col items-center justify-center bg-gray-50">
+                            <span className="text-2xl">📸</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {imagePreviews.length > 0 && (
-              <div className="grid grid-cols-4 md:grid-cols-5 gap-4 mt-6">
-                {imagePreviews.map((url, index) => (
-                  <div key={index} className="relative aspect-square rounded-xl overflow-hidden border">
-                    <img src={url} alt="" className="w-full h-full object-cover" />
-                    <button type="button" onClick={() => removeImage(index)} className="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 rounded-full text-[10px]">✕</button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <button type="submit" disabled={loading} className="w-full bg-black text-white py-4 rounded-2xl font-extrabold text-lg shadow-2xl hover:bg-gray-900 transition disabled:opacity-50">
-            {loading ? "📦 Updating..." : "💾 Save Changes"}
-          </button>
-
-        </form>
+        </div>
       </div>
     </div>
   );
