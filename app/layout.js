@@ -5,6 +5,9 @@ import { CartProvider } from "@/components/CartContext";
 export const metadata = {
   title: "Hatim Zone",
   description: "E-commerce Store",
+   icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }) {

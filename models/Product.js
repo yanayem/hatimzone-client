@@ -164,8 +164,8 @@ ProductSchema.index({ createdAt: -1 });
 ProductSchema.index({ price: 1 });
 ProductSchema.index({ name: 'text', description: 'text' });
 
-// Pre-save Middleware
-ProductSchema.pre("save", async function (next) {
+// Pre-validate Middleware
+ProductSchema.pre("validate", async function (next) {
   // 1. Generate Slug if needed
   if (this.isModified("name") || !this.slug) {
     let baseSlug = this.name
@@ -185,7 +185,7 @@ ProductSchema.pre("save", async function (next) {
 
   // 3. Recalculate Rating
   if (this.isModified("reviews")) {
-    if (this.reviews.length > 0) {
+    if (this.reviews?.length > 0) {
       const sum = this.reviews.reduce((acc, rev) => acc + rev.rating, 0);
       this.averageRating = Number((sum / this.reviews.length).toFixed(1));
       this.totalReviews = this.reviews.length;

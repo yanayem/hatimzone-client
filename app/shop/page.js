@@ -221,11 +221,11 @@ export default async function ShopPage({ searchParams }) {
                   <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-50">
                     <div className="flex items-center gap-3">
                       <span className="text-xl font-black text-gray-900">
-                        ৳{p.discountPrice > 0 ? p.discountPrice : p.price}
+                        TK{p.discountPrice > 0 ? p.discountPrice : p.price}
                       </span>
                       {p.discountPrice > 0 && (
                         <span className="text-xs text-gray-400 line-through font-medium">
-                          ৳{p.price}
+                          TK{p.price}
                         </span>
                       )}
                     </div>

@@ -27,14 +27,15 @@ const CategorySchema = new mongoose.Schema(
 );
 
 // AUTO GENERATE SLUG
-CategorySchema.pre("save", function () {
-  if (this.isModified("name")) {
+CategorySchema.pre("validate", function (next) {
+  if (this.isModified("name") && !this.slug) {
     this.slug = this.name
       .trim()
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
       .replace(/\s+/g, "-");
   }
+  next();
 });
 
 const Category =

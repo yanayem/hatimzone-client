@@ -16,7 +16,7 @@ export default async function HomePage() {
       <section className="relative h-[500px] flex items-center justify-center overflow-hidden bg-black text-white">
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1556906781-9a412961c28c?q=80&w=1974&auto=format&fit=crop" 
+            src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=2000&auto=format&fit=crop" 
             alt="Hero" 
             className="w-full h-full object-cover"
           />

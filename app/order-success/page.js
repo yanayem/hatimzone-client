@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { HiCheckCircle, HiShoppingBag, HiUser } from "react-icons/hi";
 
-export default function OrderSuccessPage() {
+function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("id");
 
@@ -18,7 +18,7 @@ export default function OrderSuccessPage() {
         
         <h1 className="text-3xl font-black mb-4">Order Confirmed!</h1>
         <p className="text-gray-500 mb-8 leading-relaxed">
-          Thank you for your purchase. Your order <span className="font-bold text-black">#{orderId}</span> has been received and is being processed.
+          Thank you for your purchase. Your order <span className="font-bold text-black">#{orderId || 'N/A'}</span> has been received and is being processed.
         </p>
 
         <div className="space-y-4">
@@ -46,5 +46,17 @@ export default function OrderSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <OrderSuccessContent />
+    </Suspense>
   );
 }
