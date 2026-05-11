@@ -68,6 +68,7 @@ export default function AdminLayout({ children }) {
     { name: 'Dashboard', href: '/admin/dashboard', icon: FiGrid },
     { name: 'Orders', href: '/admin/orders', icon: FiShoppingBag },
     { name: 'Products', href: '/admin/products', icon: FiBox },
+    { name: 'Categories', href: '/admin/categories', icon: FiGrid },
     { name: 'Customers', href: '/admin/users', icon: FiUsers },
     { name: 'Settings', href: '/admin/settings', icon: FiSettings },
   ];

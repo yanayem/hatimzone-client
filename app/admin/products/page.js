@@ -172,7 +172,12 @@ const ProductsPage = () => {
                     {/* 5. Category & Tags */}
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
-                        <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">{product.category}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">{product.category}</span>
+                          {product.subCategory && (
+                            <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded w-fit border border-blue-100">{product.subCategory}</span>
+                          )}
+                        </div>
                         <div className="flex flex-wrap gap-1">
                             {product.tags?.slice(0, 2).map(tag => (
                             <span key={tag} className="px-1.5 py-0.5 rounded text-[8px] font-extrabold bg-purple-50 text-purple-600 border border-purple-100 uppercase">

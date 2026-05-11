@@ -13,6 +13,12 @@ export default async function ShopPage({ searchParams }) {
       ? params.category
       : [params.category]
     : [];
+    
+  const selectedSubCategories = params.subCategory
+    ? Array.isArray(params.subCategory)
+      ? params.subCategory
+      : [params.subCategory]
+    : [];
 
   const selectedBrands = params.brand
     ? Array.isArray(params.brand)
@@ -37,6 +43,9 @@ export default async function ShopPage({ searchParams }) {
   if (selectedBrands.length)
     filter.brand = { $in: selectedBrands };
 
+  if (selectedSubCategories.length)
+    filter.subCategory = { $in: selectedSubCategories };
+
   if (q)
     filter.name = { $regex: q, $options: "i" };
 
@@ -51,12 +60,13 @@ export default async function ShopPage({ searchParams }) {
   if (sort === "price-low") sortOption = { price: 1 };
   if (sort === "price-high") sortOption = { price: -1 };
 
-  const [products, totalProducts, categories, brands] =
+  const [products, totalProducts, categories, brands, subCategories] =
     await Promise.all([
       Product.find(filter).sort(sortOption).skip(skip).limit(limit),
       Product.countDocuments(filter),
       Product.distinct("category"),
       Product.distinct("brand"),
+      Product.distinct("subCategory"),
     ]);
 
   const getToggleUrl = (key, value) => {
@@ -128,9 +138,37 @@ export default async function ShopPage({ searchParams }) {
                 <Link
                   key={i}
                   href={getToggleUrl("category", cat)}
-                  className="text-xs px-2 py-1 border rounded hover:bg-gray-100"
+                  className={`text-xs px-2 py-1 border rounded transition ${
+                    selectedCategories.includes(cat) ? "bg-black text-white" : "hover:bg-gray-100"
+                  }`}
                 >
                   {cat}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* SUB-CATEGORY */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-xs font-bold uppercase text-gray-500">
+                Sub-Categories
+              </h3>
+              <Link href="/shop" className="text-xs text-red-500 font-bold">
+                Reset
+              </Link>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {subCategories.filter(Boolean).map((sub, i) => (
+                <Link
+                  key={i}
+                  href={getToggleUrl("subCategory", sub)}
+                  className={`text-xs px-2 py-1 border rounded transition ${
+                    selectedSubCategories.includes(sub) ? "bg-black text-white" : "hover:bg-gray-100"
+                  }`}
+                >
+                  {sub}
                 </Link>
               ))}
             </div>
@@ -152,7 +190,9 @@ export default async function ShopPage({ searchParams }) {
                 <Link
                   key={i}
                   href={getToggleUrl("brand", brand)}
-                  className="text-xs px-2 py-1 border rounded hover:bg-gray-100"
+                  className={`text-xs px-2 py-1 border rounded transition ${
+                    selectedBrands.includes(brand) ? "bg-black text-white" : "hover:bg-gray-100"
+                  }`}
                 >
                   {brand}
                 </Link>
@@ -216,6 +256,8 @@ export default async function ShopPage({ searchParams }) {
         <div className="text-xs text-gray-500 flex justify-between">
           <span>{p.brand}</span>
           <span>{p.category}</span>
+          <span className="text-gray-300 mx-1">/</span>
+          <span>{p.subCategory}</span>
         </div>
         <h3 className="font-semibold mt-2 line-clamp-2">{p.name}</h3>
         <div className="mt-2 font-bold">

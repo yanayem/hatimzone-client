@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const AddProductPage = () => {
@@ -13,6 +13,7 @@ const AddProductPage = () => {
     price: "",
     discountPrice: "",
     category: "",
+    subCategory: "",
     stockQuantity: "",
     stockStatus: "In Stock",
     tags: [],
@@ -30,17 +31,35 @@ const AddProductPage = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("/api/admin/categories");
+        const data = await res.json();
+        if (data.success) setCategories(data.categories);
+      } catch (err) {
+        console.error("Failed to fetch categories");
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const availableTags = ["Best Deal", "Limited Edition", "Special Offer", "Summer Collection", "Winter Collection"];
 
-  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ 
-      ...prev, 
-      [name]: type === "checkbox" ? checked : value 
-    }));
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: type === "checkbox" ? checked : value };
+      
+      // Auto-reset subcategory when category changes
+      if (name === "category") {
+        updated.subCategory = "";
+      }
+      
+      return updated;
+    });
   };
 
   const handleDimensionChange = (e) => {
@@ -254,9 +273,25 @@ const AddProductPage = () => {
               <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Sale Price</label>
               <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} placeholder="4500" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black" />
             </div>
-            <div>
-              <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Category</label>
-              <input type="text" name="category" required value={formData.category} onChange={handleChange} placeholder="e.g. Sofa, Bed, Table" className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Category</label>
+                <select name="category" required value={formData.category} onChange={handleChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition bg-white">
+                  <option value="">Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat.name}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block mb-1.5 text-xs font-bold text-gray-400 uppercase tracking-widest">Sub-Category</label>
+                <select name="subCategory" required value={formData.subCategory} onChange={handleChange} className="w-full text-gray-800 border border-gray-300 rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-black transition bg-white">
+                  <option value="">Select Sub-Category</option>
+                  {categories.find(c => c.name === formData.category)?.subCategories.map(sub => (
+                    <option key={sub} value={sub}>{sub}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 

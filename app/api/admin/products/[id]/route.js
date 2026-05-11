@@ -59,7 +59,7 @@ export async function PUT(req, { params }) {
         const { id } = await params;
         const body = await req.json();
 
-        const { name, brand, description, price, discountPrice, category, stockQuantity, stockStatus, specifications, material, warranty, dimensions, deliveryCost, tags, images, isNewArrival, isTopSelling, isFeatured } = body;
+        const { name, brand, description, price, discountPrice, category, subCategory, stockQuantity, stockStatus, specifications, material, warranty, dimensions, deliveryCost, tags, images, isNewArrival, isTopSelling, isFeatured } = body;
 
         const updatedProduct = await Product.findByIdAndUpdate(id, {
             name,
@@ -68,6 +68,7 @@ export async function PUT(req, { params }) {
             price: Number(price),
             discountPrice: Number(discountPrice || 0),
             category,
+            subCategory: subCategory || "",
             stockQuantity: Number(stockQuantity || 0),
             stockStatus,
             specifications: specifications || {},
