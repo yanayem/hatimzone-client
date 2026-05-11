@@ -84,3 +84,42 @@ export async function GET(req) {
     return errorResponse("Server error");
   }
 }
+
+export async function PATCH(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const orderId = searchParams.get("id");
+    const action = searchParams.get("action");
+
+    if (!orderId || action !== "cancel") {
+      return errorResponse("Invalid request", 400);
+    }
+
+    await connectDB();
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return errorResponse("Order not found", 404);
+    }
+
+    if (order.status !== "Pending") {
+      return errorResponse("Only pending orders can be cancelled", 400);
+    }
+
+    // 1. Update order status
+    order.status = "Cancelled";
+    await order.save();
+
+    // 2. Restore stock
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stockQuantity: item.quantity }
+      });
+    }
+
+    return successResponse(order, "Order cancelled successfully");
+  } catch (error) {
+    console.error("Cancel order error:", error);
+    return errorResponse("Failed to cancel order");
+  }
+}

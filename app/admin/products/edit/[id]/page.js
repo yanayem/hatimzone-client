@@ -432,7 +432,6 @@ const EditProductPage = () => {
                             <option key={i} value={c.name}>{c.name}</option>
                         ))}
                     </select>
-                    <input name="subCategory" value={formData.subCategory} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition" placeholder="Sub-category (e.g. Sofa)" />
                     <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition" placeholder="Tags (comma separated)" />
                 </div>
             </div>

@@ -52,6 +52,29 @@ export default function AccountPage() {
     localStorage.removeItem("userPhone");
   };
 
+  const handleCancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+    
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/order?id=${orderId}&action=cancel`, {
+        method: "PATCH",
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Order cancelled successfully");
+        fetchOrders(phone);
+      } else {
+        alert(data.message || "Failed to cancel order");
+      }
+    } catch (error) {
+      console.error("Cancel error:", error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Pending": return "text-orange-500 bg-orange-50 border-orange-100";
@@ -172,6 +195,18 @@ export default function AccountPage() {
                       <p className="text-xl font-black text-black">৳{order.totalPrice}</p>
                     </div>
                   </div>
+
+                  {order.status === "Pending" && (
+                    <div className="px-6 pb-6 pt-2">
+                      <button 
+                        onClick={() => handleCancelOrder(order._id)}
+                        className="w-full py-3 bg-red-50 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
+                      >
+                        <HiXCircle />
+                        Cancel Order
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))
             )}

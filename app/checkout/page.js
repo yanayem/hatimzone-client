@@ -115,7 +115,7 @@ export default function CheckoutPage() {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Enter your name"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition text-gray-800 font-bold"
                     />
                   </div>
                   <div className="space-y-1">
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="017XXXXXXXX"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition text-gray-800 font-bold"
                     />
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export default function CheckoutPage() {
                     onChange={handleChange}
                     placeholder="House no, Road no, Area..."
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition resize-none text-gray-800 font-bold"
                   />
                 </div>
 
@@ -151,7 +151,7 @@ export default function CheckoutPage() {
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition appearance-none bg-white"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition appearance-none bg-white text-gray-800 font-bold"
                     >
                       <option value="Dhaka">Dhaka (60৳)</option>
                       <option value="Outside Dhaka">Outside Dhaka (120৳)</option>
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
                     value={formData.notes}
                     onChange={handleChange}
                     placeholder="Special instructions for delivery"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition text-gray-800 font-bold"
                   />
                 </div>
               </form>

@@ -23,13 +23,24 @@ export async function GET(req, { params }) {
         // Dynamically fetch other products from same category if relatedProducts is empty
         let related = product.relatedProducts || [];
         if (related.length < 4) {
-            const extra = await Product.find({
+            let extra = await Product.find({
                 category: product.category,
                 _id: { $ne: product._id }
             })
             .limit(4 - related.length)
             .select('name price discountPrice images slug category brand')
             .lean();
+            
+            // If still empty, fetch any latest products
+            if (extra.length === 0) {
+                extra = await Product.find({
+                    _id: { $ne: product._id }
+                })
+                .sort({ createdAt: -1 })
+                .limit(4)
+                .select('name price discountPrice images slug category brand')
+                .lean();
+            }
             
             related = [...related, ...extra];
         }

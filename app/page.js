@@ -147,7 +147,7 @@ function ProductCard({ product }) {
   const hasDiscount = product.discountPrice > 0;
 
   return (
-    <Link href={`/product/${product.slug}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full">
+    <Link href={`/product/${product.slug || product._id}`} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col h-full">
       <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center">
         <img
           src={product.images?.[0] || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
