@@ -46,7 +46,12 @@ export async function POST(req) {
       return errorResponse("Category name must be at least 2 characters", 400);
     }
 
-    const slug = generateSlug(name);
+    const baseSlug = name
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-");
+    const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 7)}`;
 
     // 3. Check Uniqueness
     const existing = await Category.findOne({

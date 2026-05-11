@@ -165,7 +165,7 @@ ProductSchema.index({ price: 1 });
 ProductSchema.index({ name: 'text', description: 'text' });
 
 // Pre-validate Middleware
-ProductSchema.pre("validate", async function (next) {
+ProductSchema.pre("validate", async function () {
   // 1. Generate Slug if needed
   if (this.isModified("name") || !this.slug) {
     let baseSlug = this.name
@@ -194,10 +194,11 @@ ProductSchema.pre("validate", async function (next) {
       this.totalReviews = 0;
     }
   }
-
-  next();
 });
 
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Product;
+}
 const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
 export default Product;

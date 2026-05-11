@@ -27,7 +27,7 @@ const CategorySchema = new mongoose.Schema(
 );
 
 // AUTO GENERATE SLUG
-CategorySchema.pre("validate", function (next) {
+CategorySchema.pre("validate", async function () {
   if (this.isModified("name") && !this.slug) {
     this.slug = this.name
       .trim()
@@ -35,9 +35,11 @@ CategorySchema.pre("validate", function (next) {
       .replace(/[^\w\s-]/g, "")
       .replace(/\s+/g, "-");
   }
-  next();
 });
 
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Category;
+}
 const Category =
   mongoose.models.Category ||
   mongoose.model("Category", CategorySchema);

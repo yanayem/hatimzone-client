@@ -86,7 +86,18 @@ export async function POST(req) {
       return errorResponse(`Category '${body.category}' does not exist`, 400);
     }
 
-    // 4. Create Product
+    // 4. Generate Slug manually to ensure it's present before validation
+    const baseSlug = body.name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    
+    const random = Math.random().toString(36).substring(2, 7);
+    body.slug = `${baseSlug}-${random}`;
+
+    // 5. Create Product
     const product = await Product.create(body);
 
     return successResponse(product, "Product created successfully", 201);
