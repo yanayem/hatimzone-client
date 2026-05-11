@@ -15,22 +15,17 @@ export async function POST(req) {
             return NextResponse.json({ success: false, message: "Invalid JSON body" }, { status: 400 });
         }
 
-        const { identifier, password } = body;
+        const { identifier, password } = body; 
 
         if (!identifier || !password) {
             return NextResponse.json({
                 success: false,
-                message: "Username/Phone and password required",
+                message: "Email and password required",
             });
         }
 
-        const cleanIdentifier = String(identifier).trim();
-        const admin = await Admin.findOne({
-            $or: [
-                { username: cleanIdentifier },
-                { phone: cleanIdentifier }
-            ]
-        });
+        const cleanEmail = String(identifier).trim().toLowerCase();
+        const admin = await Admin.findOne({ email: cleanEmail });
 
         if (!admin) {
             return NextResponse.json({
@@ -48,33 +43,31 @@ export async function POST(req) {
         }
 
         const token = jwt.sign(
-            { id: admin._id, username: admin.username },
+            { id: admin._id, email: admin.email },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
 
-        // Set Cookie
         const response = NextResponse.json({
             success: true,
-            isTempPassword: admin.isTempPassword,
             passwordChanged: admin.passwordChanged,
-            token, // User's code used localStorage.setItem("adminToken", data.token);
+            token,
         });
 
         response.cookies.set('adminToken', token, {
             httpOnly: true,
-            secure: false, // Set to false for development ease, or use process.env.NODE_ENV === 'production'
-            sameSite: 'lax', // Changed from 'strict' to 'lax' for better cross-page behavior
-            maxAge: 7 * 24 * 60 * 60, // 7 days
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60,
             path: '/',
         });
 
         return response;
     } catch (error) {
-        console.error("Login error detail:", error);
+        console.error("Login error:", error);
         return NextResponse.json({
             success: false,
-            message: error.message || "Server error during login",
+            message: "Server error during login",
         }, { status: 500 });
     }
 }

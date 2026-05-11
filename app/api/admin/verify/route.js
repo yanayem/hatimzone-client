@@ -23,9 +23,7 @@ export async function GET(req) {
             success: true, 
             admin: {
                 id: admin._id,
-                username: admin.username,
-                phone: admin.phone,
-                isTempPassword: admin.isTempPassword,
+                email: admin.email,
                 passwordChanged: admin.passwordChanged
             }
         });

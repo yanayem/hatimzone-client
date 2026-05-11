@@ -1,13 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    // Check if setup is needed
+    useEffect(() => {
+        const checkSetup = async () => {
+            try {
+                const res = await fetch("/api/admin/setup");
+                const data = await res.json();
+                if (data.success && data.count === 0) {
+                    router.push("/admin/setup");
+                }
+            } catch (e) {}
+        };
+        checkSetup();
+    }, [router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,12 +40,7 @@ export default function AdminLoginPage() {
 
         if (data.success) {
             localStorage.setItem("adminToken", data.token);
-
-            if (data.isTempPassword) {
-                window.location.href = "/admin/settings";
-            } else {
-                window.location.href = "/admin/dashboard";
-            }
+            window.location.href = "/admin/dashboard";
         } else {
             setMessage(data.message);
         }
@@ -44,18 +55,19 @@ export default function AdminLoginPage() {
                 <h1 className="text-xl text-gray-800 font-bold mb-5">Admin Login</h1>
 
                 <input
-                    placeholder="Username or Phone"
+                    type="email"
+                    placeholder="Email Address"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    className="w-full text-gray-800 placeholder:text-gray-600 p-3 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    className="w-full text-gray-800 placeholder:text-gray-600 p-4 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black outline-none"
                 />
 
                 <input
                     type="password"
-                    placeholder="Password / Temp Password"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full text-gray-800 placeholder:text-gray-600 p-3 border mb-3"
+                    className="w-full text-gray-800 placeholder:text-gray-600 p-4 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black outline-none"
                 />
 
                 <button className="w-full bg-black text-white p-3">

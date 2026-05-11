@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "createsuperuser": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
     "jose": "^6.2.3",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.2",

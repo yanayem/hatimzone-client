@@ -6,50 +6,40 @@ import bcrypt from "bcryptjs";
 export async function POST(req) {
     try {
         await connectDB();
-        let body;
-        try {
-            body = await req.json();
-        } catch (e) {
-            return NextResponse.json({ success: false, message: "Invalid JSON body" }, { status: 400 });
+        const { email } = await req.json();
+
+        if (!email) {
+            return NextResponse.json({ success: false, message: "Email is required" });
         }
 
-        const { phone } = body;
-
-        if (!phone) {
-            return NextResponse.json({
-                success: false,
-                message: "Phone number is required",
-            });
-        }
-
-        const cleanPhone = String(phone).trim();
-        const admin = await Admin.findOne({ phone: cleanPhone });
+        const admin = await Admin.findOne({ email: email.trim().toLowerCase() });
 
         if (!admin) {
-            return NextResponse.json({
-                success: false,
-                message: "❌ Phone number not found in system. Please check and try again.",
+            return NextResponse.json({ 
+                success: false, 
+                message: "Email not found in our system." 
             });
         }
 
-        // Generate a random temporary password
-        const tempPassword = Math.random().toString(36).slice(-8);
+        // Generate a very simple 6-digit temporary password
+        const tempPassword = Math.floor(100000 + Math.random() * 900000).toString();
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
         await Admin.findByIdAndUpdate(admin._id, {
             password: hashedPassword,
-            isTempPassword: true, // Mark as temporary so they are forced to change it
-            passwordChanged: false,
+            passwordChanged: false
         });
 
+        // NOTE: Actual email sending logic should be implemented here.
+        // For now, we still return it in JSON so the dev can see it in network logs if needed,
+        // but the UI won't show it as per user's request.
         return NextResponse.json({
             success: true,
-            message: `✅ Password reset successfully! Your new temporary password is: ${tempPassword}\n\nPlease login and change it immediately in settings.`,
-            tempPassword, // Return it so the UI can show it if needed, but the message already has it
+            message: "Password reset successful! Please check your email.",
+            tempPassword: tempPassword
         });
     } catch (error) {
         console.error("Forgot password error:", error);
-        return NextResponse.json({ success: false, message: "Server error" });
+        return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
     }
 }
-

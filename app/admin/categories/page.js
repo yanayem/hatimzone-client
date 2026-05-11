@@ -107,7 +107,7 @@ const CategoriesAdminPage = () => {
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
               placeholder="e.g. Home Furniture"
-              className="flex-1 border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+              className="flex-1 border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black text-gray-800"
             />
             <button className="bg-black text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition">
               Create Category
@@ -147,7 +147,7 @@ const CategoriesAdminPage = () => {
                   <input
                     type="text"
                     placeholder="Add sub-category (e.g. Chair)"
-                    className="flex-1 text-sm border rounded-lg px-3 py-2 outline-none focus:border-black"
+                    className="flex-1 text-sm border rounded-lg px-3 py-2 outline-none focus:border-black text-gray-800"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleAddSubCategory(cat._id, cat.subCategories);

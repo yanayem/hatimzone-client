@@ -31,6 +31,7 @@ const AddProductPage = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [categories, setCategories] = useState([]);
 
@@ -49,6 +50,7 @@ const AddProductPage = () => {
 
   const availableTags = ["Best Deal", "Limited Edition", "Special Offer", "Summer Collection", "Winter Collection"];
 
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => {
       const updated = { ...prev, [name]: type === "checkbox" ? checked : value };

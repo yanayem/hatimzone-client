@@ -1,18 +1,25 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Category from "@/models/Category";
-import { jwtVerify } from 'jose';
+import jwt from "jsonwebtoken";
 
 async function verifyAdmin(req) {
     const token = req.cookies.get('adminToken')?.value;
     if (!token) return false;
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-        await jwtVerify(token, secret);
+        jwt.verify(token, process.env.JWT_SECRET);
         return true;
     } catch (e) {
         return false;
     }
+}
+
+function generateSlug(text) {
+    return text
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-");
 }
 
 export async function GET(req) {
@@ -32,19 +39,33 @@ export async function POST(req) {
         }
 
         await connectDB();
-        const { name, subCategories } = await req.json();
+        const body = await req.json();
+        const { name, subCategories } = body;
 
         if (!name) {
             return NextResponse.json({ success: false, message: "Category name is required" }, { status: 400 });
         }
 
+        const slug = generateSlug(name);
+
+        // Check if category or slug already exists
+        const existing = await Category.findOne({
+            $or: [{ name: name.trim() }, { slug }]
+        });
+
+        if (existing) {
+            return NextResponse.json({ success: false, message: "Category already exists" }, { status: 400 });
+        }
+
         const newCategory = await Category.create({
-            name,
+            name: name.trim(),
+            slug,
             subCategories: subCategories || []
         });
 
-        return NextResponse.json({ success: true, category: newCategory });
+        return NextResponse.json({ success: true, category: newCategory }, { status: 201 });
     } catch (error) {
+        console.error("CATEGORY ERROR:", error);
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 }
