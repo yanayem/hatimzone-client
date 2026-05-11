@@ -92,7 +92,7 @@ export default async function HomePage() {
           <Link href="/shop" className="text-sm font-bold underline">View All</Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
           {newArrival.length > 0 ? newArrival.map((p) => (
             <ProductCard key={p._id} product={p} />
           )) : (
@@ -111,7 +111,7 @@ export default async function HomePage() {
                 <Link href="/shop" className="text-sm font-bold underline">View All</Link>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
             {topSelling.length > 0 ? topSelling.map((p) => (
                 <ProductCard key={p._id} product={p} />
             )) : (
@@ -157,7 +157,7 @@ function ProductCard({ product }) {
     const discountPercent = hasDiscount ? Math.round(((product.price - product.discountPrice) / product.price) * 100) : 0;
 
     return (
-        <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-transparent hover:border-gray-100 flex flex-col h-full">
+        <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-transparent hover:border-gray-100 flex flex-col">
             <div className="relative aspect-[4/5] overflow-hidden bg-gray-100">
                 <img
                     src={product.images?.[0] || "https://placehold.co/400x500?text=Product"}
@@ -177,7 +177,10 @@ function ProductCard({ product }) {
             </div>
 
             <div className="p-5 flex flex-col flex-1">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{product.category}</span>
+                <div className="flex justify-between items-start mb-1">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.brand || 'Generic'}</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.category}</span>
+                </div>
                 <h3 className="font-bold text-gray-800 mb-2 line-clamp-1 group-hover:text-black transition">{product.name}</h3>
                 
                 <div className="mt-auto flex items-center gap-2">

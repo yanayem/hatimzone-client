@@ -59,17 +59,22 @@ export async function PUT(req, { params }) {
         const { id } = await params;
         const body = await req.json();
 
-        const { name, description, price, discountPrice, category, stockQuantity, stockStatus, sizes, tags, images, isNewArrival, isTopSelling, isFeatured } = body;
+        const { name, brand, description, price, discountPrice, category, stockQuantity, stockStatus, specifications, material, warranty, dimensions, deliveryCost, tags, images, isNewArrival, isTopSelling, isFeatured } = body;
 
         const updatedProduct = await Product.findByIdAndUpdate(id, {
             name,
+            brand: brand || "Generic",
             description,
             price: Number(price),
             discountPrice: Number(discountPrice || 0),
             category,
             stockQuantity: Number(stockQuantity || 0),
             stockStatus,
-            sizes: Array.isArray(sizes) ? sizes : String(sizes).split(',').map(s => s.trim()).filter(Boolean),
+            specifications: specifications || {},
+            material: material || "Solid Wood / Laminated Board",
+            warranty: warranty || "1 Year Service Warranty",
+            dimensions: dimensions || { length: "", width: "", height: "" },
+            deliveryCost: deliveryCost || { insideDhaka: 60, outsideDhaka: 120 },
             tags: Array.isArray(tags) ? tags : [],
             images,
             isNewArrival: Boolean(isNewArrival),
