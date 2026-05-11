@@ -20,11 +20,19 @@ export const CartProvider = ({ children }) => {
 
   // Save to localStorage on change
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch (e) {
+      console.warn("Cart storage failed: quota exceeded", e);
+    }
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    try {
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    } catch (e) {
+      console.warn("Wishlist storage failed: quota exceeded", e);
+    }
   }, [wishlist]);
 
   // Cart actions

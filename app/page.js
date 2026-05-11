@@ -14,8 +14,15 @@ export default async function HomePage() {
 
   // Parallel data fetching for better performance
   const [newArrival, topSelling, categories] = await Promise.all([
-    Product.find({ isNewArrival: true }).sort({ createdAt: -1 }).limit(8).lean(),
-    Product.find({ isTopSelling: true }).limit(8).lean(),
+    Product.find({ isNewArrival: true })
+      .select("name price cover slug brand isNewArrival")
+      .sort({ createdAt: -1 })
+      .limit(8)
+      .lean(),
+    Product.find({ isTopSelling: true })
+      .select("name price cover slug brand isNewArrival")
+      .limit(8)
+      .lean(),
     Product.distinct("category")
   ]);
 

@@ -62,8 +62,8 @@ export default function LandingPage() {
 
       setOrderLoading(true);
       try {
-         const shippingCost = customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka;
-         const currentPrice = selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price;
+         const shippingCost = Number(customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka);
+         const currentPrice = Number(selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price);
          
          const orderData = {
             items: [{

@@ -59,7 +59,11 @@ export default async function ShopPage({ searchParams }) {
 
   const [products, totalProducts, categories, brands] =
     await Promise.all([
-      Product.find(filter).sort(sortOption).skip(skip).limit(limit),
+      Product.find(filter)
+        .select("name price discountPrice cover slug brand")
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit),
       Product.countDocuments(filter),
       Product.distinct("category"),
       Product.distinct("brand"),

@@ -15,11 +15,8 @@ import { useCart } from "@/components/CartContext";
 export default function Navbar() {
   const pathname = usePathname();
   const { cart, wishlist } = useCart();
-
   const [categories, setCategories] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
-
-  if (pathname.startsWith("/admin") || pathname === "/landing") return null;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -35,6 +32,8 @@ export default function Navbar() {
     };
     fetchCategories();
   }, []);
+
+  if (pathname.startsWith("/admin") || pathname === "/landing") return null;
 
   return (
     <header className="w-full bg-white border-b border-gray-100 sticky top-0 z-[999]">

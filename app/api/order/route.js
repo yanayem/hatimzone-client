@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
+import mongoose from "mongoose";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
 import User from "@/models/User";
@@ -17,70 +18,84 @@ export async function POST(req) {
 
     console.log("Connecting to DB...");
     await connectDB();
-    console.log("Connected to DB.");
+    
+    // Validate customer data
+    if (!customer?.phone || !customer?.name) {
+      return errorResponse("Customer name and phone are required", 400);
+    }
 
     // 1. Create or Update User based on phone
-    console.log("Finding user with phone:", customer.phone);
+    console.log("Processing user...");
     let user;
     try {
       user = await User.findOne({ phone: customer.phone });
-    } catch (e) {
-      console.error("User find error:", e);
-      throw new Error("User identification failed");
-    }
-    
-    if (!user) {
-      console.log("Creating new user...");
-      user = await User.create({
-        name: customer.name,
-        phone: customer.phone,
-        address: customer.address,
-        city: customer.city
-      });
-    } else {
-      console.log("Updating existing user...");
-      user.name = customer.name;
-      user.address = customer.address;
-      user.city = customer.city;
-      await user.save();
+      if (!user) {
+        user = await User.create({
+          name: customer.name,
+          phone: customer.phone,
+          address: customer.address,
+          city: customer.city
+        });
+      } else {
+        user.name = customer.name;
+        user.address = customer.address;
+        user.city = customer.city;
+        await user.save();
+      }
+    } catch (err) {
+      console.error("User management error:", err);
+      return errorResponse("Failed to identify or create customer profile");
     }
 
     // 2. Generate Order ID
-    const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const random = Math.floor(1000 + Math.random() * 9000);
     const orderId = `ORD-${dateStr}-${random}`;
-    console.log("Generated Order ID:", orderId);
 
-    // 3. Create Order
-    console.log("Creating order in DB...");
+    // 3. Validate items and prepare order
+    const validatedItems = items.map(item => {
+      if (!mongoose.Types.ObjectId.isValid(item.product)) {
+        throw new Error(`Invalid product ID: ${item.product}`);
+      }
+      return {
+        ...item,
+        product: new mongoose.Types.ObjectId(item.product)
+      };
+    });
+
+    // 4. Create Order
+    console.log("Saving order...");
     const newOrder = await Order.create({
       orderId,
-      items,
+      items: validatedItems,
       customer,
       subTotal,
       shippingCost,
       totalPrice,
-      paymentMethod,
+      paymentMethod: paymentMethod || "Cash on Delivery",
       notes,
       status: "Pending",
       paymentStatus: "Pending"
     });
-    console.log("Order created successfully.");
 
-    // 4. Update product stock
-    console.log("Updating stock for items...");
-    for (const item of items) {
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { stockQuantity: -item.quantity }
-      });
+    // 5. Update product stock (async but don't block response if possible, 
+    // though here we'll keep it sequential for simplicity unless it's the bottleneck)
+    console.log("Updating stock...");
+    try {
+      for (const item of validatedItems) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stockQuantity: -(item.quantity || 1) }
+        });
+      }
+    } catch (err) {
+      console.error("Stock update error (non-fatal for order):", err);
     }
-    console.log("Stock updated.");
 
+    console.log("Order complete.");
     return successResponse(newOrder, "Order placed successfully");
   } catch (error) {
-    console.error("Order creation error:", error);
-    return errorResponse(error.message || "Failed to place order");
+    console.error("Order completion failed:", error);
+    return errorResponse(error.message || "Internal server error during order processing");
   }
 }
 

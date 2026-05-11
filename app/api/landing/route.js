@@ -16,6 +16,7 @@ export async function GET() {
         { isNewArrival: true }
       ] 
     })
+    .select("name price discountPrice cover slug brand")
     .sort({ createdAt: -1 })
     .limit(12)
     .lean();

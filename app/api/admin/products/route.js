@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import { optimizeImage } from "@/lib/image-utils";
 import { 
   checkAdminAuth, 
   successResponse, 
@@ -88,6 +89,13 @@ export async function POST(req) {
     // 4. Handle Cover & Gallery
     // Ensure images is an array even if empty
     if (!body.images) body.images = [];
+
+    // Optimize images with Sharp
+    console.log("Optimizing images with Sharp...");
+    body.cover = await optimizeImage(body.cover, 1200, 85);
+    body.images = await Promise.all(
+      body.images.map(img => optimizeImage(img, 1000, 80))
+    );
 
     // 5. Generate Slug manually
     const baseSlug = body.name
