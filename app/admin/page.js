@@ -13,39 +13,49 @@ export default function AdminLoginPage() {
 
     // Check if setup is needed
     useEffect(() => {
+        const controller = new AbortController();
         const checkSetup = async () => {
             try {
-                const res = await fetch("/api/admin/setup");
+                const res = await fetch("/api/admin/setup", { signal: controller.signal });
                 const data = await res.json();
                 if (data.success && data.count === 0) {
                     router.push("/admin/setup");
                 }
-            } catch (e) {}
+            } catch (e) {
+                if (e.name !== 'AbortError') console.error("Setup check error:", e);
+            }
         };
         checkSetup();
+        return () => controller.abort();
     }, [router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (loading) return;
         setLoading(true);
         setMessage("");
 
-        const res = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ identifier, password }),
-        });
+        try {
+            const res = await fetch("/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ identifier, password }),
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (data.success) {
-            localStorage.setItem("adminToken", data.token);
-            window.location.href = "/admin/dashboard";
-        } else {
-            setMessage(data.message);
+            if (data.success) {
+                localStorage.setItem("adminToken", data.token);
+                router.push("/admin/dashboard");
+            } else {
+                setMessage(data.message);
+            }
+        } catch (err) {
+            setMessage("Login failed. Please try again.");
+            console.error("Login Error:", err);
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
     };
 
     return (
@@ -75,11 +85,11 @@ export default function AdminLoginPage() {
                 </button>
 
                 {/* 🔥 Forgot password link */}
-                <p className="text-center mt-3 text-sm">
+                {/* <p className="text-center mt-3 text-sm">
                     <Link href="/admin/forgot-password" title="Forgot Password" id="forgot-password-link" className="text-blue-500 hover:underline">
                         Forgot Password?
                     </Link>
-                </p>
+                </p> */}
 
                 {message && (
                     <p className="mt-3 text-center text-sm text-gray-600">

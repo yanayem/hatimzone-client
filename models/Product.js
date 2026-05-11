@@ -56,7 +56,7 @@ const ProductSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "Product description is required"],
+      required: false,
     },
 
     // PRICE
@@ -74,15 +74,21 @@ const ProductSchema = new mongoose.Schema(
     // CATEGORY
     category: {
       type: String,
-      required: [true, "Category is required"],
+      required: false,
       index: true
     },
-
+    cover: {
+      type: String,
+      required: [true, "Cover image is required"],
+    },
     // GALLERY
     images: {
       type: [String],
-      required: [true, "At least one image is required"],
-      validate: [(val) => val.length > 0, "At least one image is required"]
+      default: [],
+    },
+    videoUrl: {
+      type: String,
+      default: "",
     },
     videos: {
       type: [String],

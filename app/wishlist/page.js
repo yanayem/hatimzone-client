@@ -43,9 +43,9 @@ export default function WishlistPage() {
             <div key={product._id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50 flex flex-col">
               <div className="aspect-square bg-gray-50 overflow-hidden relative flex items-center justify-center">
                 <img
-                  src={product.images?.[0]}
+                  src={product.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
                   alt={product.name}
-                  className="w-full h-full object-contain transition duration-500 group-hover:scale-110 p-4"
+                  className="w-full h-full object-cover transition duration-500 group-hover:scale-110"
                 />
                 <button 
                   onClick={() => toggleWishlist(product)}

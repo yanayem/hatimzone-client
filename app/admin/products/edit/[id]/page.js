@@ -37,7 +37,8 @@ const EditProductPage = () => {
     isNewArrival: false,
     isTopSelling: false,
     isFeatured: false,
-    tags: "", // Handled as string then split
+    tags: "",
+    videoUrl: "",
   });
 
   const [dimensions, setDimensions] = useState({ length: "", width: "", height: "" });
@@ -50,6 +51,9 @@ const EditProductPage = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
+  const [cover, setCover] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [existingCover, setExistingCover] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -90,6 +94,7 @@ const EditProductPage = () => {
                 isTopSelling: !!p.isTopSelling,
                 isFeatured: !!p.isFeatured,
                 tags: p.tags?.join(", ") || "",
+                videoUrl: p.videoUrl || "",
             });
             setDimensions(p.dimensions || { length: "", width: "", height: "" });
             setDeliveryCost(p.deliveryCost || { insideDhaka: 60, outsideDhaka: 120 });
@@ -101,6 +106,7 @@ const EditProductPage = () => {
             setUsageInstructions(p.usageInstructions?.length > 0 ? p.usageInstructions : [""]);
             setVideos(p.videos?.length > 0 ? p.videos : [""]);
             setExistingImages(p.images || []);
+            setExistingCover(p.cover || null);
         }
       } catch (err) {
         setError("Failed to load data. Please refresh.");
@@ -149,11 +155,13 @@ const EditProductPage = () => {
   const addListItem = (setter, defaultValue = "") => setter(prev => [...prev, defaultValue]);
   const removeListItem = (index, setter) => setter(prev => prev.filter((_, i) => i !== index));
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prev) => [...prev, ...newPreviews]);
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCover(file);
+      setCoverPreview(URL.createObjectURL(file));
+      setExistingCover(null);
+    }
   };
 
   const removeNewImage = (index) => {
@@ -175,8 +183,7 @@ const EditProductPage = () => {
   const validateForm = () => {
     if (formData.name.trim().length < 3) return "Product title must be at least 3 characters.";
     if (!formData.price || Number(formData.price) <= 0) return "Please enter a valid base price.";
-    if (!formData.category) return "Please select a category.";
-    if (images.length === 0 && existingImages.length === 0) return "At least one image is required.";
+    if (!cover && !existingCover) return "Cover image is required.";
     return null;
   };
 
@@ -196,6 +203,7 @@ const EditProductPage = () => {
 
     try {
       const base64Images = await Promise.all(images.map((img) => fileToBase64(img)));
+      const base64Cover = cover ? await fileToBase64(cover) : null;
       
       const specsObj = {};
       specifications.forEach(s => {
@@ -215,6 +223,7 @@ const EditProductPage = () => {
         usageInstructions: usageInstructions.filter(i => i.trim()),
         videos: videos.filter(v => v.trim()),
         images: [...existingImages, ...base64Images],
+        cover: base64Cover || existingCover,
       };
 
       const res = await fetch(`/api/admin/products/${id}`, {
@@ -280,7 +289,7 @@ const EditProductPage = () => {
             <section className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-black text-white rounded-2xl flex items-center justify-center"><HiOutlineInformationCircle className="text-xl" /></div>
-                    <h2 className="text-2xl font-black text-black uppercase tracking-tight">Core Details</h2>
+                    <h2 className="text-2xl font-black text-black uppercase tracking-tight">Basic Details</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -304,84 +313,65 @@ const EditProductPage = () => {
 
                     <div>
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
-                          Description <span className="text-red-500">*</span>
+                          Description
                         </label>
                         <textarea name="description" rows="5" value={formData.description} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="Tell the product's story..."></textarea>
                     </div>
-                </div>
-            </section>
 
-            {/* 2. SPECIFICATIONS (DETAILED SYNC WITH MODEL) */}
-            <section className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-600 text-white rounded-2xl flex items-center justify-center"><HiOutlineCube className="text-xl" /></div>
-                    <h2 className="text-2xl font-black text-black uppercase tracking-tight">Technical Specs</h2>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Material</label>
-                        <input name="material" value={formData.material} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Solid Oak" />
-                    </div>
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Color</label>
-                        <input name="color" value={formData.color} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Walnut" />
-                    </div>
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Power Source</label>
-                        <input name="powerSource" value={formData.powerSource} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. AC Adapter" />
-                    </div>
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Wattage</label>
-                        <input name="wattage" value={formData.wattage} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. 60W" />
-                    </div>
-                </div>
-
-                <div className="pt-6 border-t border-gray-50">
-                    <h3 className="text-sm font-black uppercase text-gray-400 mb-4">Custom Attributes</h3>
-                    <div className="space-y-4">
-                        {specifications.map((s, i) => (
-                            <div key={i} className="flex gap-4 items-center">
-                                <input placeholder="Key (e.g. Fabric)" value={s.key} onChange={(e) => handleSpecChange(i, 'key', e.target.value)} className="flex-1 bg-gray-50 rounded-2xl px-5 py-3 text-black font-bold outline-none border-2 border-transparent focus:border-black" />
-                                <input placeholder="Value (e.g. Cotton)" value={s.value} onChange={(e) => handleSpecChange(i, 'value', e.target.value)} className="flex-1 bg-gray-50 rounded-2xl px-5 py-3 text-black font-bold outline-none border-2 border-transparent focus:border-black" />
-                                <button type="button" onClick={() => removeListItem(i, setSpecifications)} className="text-red-500 p-2 hover:bg-red-50 rounded-xl transition"><HiOutlineTrash /></button>
-                            </div>
-                        ))}
-                        <button type="button" onClick={() => addListItem(setSpecifications, { key: "", value: "" })} className="text-xs font-black text-blue-600 bg-blue-50 px-6 py-3 rounded-2xl uppercase tracking-widest hover:bg-blue-100 transition">+ Add Attribute</button>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                          Video URL (YouTube/Direct)
+                        </label>
+                        <input name="videoUrl" value={formData.videoUrl} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. https://youtube.com/watch?v=..." />
                     </div>
                 </div>
             </section>
 
-            {/* 3. VARIANTS & STOCK */}
-            <section className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
-                <div className="flex justify-between items-center">
+            {/* TECHNICAL SPECS */}
+            {/* <section className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
+                ... (commented out)
+            </section> */}
+
+            {/* VARIANTS */}
+            {/* <section className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
+                ... (commented out)
+            </section> */}
+
+            {/* LOGISTICS & DELIVERY - OPTIMIZED STANDALONE CARD */}
+            {/* <section className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-600 text-white rounded-2xl flex items-center justify-center"><HiOutlineTag className="text-xl" /></div>
-                        <h2 className="text-2xl font-black text-black uppercase tracking-tight">Variants</h2>
+                        <div className="w-10 h-10 bg-blue-500 text-white rounded-2xl flex items-center justify-center"><HiOutlineTruck className="text-xl" /></div>
+                        <h2 className="text-2xl font-black text-black uppercase tracking-tight">Logistic Optimization</h2>
                     </div>
-                    <button type="button" onClick={() => addListItem(setVariants, { size: "", color: "", material: "", stock: 0, additionalPrice: 0 })} className="text-xs font-black text-purple-600 bg-purple-50 px-6 py-3 rounded-2xl uppercase tracking-widest hover:bg-purple-100 transition">+ Add Variant</button>
+                    <div className="flex gap-2">
+                        <button type="button" onClick={() => setDeliveryCost({ insideDhaka: 60, outsideDhaka: 120 })} className="text-[10px] font-black uppercase bg-gray-100 px-3 py-1.5 rounded-lg hover:bg-black hover:text-white transition">Reset Default</button>
+                    </div>
                 </div>
-
-                <div className="space-y-4">
-                    {variants.map((v, i) => (
-                        <div key={i} className="grid grid-cols-2 md:grid-cols-5 gap-3 p-6 bg-gray-50 rounded-[2rem] relative border border-transparent hover:border-purple-200 transition">
-                            <input placeholder="Size" value={v.size} onChange={(e) => handleVariantChange(i, 'size', e.target.value)} className="bg-white rounded-2xl px-4 py-3 text-black font-bold text-sm outline-none border-2 border-transparent focus:border-purple-500" />
-                            <input placeholder="Color" value={v.color} onChange={(e) => handleVariantChange(i, 'color', e.target.value)} className="bg-white rounded-2xl px-4 py-3 text-black font-bold text-sm outline-none border-2 border-transparent focus:border-purple-500" />
-                            <input placeholder="Material" value={v.material} onChange={(e) => handleVariantChange(i, 'material', e.target.value)} className="bg-white rounded-2xl px-4 py-3 text-black font-bold text-sm outline-none border-2 border-transparent focus:border-purple-500" />
-                            <input type="number" placeholder="Stock" value={v.stock} onChange={(e) => handleVariantChange(i, 'stock', e.target.value)} className="bg-white rounded-2xl px-4 py-3 text-black font-bold text-sm outline-none border-2 border-transparent focus:border-purple-500" />
-                            <input type="number" placeholder="+Price" value={v.additionalPrice} onChange={(e) => handleVariantChange(i, 'additionalPrice', e.target.value)} className="bg-white rounded-2xl px-4 py-3 text-black font-bold text-sm outline-none border-2 border-transparent focus:border-purple-500" />
-                            <button type="button" onClick={() => removeListItem(i, setVariants)} className="absolute -top-3 -right-3 bg-white text-red-500 w-8 h-8 rounded-full shadow-lg border-2 flex items-center justify-center hover:bg-red-50 transition">✕</button>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-50 p-8 rounded-[2.5rem]">
+                    <div className="space-y-4">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Inside Dhaka Delivery Fee (৳)</label>
+                        <div className="relative">
+                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold">৳</span>
+                            <input type="number" name="insideDhaka" value={deliveryCost.insideDhaka} onChange={handleDeliveryChange} className="w-full bg-white border-2 border-transparent focus:border-blue-500 rounded-2xl pl-10 pr-6 py-4 text-black font-black outline-none transition shadow-sm" />
                         </div>
-                    ))}
+                    </div>
+                    <div className="space-y-4">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Outside Dhaka Delivery Fee (৳)</label>
+                        <div className="relative">
+                            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold">৳</span>
+                            <input type="number" name="outsideDhaka" value={deliveryCost.outsideDhaka} onChange={handleDeliveryChange} className="w-full bg-white border-2 border-transparent focus:border-blue-500 rounded-2xl pl-10 pr-6 py-4 text-black font-black outline-none transition shadow-sm" />
+                        </div>
+                    </div>
                 </div>
-            </section>
+            </section> */}
         </div>
-
         {/* RIGHT COLUMN - SIDEBAR */}
         <div className="lg:col-span-4 space-y-10">
             
             {/* PRICING & CLASSIFICATION */}
-            <div className="bg-black text-white p-10 rounded-[3rem] shadow-2xl space-y-8">
+            <div className="bg-gray-100 text-gray-800 p-10 rounded-[3rem] shadow-2xl space-y-8">
                 <div className="flex items-center gap-3 border-b border-white/10 pb-6">
                     <HiOutlineCurrencyBangladeshi className="text-3xl text-green-400" />
                     <h3 className="text-xl font-black uppercase tracking-tight">Market Values</h3>
@@ -389,19 +379,19 @@ const EditProductPage = () => {
 
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
-                          Original Price (৳) <span className="text-red-500">*</span>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-700 mb-2">
+                          Original Price (Taka) <span className="text-red-500">*</span>
                         </label>
-                        <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full bg-white/10 border-2 border-transparent focus:border-green-400 rounded-3xl px-6 py-5 text-3xl font-black text-white outline-none transition" placeholder="0.00" />
+                        <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full bg-white border-2 border-transparent focus:border-green-400 rounded-3xl px-6 py-5 text-3xl font-black text-gray-800 outline-none transition" placeholder="0.00" />
                     </div>
-                    <div>
+                    {/* <div>
                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Discount Price (৳)</label>
                         <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} className="w-full bg-white/10 border-2 border-transparent focus:border-pink-400 rounded-3xl px-6 py-5 text-3xl font-black text-white outline-none transition" placeholder="0.00" />
                     </div>
                     <div>
                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Inventory Count</label>
                         <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} className="w-full bg-white/10 border-2 border-transparent focus:border-blue-400 rounded-3xl px-6 py-5 text-3xl font-black text-white outline-none transition" placeholder="0" />
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="pt-6 border-t border-white/10 space-y-4">
@@ -421,30 +411,46 @@ const EditProductPage = () => {
             </div>
 
             {/* CATEGORY SELECT */}
-            <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
+            {/* <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
                 <h3 className="text-xs font-black uppercase text-gray-400 text-center tracking-widest">
                   Classification <span className="text-red-500">*</span>
                 </h3>
-                <div className="space-y-4">
-                    <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition appearance-none cursor-pointer">
-                        <option value="">Select Category</option>
-                        {categories.map((c, i) => (
-                            <option key={i} value={c.name}>{c.name}</option>
-                        ))}
-                    </select>
-                    <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-black font-bold outline-none transition" placeholder="Tags (comma separated)" />
+                ... (commented out)
+            </div> */}
+
+            {/* COVER IMAGE */}
+            <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
+                <div className="flex items-center justify-between border-b border-gray-50 pb-4">
+                    <h3 className="text-sm font-black uppercase text-gray-400 tracking-widest">
+                      Cover Image <span className="text-red-500">*</span>
+                    </h3>
+                    <div className="relative">
+                        <input type="file" accept="image/*" onChange={handleCoverChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        <button className="text-xs font-black bg-blue-600 text-white px-4 py-2 rounded-xl">Select Cover</button>
+                    </div>
                 </div>
+                {(coverPreview || existingCover) && (
+                    <div className="relative aspect-square rounded-2xl overflow-hidden shadow-md border-2 border-blue-100">
+                        <img src={coverPreview || existingCover} className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => {setCover(null); setCoverPreview(null); setExistingCover(null);}} className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold">✕</button>
+                    </div>
+                )}
             </div>
 
             {/* GALLERY & MEDIA */}
             <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-8">
                 <div className="flex items-center justify-between border-b border-gray-50 pb-4">
                     <h3 className="text-sm font-black uppercase text-gray-400 tracking-widest">
-                      Gallery <span className="text-red-500">*</span>
+                      Gallery
                     </h3>
                     <div className="relative">
-                        <input type="file" multiple accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-                        <button className="text-xs font-black bg-black text-white px-4 py-2 rounded-xl">+ Upload</button>
+                        <input type="file" multiple accept="image/*" onChange={(e) => {
+                             const files = Array.from(e.target.files);
+                             setImages((prev) => [...prev, ...files]);
+                             const newPreviews = files.map((file) => URL.createObjectURL(file));
+                             setImagePreviews((prev) => [...prev, ...newPreviews]);
+                        }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        <button className="text-xs font-black bg-black text-white px-4 py-2 rounded-xl">+ Add Images</button>
                     </div>
                 </div>
 
@@ -464,24 +470,6 @@ const EditProductPage = () => {
                             <div className="absolute top-1 right-1 bg-blue-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">NEW</div>
                         </div>
                     ))}
-                </div>
-            </div>
-
-            {/* SHIPPING & LOGISTICS */}
-            <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
-                <div className="flex items-center gap-3">
-                    <HiOutlineTruck className="text-2xl text-blue-500" />
-                    <h3 className="text-lg font-black uppercase text-black tracking-tight">Logistics</h3>
-                </div>
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center gap-4">
-                        <span className="text-[10px] font-black text-gray-400 uppercase">Inside Dhaka (৳)</span>
-                        <input type="number" name="insideDhaka" value={deliveryCost.insideDhaka} onChange={handleDeliveryChange} className="w-24 bg-gray-50 rounded-xl px-4 py-3 text-black font-bold text-right" />
-                    </div>
-                    <div className="flex justify-between items-center gap-4">
-                        <span className="text-[10px] font-black text-gray-400 uppercase">Outside Dhaka (৳)</span>
-                        <input type="number" name="outsideDhaka" value={deliveryCost.outsideDhaka} onChange={handleDeliveryChange} className="w-24 bg-gray-50 rounded-xl px-4 py-3 text-black font-bold text-right" />
-                    </div>
                 </div>
             </div>
 

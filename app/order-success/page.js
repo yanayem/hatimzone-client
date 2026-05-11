@@ -11,38 +11,36 @@ function OrderSuccessContent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white p-8 md:p-12 rounded-[40px] shadow-sm max-w-lg w-full text-center">
-        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
-          <HiCheckCircle className="text-5xl text-green-600" />
+      <div className="bg-white p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-sm max-w-lg w-full text-center border border-gray-100">
+        <div className="w-20 h-20 md:w-24 md:h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+          <HiCheckCircle className="text-4xl md:text-5xl text-green-600" />
         </div>
         
-        <h1 className="text-3xl font-black mb-4">Order Confirmed!</h1>
-        <p className="text-gray-500 mb-8 leading-relaxed">
-          Thank you for your purchase. Your order <span className="font-bold text-black">#{orderId || 'N/A'}</span> has been received and is being processed.
+        <h1 className="text-2xl md:text-3xl font-black mb-4 uppercase tracking-tighter">Order Received!</h1>
+        <p className="text-gray-500 mb-8 leading-relaxed text-sm md:text-base font-medium">
+          Thank you for choosing our lighting. Your home is about to get brighter! Your order <span className="font-bold text-black">#{orderId || 'N/A'}</span> is now being prepared for delivery.
         </p>
 
         <div className="space-y-4">
           <Link 
             href="/account" 
-            className="flex items-center justify-center gap-3 w-full bg-gray-900 text-white py-4 rounded-2xl font-bold hover:bg-black transition shadow-lg shadow-gray-200"
+            className="flex items-center justify-center gap-3 w-full bg-black text-white py-4 rounded-xl font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-gray-800 transition shadow-xl"
           >
             <HiUser className="text-xl" />
-            View Order History
+            Track Your Order
           </Link>
           
           <Link 
             href="/shop" 
-            className="flex items-center justify-center gap-3 w-full bg-white border-2 border-gray-100 text-gray-900 py-4 rounded-2xl font-bold hover:bg-gray-50 transition"
+            className="flex items-center justify-center gap-3 w-full bg-white border-2 border-gray-100 text-gray-900 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-gray-50 transition"
           >
             <HiShoppingBag className="text-xl" />
-            Continue Shopping
+            Browse More Lamps
           </Link>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-50">
-          <p className="text-xs text-gray-400 font-medium uppercase tracking-widest">
-            A confirmation has been sent to your phone
-          </p>
+        <div className="mt-12 pt-8 border-t border-gray-50 text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">
+          A confirmation SMS will be sent shortly
         </div>
       </div>
     </div>

@@ -21,12 +21,14 @@ export default function AdminLayout({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     // Check authentication
     const checkAuth = async () => {
       try {
         const res = await fetch('/api/admin/verify', {
           method: 'GET',
           credentials: 'include',
+          signal: controller.signal
         });
         if (res.ok) {
           setIsAuthenticated(true);
@@ -34,8 +36,10 @@ export default function AdminLayout({ children }) {
           router.push('/admin');
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
-        router.push('/admin');
+        if (error.name !== 'AbortError') {
+          console.error('Auth check failed:', error);
+          router.push('/admin');
+        }
       } finally {
         setLoading(false);
       }
@@ -48,6 +52,8 @@ export default function AdminLayout({ children }) {
     } else {
       setLoading(false);
     }
+
+    return () => controller.abort();
   }, [pathname, router]);
 
   const handleLogout = async () => {
@@ -68,9 +74,9 @@ export default function AdminLayout({ children }) {
     { name: 'Dashboard', href: '/admin/dashboard', icon: FiGrid },
     { name: 'Orders', href: '/admin/orders', icon: FiShoppingBag },
     { name: 'Products', href: '/admin/products', icon: FiBox },
-    { name: 'Categories', href: '/admin/categories', icon: FiGrid },
-    { name: 'Customers', href: '/admin/users', icon: FiUsers },
-    { name: 'Settings', href: '/admin/settings', icon: FiSettings },
+    // { name: 'Categories', href: '/admin/categories', icon: FiGrid },
+    // { name: 'Customers', href: '/admin/users', icon: FiUsers },
+    // { name: 'Settings', href: '/admin/settings', icon: FiSettings },
   ];
 
   // If we are on the login page or forgot password page, don't show the sidebar/header
@@ -95,14 +101,9 @@ export default function AdminLayout({ children }) {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col sticky top-0 h-screen">
 
-        <div className="p-6">
-          <Link
-            href="/"
-            className="text-2xl font-bold text-black flex items-center gap-2"
-          >
-            <span className="w-8 h-8 bg-black rounded-lg"></span>
-            ADMIN
-          </Link>
+        <div className="p-6 text-xl font-extrabold text-green-600 flex items-center gap-2"
+        >
+        <span className='text-black'>HatimZone</span> ADMIN
         </div>
 
         {/* Nav */}
@@ -135,7 +136,7 @@ export default function AdminLayout({ children }) {
 
         {/* Bottom */}
         <div className="p-4 border-t border-gray-200">
-          <Link
+          {/* <Link
             href="/"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all mb-2"
           >
@@ -144,7 +145,7 @@ export default function AdminLayout({ children }) {
             <span className="font-medium">
               Back to Store
             </span>
-          </Link>
+          </Link> */}
 
           {/* Logout */}
           <button
@@ -168,8 +169,6 @@ export default function AdminLayout({ children }) {
               (item) => item.href === pathname
             )?.name || 'Dashboard'}
           </h2>
-
-          <div className="w-9 h-9 rounded-full bg-gray-300"></div>
         </header>
 
         <main className="p-8">{children}</main>

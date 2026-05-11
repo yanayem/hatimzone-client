@@ -13,7 +13,7 @@ export default async function ShopPage({ searchParams }) {
       ? params.category
       : [params.category]
     : [];
-    
+
   const selectedSubCategories = params.subCategory
     ? Array.isArray(params.subCategory)
       ? params.subCategory
@@ -90,13 +90,13 @@ export default async function ShopPage({ searchParams }) {
     <div className="bg-gray-50 min-h-screen text-gray-900 pb-20">
 
       {/* HEADER */}
-      <div className="bg-white border-b border-gray-100 py-12 px-6">
+      <div className="bg-white border-b border-gray-100 py-8 md:py-12 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row justify-between items-end gap-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
             <div>
-              <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">Premium Collection</h1>
-              <p className="text-gray-500 font-medium mt-2">
-                Showing <span className="text-black font-bold">{totalProducts}</span> unique designs
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter">Lighting Collection</h1>
+              <p className="text-gray-500 font-medium mt-2 text-sm md:text-base">
+                Showing <span className="text-black font-bold">{totalProducts}</span> unique lamp designs
               </p>
             </div>
 
@@ -104,8 +104,8 @@ export default async function ShopPage({ searchParams }) {
               <input
                 name="q"
                 defaultValue={q}
-                placeholder="Search our collections..."
-                className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-6 py-4 text-gray-900 font-medium outline-none transition-all"
+                placeholder="Search for lamps..."
+                className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-6 py-4 text-gray-900 font-medium outline-none transition-all text-sm"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -121,7 +121,7 @@ export default async function ShopPage({ searchParams }) {
         {/* FILTER SIDEBAR */}
         <aside className="w-full lg:w-72 space-y-10">
 
-          {/* CATEGORIES */}
+          {/* CATEGORIES - Commented Out
           <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
@@ -144,6 +144,34 @@ export default async function ShopPage({ searchParams }) {
                   }`}
                 >
                   {cat}
+                </Link>
+              ))}
+            </div>
+          </div>
+          */}
+
+          {/* BRANDS FILTER */}
+          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
+                Brands
+              </h3>
+              <Link href="/shop" className="text-[10px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
+                Clear
+              </Link>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              {brands.map((brand, i) => (
+                <Link
+                  key={i}
+                  href={getToggleUrl("brand", brand)}
+                  className={`text-sm px-5 py-3 rounded-xl border transition-all font-bold ${selectedBrands.includes(brand)
+                      ? "bg-black text-white border-black"
+                      : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
+                    }`}
+                >
+                  {brand}
                 </Link>
               ))}
             </div>
@@ -197,9 +225,9 @@ export default async function ShopPage({ searchParams }) {
               <div key={p._id} className="store-card group flex flex-col">
                 <Link href={`/product/${p.slug || p._id}`} className="block relative aspect-[4/5] bg-gray-50 overflow-hidden m-2 rounded-2xl">
                   <img
-                    src={p.images?.[0]}
+                    src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
                     alt={p.name}
-                    className="w-full h-full object-contain p-6 transition duration-700 group-hover:scale-110"
+                    className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                   />
                   {p.discountPrice > 0 && (
                     <span className="absolute top-4 left-4 bg-black text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
@@ -207,27 +235,27 @@ export default async function ShopPage({ searchParams }) {
                     </span>
                   )}
                 </Link>
-                
+
                 <div className="p-6 flex flex-col flex-1 pt-2">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{p.brand}</span>
-                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{p.category}</span>
+                    {/*<span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{p.category}</span>*/}
                   </div>
-                  
+
                   <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-lg h-7">
                     {p.name}
                   </h3>
-                  
+
                   <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-50">
                     <div className="flex items-center gap-3">
                       <span className="text-xl font-black text-gray-900">
                         TK{p.discountPrice > 0 ? p.discountPrice : p.price}
                       </span>
-                      {p.discountPrice > 0 && (
+                      {/*{p.discountPrice > 0 && (
                         <span className="text-xs text-gray-400 line-through font-medium">
                           TK{p.price}
                         </span>
-                      )}
+                      )}*/}
                     </div>
                     <Link
                       href={`/product/${p.slug || p._id}`}
@@ -243,17 +271,17 @@ export default async function ShopPage({ searchParams }) {
 
           {/* PAGINATION FALLBACK */}
           {totalProducts > limit && (
-             <div className="mt-16 flex justify-center gap-2">
-               {[...Array(Math.ceil(totalProducts / limit))].map((_, i) => (
-                 <Link 
-                   key={i}
-                   href={`/shop?page=${i + 1}`}
-                   className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition ${page === i + 1 ? 'bg-black text-white' : 'bg-white border hover:bg-gray-50'}`}
-                 >
-                   {i + 1}
-                 </Link>
-               ))}
-             </div>
+            <div className="mt-16 flex justify-center gap-2">
+              {[...Array(Math.ceil(totalProducts / limit))].map((_, i) => (
+                <Link
+                  key={i}
+                  href={`/shop?page=${i + 1}`}
+                  className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition ${page === i + 1 ? 'bg-black text-white' : 'bg-white border hover:bg-gray-50'}`}
+                >
+                  {i + 1}
+                </Link>
+              ))}
+            </div>
           )}
 
         </main>

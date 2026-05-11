@@ -9,6 +9,7 @@ export default function AdminOrdersPage() {
   const [updating, setUpdating] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [zoomedImage, setZoomedImage] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -124,7 +125,8 @@ export default function AdminOrdersPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-50/50 border-b border-gray-100">
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Order Details</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Order</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Product</th>
                   <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Customer</th>
                   <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Amount</th>
                   <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Status</th>
@@ -149,12 +151,18 @@ export default function AdminOrdersPage() {
                     <tr key={order._id} className="hover:bg-gray-50/50 transition">
                       <td className="px-8 py-6">
                         <p className="font-black text-gray-900">#{order.orderId}</p>
-                        <p className="text-xs font-bold text-gray-400">{new Date(order.createdAt).toLocaleString()}</p>
-                        <div className="flex gap-1 mt-2">
-                          {order.items.slice(0, 3).map((item, i) => (
-                            <img key={i} src={item.image} className="w-6 h-6 rounded bg-gray-100 object-contain border border-white shadow-sm" alt="" />
+                        <p className="text-[11px] font-bold text-gray-500 uppercase tracking-tight">
+                          {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'short' })} {new Date(order.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                        </p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <div className="flex gap-1.5">
+                          {order.items.map((item, i) => (
+                            <div key={i} className="relative group cursor-zoom-in" onClick={() => setZoomedImage(item.image)}>
+                              <img src={item.image} className="w-10 h-10 rounded-lg bg-gray-50 object-cover border border-gray-100 shadow-sm transition hover:scale-110" alt="" />
+                              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 rounded-lg transition"></div>
+                            </div>
                           ))}
-                          {order.items.length > 3 && <span className="text-[10px] bg-gray-100 px-1 rounded flex items-center">+{order.items.length - 3}</span>}
                         </div>
                       </td>
                       <td className="px-8 py-6">
@@ -193,6 +201,21 @@ export default function AdminOrdersPage() {
           </div>
         </div>
       </div>
+      
+      {/* Zoom Modal */}
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-200"
+          onClick={() => setZoomedImage(null)}
+        >
+          <img 
+            src={zoomedImage} 
+            className="max-w-full max-h-[90vh] rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300" 
+            alt="Zoomed" 
+          />
+          <button className="absolute top-8 right-8 text-white text-4xl hover:scale-110 transition">✕</button>
+        </div>
+      )}
     </div>
   );
 }

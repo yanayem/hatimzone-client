@@ -18,10 +18,30 @@ export default function CheckoutPage() {
     notes: ""
   });
 
+  const [settings, setSettings] = useState({
+    shippingInsideDhaka: 60,
+    shippingOutsideDhaka: 120
+  });
+
   const [loading, setLoading] = useState(false);
 
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings");
+        const data = await res.json();
+        if (data.success) {
+          setSettings(data.data);
+        }
+      } catch (err) {
+        console.error("Settings fetch error");
+      }
+    };
+    fetchSettings();
+  }, []);
+
   const subTotal = cart.reduce((acc, item) => acc + (item.discountPrice || item.price) * item.quantity, 0);
-  const shippingCost = formData.city === "Dhaka" ? 60 : 120;
+  const shippingCost = formData.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka;
   const total = subTotal + shippingCost;
 
   const handleChange = (e) => {
@@ -40,7 +60,7 @@ export default function CheckoutPage() {
           price: item.discountPrice || item.price,
           quantity: item.quantity,
           variant: item.variant,
-          image: item.images?.[0]
+          image: item.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"
         })),
         customer: {
           name: formData.name,
@@ -85,82 +105,82 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
         
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
+        <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 md:mb-8">
           <span>Cart</span>
           <HiChevronRight />
-          <span className="text-black font-bold">Checkout</span>
+          <span className="text-black">Checkout</span>
           <HiChevronRight />
           <span>Payment</span>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12">
           
           {/* Shipping Form */}
-          <div className="space-y-8">
+          <div className="space-y-8 md:space-y-10">
             <div>
-              <h1 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                <div className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm">1</div>
-                Shipping Information
+              <h1 className="text-xl md:text-2xl font-black mb-6 md:mb-8 flex items-center gap-3 uppercase tracking-tighter">
+                <div className="w-7 h-7 md:w-8 md:h-8 bg-black text-white rounded-full flex items-center justify-center text-xs md:text-sm">1</div>
+                Delivery Details
               </h1>
               
-              <form onSubmit={handleSubmit} id="checkout-form" className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700">Full Name</label>
+              <form onSubmit={handleSubmit} id="checkout-form" className="space-y-4 md:space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
                     <input
                       required
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Enter your name"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition text-gray-800 font-bold"
+                      placeholder="Enter your full name"
+                      className="w-full px-5 py-3.5 md:py-4 rounded-xl border border-gray-100 focus:border-black outline-none transition text-gray-800 font-bold bg-white shadow-sm text-sm"
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700">Phone Number</label>
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
                     <input
                       required
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="017XXXXXXXX"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition text-gray-800 font-bold"
+                      className="w-full px-5 py-3.5 md:py-4 rounded-xl border border-gray-100 focus:border-black outline-none transition text-gray-800 font-bold bg-white shadow-sm text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-semibold text-gray-700">Full Address</label>
+                <div className="space-y-1.5 md:space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Delivery Address</label>
                   <textarea
                     required
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    placeholder="House no, Road no, Area..."
+                    placeholder="House no, Road no, Area, Thana..."
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition resize-none text-gray-800 font-bold"
+                    className="w-full px-5 py-3.5 md:py-4 rounded-xl border border-gray-100 focus:border-black outline-none transition resize-none text-gray-800 font-bold bg-white shadow-sm text-sm"
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700">City</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Your City</label>
                     <select
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition appearance-none bg-white text-gray-800 font-bold"
+                      className="w-full px-5 py-3.5 md:py-4 rounded-xl border border-gray-100 focus:border-black outline-none transition appearance-none bg-white text-gray-800 font-bold shadow-sm text-sm"
                     >
-                      <option value="Dhaka">Dhaka (60৳)</option>
-                      <option value="Outside Dhaka">Outside Dhaka (120৳)</option>
+                      <option value="Dhaka">Dhaka City (৳{settings.shippingInsideDhaka})</option>
+                      <option value="Outside Dhaka">Outside Dhaka (৳{settings.shippingOutsideDhaka})</option>
                     </select>
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700">Payment Method</label>
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Payment Method</label>
                     <div className="flex gap-4">
-                      <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border cursor-pointer transition ${formData.paymentMethod === 'Cash on Delivery' ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-black'}`}>
+                      <label className={`flex-1 flex items-center justify-center gap-2 p-3.5 md:p-4 rounded-xl border cursor-pointer transition shadow-sm ${formData.paymentMethod === 'Cash on Delivery' ? 'border-black bg-black text-white' : 'border-gray-100 bg-white hover:border-black'}`}>
                         <input 
                           type="radio" 
                           name="paymentMethod" 
@@ -169,69 +189,69 @@ export default function CheckoutPage() {
                           onChange={handleChange}
                           className="hidden"
                         />
-                        <span className="text-sm font-bold text-center">Cash on Delivery</span>
+                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-center">Cash on Delivery</span>
                       </label>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-sm font-semibold text-gray-700">Order Notes (Optional)</label>
+                <div className="space-y-1.5 md:space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Delivery Notes (Optional)</label>
                   <input
                     name="notes"
                     value={formData.notes}
                     onChange={handleChange}
-                    placeholder="Special instructions for delivery"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black outline-none transition text-gray-800 font-bold"
+                    placeholder="Anything else we should know?"
+                    className="w-full px-5 py-3.5 md:py-4 rounded-xl border border-gray-100 focus:border-black outline-none transition text-gray-800 font-bold bg-white shadow-sm text-sm"
                   />
                 </div>
               </form>
             </div>
 
-            <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100 flex gap-4">
-              <div className="text-2xl">🛡️</div>
+            <div className="p-5 md:p-6 bg-blue-50/50 rounded-2xl md:rounded-3xl border border-blue-100 flex gap-4">
+              <div className="text-xl md:text-2xl">🛡️</div>
               <div>
-                <p className="font-bold text-blue-900">Buyer Protection</p>
-                <p className="text-sm text-blue-700">Get a full refund if the item is not as described or if is not delivered.</p>
+                <p className="font-black text-blue-900 uppercase tracking-tighter text-sm">Light Protection</p>
+                <p className="text-xs md:text-sm text-blue-700 font-medium leading-relaxed">We guarantee safe delivery of your lamps. If anything breaks during shipping, we'll replace it for free.</p>
               </div>
             </div>
           </div>
 
           {/* Order Summary */}
-          <div>
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-8">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                <HiShoppingBag />
-                Order Summary
+          <div className="lg:sticky lg:top-8 h-fit">
+            <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-gray-100">
+              <h2 className="text-xl md:text-2xl font-black mb-6 md:mb-8 flex items-center gap-3 uppercase tracking-tighter">
+                <HiShoppingBag className="text-gray-400" />
+                Selected Lamps
               </h2>
 
-              <div className="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2">
+              <div className="space-y-4 md:space-y-6 mb-8 md:mb-10 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
                 {cart.map((item, i) => (
-                  <div key={i} className="flex gap-4 items-center">
-                    <div className="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden flex-shrink-0">
-                      <img src={item.images?.[0]} alt={item.name} className="w-full h-full object-cover" />
+                  <div key={i} className="flex gap-4 items-center group">
+                    <div className="w-14 h-14 md:w-16 md:h-16 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
+                      <img src={item.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"} alt={item.name} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm truncate">{item.name}</p>
-                      <p className="text-xs text-gray-500">{item.quantity} x ৳{item.discountPrice || item.price}</p>
+                      <p className="font-bold text-xs md:text-sm truncate text-gray-900">{item.name}</p>
+                      <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{item.quantity} x ৳{(item.discountPrice || item.price).toLocaleString()}</p>
                     </div>
-                    <p className="font-bold text-sm">৳{(item.discountPrice || item.price) * item.quantity}</p>
+                    <p className="font-black text-sm md:text-base">৳{((item.discountPrice || item.price) * item.quantity).toLocaleString()}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-3 border-t pt-6 mb-6">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span className="font-bold text-gray-900">৳{subTotal}</span>
+              <div className="space-y-4 border-t border-gray-50 pt-6 md:pt-8 mb-8 md:mb-10">
+                <div className="flex justify-between text-gray-500 font-medium text-sm">
+                  <span>Lamp Total</span>
+                  <span className="font-black text-gray-900">৳{subTotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping Fee</span>
-                  <span className="font-bold text-gray-900">৳{shippingCost}</span>
+                <div className="flex justify-between text-gray-500 font-medium text-sm">
+                  <span>Shipping Cost</span>
+                  <span className="font-black text-gray-900">৳{shippingCost.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-end pt-4 border-t border-dashed">
-                  <span className="text-lg font-bold">Total</span>
-                  <span className="text-3xl font-black text-black">৳{total}</span>
+                <div className="flex justify-between items-end pt-6 border-t border-dashed border-gray-200">
+                  <span className="text-xs md:text-sm font-black uppercase tracking-widest text-gray-400 mb-1">Grand Total</span>
+                  <span className="text-3xl md:text-4xl font-black text-black">৳{total.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -239,18 +259,16 @@ export default function CheckoutPage() {
                 type="submit"
                 form="checkout-form"
                 disabled={loading}
-                className={`w-full py-4 rounded-2xl font-bold text-white shadow-xl transition-all ${
-                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:scale-[1.02] active:scale-95 shadow-gray-200"
+                className={`w-full py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-xs md:text-sm text-white shadow-2xl transition-all ${
+                  loading ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:bg-gray-800 active:scale-95 shadow-gray-200"
                 }`}
               >
-                {loading ? "Processing Order..." : "Confirm Order"}
+                {loading ? "Placing Your Order..." : "Place Lamp Order"}
               </button>
 
-              <div className="mt-6 space-y-4">
-                <div className="flex items-center gap-3 text-xs text-green-600 font-semibold justify-center">
-                  <HiCheckCircle className="text-lg" />
-                  Secure checkout with 256-bit SSL encryption
-                </div>
+              <div className="mt-6 md:mt-8 flex items-center gap-3 text-[10px] md:text-xs text-green-600 font-bold uppercase tracking-widest justify-center">
+                <HiCheckCircle className="text-lg" />
+                Secure Lighting Checkout
               </div>
             </div>
           </div>

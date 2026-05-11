@@ -73,20 +73,23 @@ export async function POST(req) {
     if (!validators.isValidPrice(body.price)) {
       return errorResponse("Price must be a positive number", 400);
     }
-    if (!validators.isValidImageArray(body.images)) {
-      return errorResponse("At least one valid image URL is required", 400);
-    }
-    if (!body.category) {
-      return errorResponse("Category is required", 400);
+    if (!body.cover) {
+      return errorResponse("Cover image is required", 400);
     }
 
-    // 3. Verify Category Exists
-    const categoryExists = await Category.findOne({ name: body.category });
-    if (!categoryExists) {
-      return errorResponse(`Category '${body.category}' does not exist`, 400);
+    // 3. Optional Category Verify
+    if (body.category) {
+      const categoryExists = await Category.findOne({ name: body.category });
+      if (!categoryExists) {
+        return errorResponse(`Category '${body.category}' does not exist`, 400);
+      }
     }
 
-    // 4. Generate Slug manually to ensure it's present before validation
+    // 4. Handle Cover & Gallery
+    // Ensure images is an array even if empty
+    if (!body.images) body.images = [];
+
+    // 5. Generate Slug manually
     const baseSlug = body.name
       .toLowerCase()
       .trim()
@@ -97,7 +100,7 @@ export async function POST(req) {
     const random = Math.random().toString(36).substring(2, 7);
     body.slug = `${baseSlug}-${random}`;
 
-    // 5. Create Product
+    // 6. Create Product
     const product = await Product.create(body);
 
     return successResponse(product, "Product created successfully", 201);

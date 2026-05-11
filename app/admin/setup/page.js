@@ -16,9 +16,10 @@ export default function AdminSetup() {
     const router = useRouter();
 
     useEffect(() => {
+        const controller = new AbortController();
         const checkStatus = async () => {
             try {
-                const res = await fetch("/api/admin/setup");
+                const res = await fetch("/api/admin/setup", { signal: controller.signal });
                 const data = await res.json();
                 if (data.success && data.count > 0) {
                     router.push("/admin");
@@ -26,11 +27,14 @@ export default function AdminSetup() {
                     setChecking(false);
                 }
             } catch (err) {
-                setError("Failed to check system status");
-                setChecking(false);
+                if (err.name !== 'AbortError') {
+                    setError("Failed to check system status");
+                    setChecking(false);
+                }
             }
         };
         checkStatus();
+        return () => controller.abort();
     }, [router]);
 
     const handleSubmit = async (e) => {

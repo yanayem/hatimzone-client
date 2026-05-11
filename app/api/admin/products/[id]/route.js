@@ -47,6 +47,11 @@ export async function PUT(req, { params }) {
       return errorResponse("Price must be a positive number", 400);
     }
 
+    // 3. Handle Cover Image (New Field) Fallback
+    if (body.images && (!body.cover || (Array.isArray(body.cover) && body.cover.length === 0))) {
+      body.cover = Array.isArray(body.images) ? [body.images[0]] : [body.images];
+    }
+
     // 3. Update
     // Note: The pre-save hook in Product model will handle slug and rating updates if needed
     const updatedProduct = await Product.findByIdAndUpdate(

@@ -10,11 +10,12 @@ const ProductsPage = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProducts = async () => {
       try {
-        const res = await fetch("/api/admin/products");
+        const res = await fetch("/api/admin/products", { signal: controller.signal });
         const data = await res.json();
-        
+
         if (data.success) {
           // The new API structure returns items inside a 'data' object
           // Support both data.products (old) and data.data.items (new) for compatibility
@@ -24,13 +25,14 @@ const ProductsPage = () => {
           setError(data.message || "Failed to load products");
         }
       } catch (err) {
-        setError("Network error. Please try again.");
+        if (err.name !== 'AbortError') setError("Network error. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
+    return () => controller.abort();
   }, []);
 
   const handleDelete = async (id) => {
@@ -49,14 +51,14 @@ const ProductsPage = () => {
     }
   };
 
-  const filteredProducts = Array.isArray(products) ? products.filter(p => 
-    p.name?.toLowerCase().includes(search.toLowerCase()) || 
-    p.category?.toLowerCase().includes(search.toLowerCase())
+  const filteredProducts = Array.isArray(products) ? products.filter(p =>
+    p.name?.toLowerCase().includes(search.toLowerCase())
+    // || p.category?.toLowerCase().includes(search.toLowerCase())
   ) : [];
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
@@ -65,18 +67,18 @@ const ProductsPage = () => {
         </div>
 
         <div className="flex items-center gap-3">
-            <input 
-                type="text" 
-                placeholder="Search products..." 
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-black transition bg-white text-gray-800 placeholder:text-gray-600 w-full md:w-64"
-            />
-            <Link href="/admin/products/add">
-                <button className="bg-black text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg whitespace-nowrap">
-                    + Add Product
-                </button>
-            </Link>
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-black transition bg-white text-gray-800 placeholder:text-gray-600 w-full md:w-64"
+          />
+          <Link href="/admin/products/add">
+            <button className="bg-black text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg whitespace-nowrap">
+              + Add Product
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -90,14 +92,14 @@ const ProductsPage = () => {
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            
+
             <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-extrabold tracking-widest border-b border-gray-100">
               <tr>
                 <th className="px-6 py-5">Product Info</th>
                 <th className="px-6 py-5">Price</th>
-                <th className="px-6 py-5">Discount Price</th>
-                <th className="px-6 py-5">Stock Value</th>
-                <th className="px-6 py-5">Category & Tags</th>
+                {/* <th className="px-6 py-5">Discount Price</th> */}
+               {/* <th className="px-6 py-5">Stock Value</th> */}
+                {/* <th className="px-6 py-5">Category & Tags</th> */}
                 <th className="px-6 py-5 text-right">Actions</th>
               </tr>
             </thead>
@@ -118,13 +120,13 @@ const ProductsPage = () => {
               ) : (
                 filteredProducts.map((product) => (
                   <tr key={product._id} className="hover:bg-gray-50 transition group">
-                    
+
                     {/* 1. Image with Product Info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100 shadow-sm">
-                          {product.images?.[0] ? (
-                            <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+                          {product.cover ? (
+                            <img src={product.cover} alt="" className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-lg">🖼️</div>
                           )}
@@ -138,43 +140,42 @@ const ProductsPage = () => {
 
                     {/* 2. Original Price */}
                     <td className="px-6 py-4">
-                      <span className={`text-sm font-bold ${product.discountPrice > 0 ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
-                        ${product.price}
+                      <span className="text-sm font-bold text-gray-800">
+                        ৳{product.price}
                       </span>
                     </td>
 
-                    {/* 3. Discount Price */}
-                    <td className="px-6 py-4">
+                    {/* 3. Discount Price - Commented Out */}
+                    {/* <td className="px-6 py-4">
                       {product.discountPrice > 0 ? (
                         <div className="flex flex-col">
-                            <span className="text-sm font-extrabold text-green-600">${product.discountPrice}</span>
-                            <span className="text-[9px] font-bold text-green-500 uppercase">
-                                Saved {Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
-                            </span>
+                          <span className="text-sm font-extrabold text-green-600">${product.discountPrice}</span>
+                          <span className="text-[9px] font-bold text-green-500 uppercase">
+                            Saved {Math.round(((product.price - product.discountPrice) / product.price) * 100)}%
+                          </span>
                         </div>
                       ) : (
                         <span className="text-xs text-gray-400 italic">No discount</span>
                       )}
-                    </td>
+                    </td> */}
 
-                    {/* 4. Stock Value */}
+                    {/* 4. Stock Value 
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-0.5">
-                        <span className={`text-sm font-bold ${
-                            product.stockQuantity > 5 ? 'text-gray-800' : product.stockQuantity > 0 ? 'text-orange-500' : 'text-red-500'
-                        }`}>
-                            {product.stockQuantity} Pcs
+                        <span className={`text-sm font-bold ${product.stockQuantity > 5 ? 'text-gray-800' : product.stockQuantity > 0 ? 'text-orange-500' : 'text-red-500'
+                          }`}>
+                          {product.stockQuantity} Pcs
                         </span>
-                        <span className={`text-[9px] font-extrabold uppercase ${
-                          product.stockStatus === 'In Stock' ? 'text-blue-500' : 'text-red-400'
-                        }`}>
+                        <span className={`text-[9px] font-extrabold uppercase ${product.stockStatus === 'In Stock' ? 'text-blue-500' : 'text-red-400'
+                          }`}>
                           {product.stockStatus}
                         </span>
                       </div>
                     </td>
+                    */}
 
-                    {/* 5. Category & Tags */}
-                    <td className="px-6 py-4">
+                    {/* 5. Category & Tags - Commented Out */}
+                    {/* <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-1">
                           <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">{product.category}</span>
@@ -183,28 +184,28 @@ const ProductsPage = () => {
                           )}
                         </div>
                         <div className="flex flex-wrap gap-1">
-                            {product.tags?.slice(0, 2).map(tag => (
+                          {product.tags?.slice(0, 2).map(tag => (
                             <span key={tag} className="px-1.5 py-0.5 rounded text-[8px] font-extrabold bg-purple-50 text-purple-600 border border-purple-100 uppercase">
-                                {tag}
+                              {tag}
                             </span>
-                            ))}
+                          ))}
                         </div>
                       </div>
-                    </td>
+                    </td> */}
 
                     {/* 6. Actions */}
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <Link 
+                        <Link
                           href={`/admin/products/edit/${product._id}`}
-                          className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition" 
+                          className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"
                           title="Edit"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </Link>
-                        <button 
+                        <button
                           onClick={() => handleDelete(product._id)}
-                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" 
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
                           title="Delete"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
