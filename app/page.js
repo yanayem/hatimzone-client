@@ -22,44 +22,41 @@ export default async function HomePage() {
   return (
     <div className="bg-white text-slate-950 min-h-screen selection:bg-zinc-200">
       
-      {/* HERO SECTION */}
-      <section className="relative h-[70vh] md:h-[85vh] flex items-center overflow-hidden">
+      {/* HERO: FEATURING YOUR SELECTED LAMP */}
+      <section className="relative h-[85vh] flex items-center overflow-hidden bg-zinc-100">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1581210020469-hp1kWCABonI"
-            alt="Premium Lamp Collection"
-            className="w-full h-full object-cover scale-105 animate-slow-zoom"
+            src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=2070&auto=format&fit=crop" 
+            alt="Minimalist Table Lamp"
+            className="w-full h-full object-cover animate-slow-zoom"
           />
-          <div className="absolute inset-0 bg-slate-950/40 backdrop-brightness-75" />
+          {/* Soft vignette to make text readable without hiding the lamp */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-slate-950/20 to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 md:mb-8">
-              <HiOutlineSparkles className="text-amber-300 animate-pulse" />
-              <span className="text-white text-[10px] font-bold tracking-[0.2em] uppercase">
-                Premium Collection 2026
-              </span>
+          <div className="max-w-2xl text-white">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-8">
+              <HiOutlineSparkles className="text-amber-300" />
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Premium Lighting</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-8xl font-medium text-white leading-tight tracking-tighter mb-4 md:mb-6">
-              Illuminate your home <br /> 
-              <span className="italic font-light text-slate-200">beautifully.</span>
+            <h1 className="text-6xl md:text-8xl font-light leading-tight tracking-tighter mb-8">
+              Perfect light <br />
+              <span className="italic font-serif text-amber-100">for every mood.</span>
             </h1>
 
-            <p className="text-slate-100 text-base md:text-xl mb-8 md:mb-10 max-w-lg font-light leading-relaxed">
-              Exquisite lamps designed for every corner of your home. Perfect lighting for your living room, bedroom, and workspace.
+            <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-md font-light leading-relaxed">
+              Elevate your living space with our collection of modern, minimalist lighting solutions.
             </p>
 
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/shop"
-                className="bg-white text-slate-950 px-8 md:px-10 py-3 md:py-4 rounded-full font-medium hover:bg-zinc-100 transition-all duration-300 flex items-center gap-2 group text-sm md:text-base"
-              >
-                Shop All Lamps
-                <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-3 bg-white text-slate-950 px-10 py-4 rounded-full font-bold hover:bg-amber-400 transition-all duration-500 group shadow-xl"
+            >
+              Shop Collection
+              <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
       </section>

@@ -40,8 +40,11 @@ export default function Navbar() {
     <header className="w-full bg-white border-b border-gray-100 sticky top-0 z-[999]">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-6 h-20 relative">
 
-        <Link href="/" className="text-xl md:text-2xl font-black text-black uppercase tracking-tighter hover:text-blue-600 transition-colors">
-          HatimZone <span className="text-blue-600">Lighting</span>
+        <Link href="/" className="flex items-center gap-2 group">
+          <img src="/logo.png" alt="HatimZone" className="w-8 h-8 md:w-10 md:h-10 object-contain transition-transform group-hover:scale-110" />
+          <span className="text-xl md:text-2xl font-black text-black uppercase tracking-tighter hover:text-blue-600 transition-colors">
+            HatimZone
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 h-full">
@@ -60,6 +63,7 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4 md:gap-6">
+          {/* SEARCH BAR (Commented out)
           <div className="relative hidden lg:block">
             <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -68,7 +72,9 @@ export default function Navbar() {
               className="pl-9 pr-4 py-2 w-40 xl:w-56 bg-gray-50 border border-transparent rounded-full text-xs font-medium focus:outline-none focus:bg-white focus:border-gray-200 transition-all"
             />
           </div>
+          */}
           
+          {/* WISHLIST (Commented out)
           <Link href="/wishlist" className="relative group p-2">
             <HiOutlineHeart className="w-6 h-6 text-gray-800 group-hover:text-blue-600 transition" />
             {wishlist.length > 0 && (
@@ -77,6 +83,7 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+          */}
 
           <Link href="/cart" className="relative group p-2">
             <HiOutlineShoppingBag className="w-6 h-6 text-gray-800 group-hover:text-blue-600 transition" />

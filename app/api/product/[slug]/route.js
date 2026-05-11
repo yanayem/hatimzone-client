@@ -28,7 +28,7 @@ export async function GET(req, { params }) {
                 _id: { $ne: product._id }
             })
             .limit(4 - related.length)
-            .select('name price discountPrice images slug category brand')
+            .select('name price discountPrice images slug category brand cover')
             .lean();
             
             // If still empty, fetch any latest products
@@ -38,7 +38,7 @@ export async function GET(req, { params }) {
                 })
                 .sort({ createdAt: -1 })
                 .limit(4)
-                .select('name price discountPrice images slug category brand')
+                .select('name price discountPrice images slug category brand cover')
                 .lean();
             }
             

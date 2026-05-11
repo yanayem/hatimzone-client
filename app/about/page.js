@@ -12,7 +12,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=2000&auto=format&fit=crop"
-            alt="About HatimZone Lighting"
+            alt="About HatimZone"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
@@ -24,7 +24,7 @@ export default function AboutPage() {
             <span className="italic font-light text-slate-300">Of Light.</span>
           </h1>
           <p className="text-base md:text-xl font-light text-slate-200 max-w-2xl mx-auto leading-relaxed">
-            HatimZone Lighting was born out of a passion for exquisite design and the belief that the right light can transform any space into a masterpiece.
+            HatimZone was born out of a passion for exquisite design and the belief that the right light can transform any space into a masterpiece.
           </p>
         </div>
       </section>

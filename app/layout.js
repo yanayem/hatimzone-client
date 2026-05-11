@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartContext";
 
 export const metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
           <main className="min-h-screen">
             {children}
           </main>
+          <Footer />
         </CartProvider>
       </body>
     </html>

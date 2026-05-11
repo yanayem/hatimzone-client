@@ -8,17 +8,29 @@ import { successResponse, errorResponse } from "@/lib/api-utils";
 export async function POST(req) {
   try {
     const body = await req.json();
+    console.log("Order body received:", JSON.stringify(body, null, 2));
     const { items, customer, subTotal, shippingCost, totalPrice, paymentMethod, notes } = body;
 
     if (!items || items.length === 0) {
       return errorResponse("No items in order", 400);
     }
 
+    console.log("Connecting to DB...");
     await connectDB();
+    console.log("Connected to DB.");
 
     // 1. Create or Update User based on phone
-    let user = await User.findOne({ phone: customer.phone });
+    console.log("Finding user with phone:", customer.phone);
+    let user;
+    try {
+      user = await User.findOne({ phone: customer.phone });
+    } catch (e) {
+      console.error("User find error:", e);
+      throw new Error("User identification failed");
+    }
+    
     if (!user) {
+      console.log("Creating new user...");
       user = await User.create({
         name: customer.name,
         phone: customer.phone,
@@ -26,6 +38,7 @@ export async function POST(req) {
         city: customer.city
       });
     } else {
+      console.log("Updating existing user...");
       user.name = customer.name;
       user.address = customer.address;
       user.city = customer.city;
@@ -37,8 +50,10 @@ export async function POST(req) {
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
     const random = Math.floor(1000 + Math.random() * 9000);
     const orderId = `ORD-${dateStr}-${random}`;
+    console.log("Generated Order ID:", orderId);
 
     // 3. Create Order
+    console.log("Creating order in DB...");
     const newOrder = await Order.create({
       orderId,
       items,
@@ -51,18 +66,21 @@ export async function POST(req) {
       status: "Pending",
       paymentStatus: "Pending"
     });
+    console.log("Order created successfully.");
 
     // 4. Update product stock
+    console.log("Updating stock for items...");
     for (const item of items) {
       await Product.findByIdAndUpdate(item.product, {
         $inc: { stockQuantity: -item.quantity }
       });
     }
+    console.log("Stock updated.");
 
     return successResponse(newOrder, "Order placed successfully");
   } catch (error) {
     console.error("Order creation error:", error);
-    return errorResponse("Failed to place order");
+    return errorResponse(error.message || "Failed to place order");
   }
 }
 

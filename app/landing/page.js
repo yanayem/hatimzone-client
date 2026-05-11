@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle } from "react-icons/hi";
+import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
@@ -11,8 +11,8 @@ export default function LandingPage() {
    const [selectedProduct, setSelectedProduct] = useState(null);
 
    const [settings, setSettings] = useState({
-      shippingInsideDhaka: 60,
-      shippingOutsideDhaka: 120,
+      shippingInsideDhaka: 70,
+      shippingOutsideDhaka: 130,
       contactNumber: "01700-000000"
    });
 
@@ -29,24 +29,20 @@ export default function LandingPage() {
    useEffect(() => {
       const fetchData = async () => {
          try {
-            // Fetch products
-            const pRes = await fetch("/api/admin/products?limit=50");
-            const pData = await pRes.json();
-            if (pData.success) {
-               setProducts(pData.data.items || []);
-               if (pData.data.items?.length > 0) {
-                  setSelectedProduct(pData.data.items[0]);
+            const res = await fetch("/api/landing");
+            const data = await res.json();
+            if (data.success) {
+               const { products, settings } = data.data;
+               setProducts(products || []);
+               if (products?.length > 0) {
+                  setSelectedProduct(products[0]);
+               }
+               if (settings) {
+                  setSettings(settings);
                }
             }
-
-            // Fetch settings
-            const sRes = await fetch("/api/settings");
-            const sData = await sRes.json();
-            if (sData.success) {
-               setSettings(sData.data);
-            }
          } catch (err) {
-            console.error("Failed to fetch data");
+            console.error("Failed to fetch landing data");
          } finally {
             setLoading(false);
          }
@@ -67,18 +63,20 @@ export default function LandingPage() {
       setOrderLoading(true);
       try {
          const shippingCost = customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka;
+         const currentPrice = selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price;
+         
          const orderData = {
             items: [{
                product: selectedProduct._id,
                name: selectedProduct.name,
-               price: selectedProduct.price, // selectedProduct.discountPrice || selectedProduct.price,
+               price: currentPrice,
                quantity: 1,
                image: selectedProduct.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"
             }],
             customer,
-            subTotal: selectedProduct.price, // selectedProduct.discountPrice || selectedProduct.price,
+            subTotal: currentPrice,
             shippingCost: shippingCost,
-            totalPrice: selectedProduct.price + shippingCost, // (selectedProduct.discountPrice || selectedProduct.price) + shippingCost,
+            totalPrice: currentPrice + shippingCost,
             paymentMethod: "Cash on Delivery",
             notes: "Landing Page Order"
          };
@@ -104,67 +102,82 @@ export default function LandingPage() {
 
    if (loading) return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+         <div className="w-10 h-10 border-4 border-gray-100 border-t-black rounded-full animate-spin"></div>
       </div>
    );
 
    return (
-      <div className="bg-[#EAEDED] min-h-screen font-sans selection:bg-[#FEB069] pb-20 md:pb-24">
+      <div className="bg-[#ffffff] min-h-screen text-gray-900 selection:bg-blue-100 pb-20 md:pb-32">
 
-         {/* HERO SECTION */}
-         <section className="relative h-[40vh] md:h-[60vh] flex items-center justify-center overflow-hidden mb-8">
+         {/* HERO SECTION - PREMIUM BOUTIQUE STYLE */}
+         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 z-0">
                <img
                   src="https://images.unsplash.com/photo-1581210020469-hp1kWCABonI?auto=format&fit=crop&w=2000&q=80"
                   alt="Exclusive Lamp"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover scale-105 animate-slow-zoom"
                />
-               <div className="absolute inset-0 bg-black/50" />
+               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
             </div>
             
-            <div className="relative z-10 text-center px-4 max-w-4xl">
-               <h1 className="text-3xl md:text-6xl font-black text-white uppercase tracking-tighter mb-4 leading-none">এক্সক্লুসিভ লাইটিং কালেকশন</h1>
-               <p className="text-sm md:text-lg text-white/80 font-bold max-w-2xl mx-auto">আপনার ঘরকে আলোকিত করতে সেরা ল্যাম্পটি বেছে নিন এবং দ্রুত অর্ডার করুন</p>
+            <div className="relative z-10 text-center px-6 max-w-5xl">
+               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-8">
+                  <HiOutlineSparkles className="text-blue-400" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">প্রিমিয়াম কালেকশন</span>
+               </div>
+               <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter mb-8 leading-none">
+                  আলোকিত করুন <br />
+                  <span className="text-blue-400 italic font-serif normal-case tracking-normal">আপনার পৃথিবী</span>
+               </h1>
+               <p className="text-sm md:text-xl text-white/90 font-medium max-w-2xl mx-auto mb-10 leading-relaxed">
+                  হাতে তৈরি অসাধারণ সব ল্যাম্পের কালেকশন থেকে আপনার পছন্দেরটি বেছে নিন। প্রতিটি পণ্য আমাদের নিজস্ব কারখানায় নিপুণভাবে তৈরি।
+               </p>
                <button 
                   onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth" })}
-                  className="mt-8 bg-[#FFD814] text-[#0F1111] px-10 py-4 rounded-full font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition shadow-2xl"
+                  className="bg-white text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-500 hover:text-white transition-all shadow-2xl active:scale-95"
                >
-                  নিচে দেখুন
+                  অর্ডার করুন <HiArrowRight className="inline-block ml-2" />
                </button>
             </div>
          </section>
 
-         {/* 1. PRODUCT SHOWCASE SECTION - 2 COLUMN GRID */}
-         <section className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+         {/* PRODUCT GRID SECTION */}
+         <section className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+            <div className="text-center mb-16 md:mb-24">
+               <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter mb-4">আমাদের কালেকশন</h2>
+               <div className="w-20 h-1.5 bg-black mx-auto rounded-full"></div>
+            </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
                {products.map((p) => (
-                  <div key={p._id} className="bg-white overflow-hidden shadow-sm border border-gray-200 flex flex-col hover:shadow-md transition rounded-xl group">
-                     <div className="aspect-[4/5] bg-gray-50 flex items-center justify-center overflow-hidden">
+                  <div key={p._id} className="store-card group flex flex-col bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500">
+                     <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative">
                         <img
                            src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
-                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                            alt={p.name}
                         />
-                     </div>
-                     <div className="p-3 md:p-4 flex flex-col flex-1">
-                        <h2 className="text-[12px] md:text-[14px] font-bold text-[#0F1111] line-clamp-2 mb-1 h-10 leading-tight">{p.name}</h2>
-
-                        <div className="flex items-center gap-1 mb-2">
-                           <div className="flex text-orange-400 text-[8px] md:text-[10px]">
-                              {"★★★★★".split("").map((s, i) => <span key={i}>★</span>)}
+                        {p.discountPrice > 0 && (
+                           <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-xl">
+                              সেল
                            </div>
-                           <span className="text-[8px] md:text-[10px] text-blue-600 font-medium">(৮৭৫ জন রিভিউ দিয়েছেন)</span>
-                        </div>
+                        )}
+                     </div>
+                     <div className="p-6 md:p-8 flex flex-col flex-1">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{p.brand || "প্রিমিয়াম ব্র্যান্ড"}</p>
+                        <h3 className="text-lg md:text-xl font-bold text-gray-900 line-clamp-2 mb-6 h-14 leading-tight group-hover:text-blue-600 transition-colors">{p.name}</h3>
 
-                        <div className="mt-auto pt-2">
-                           <div className="flex flex-col mb-3">
-                              <span className="text-base md:text-xl font-black text-[#B12704]">৳{p.price.toLocaleString()}</span>
+                        <div className="mt-auto">
+                           <div className="flex items-center gap-3 mb-6">
+                              <span className="text-2xl font-black text-gray-900">৳{(p.discountPrice > 0 ? p.discountPrice : p.price).toLocaleString()}</span>
+                              {p.discountPrice > 0 && (
+                                 <span className="text-sm text-gray-400 line-through font-medium">৳{p.price.toLocaleString()}</span>
+                              )}
                            </div>
 
                            <button
                               onClick={() => scrollToForm(p)}
-                              className="bg-[#FFD814] hover:bg-[#F7CA00] text-[#0F1111] border border-[#FCD200] w-full py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest transition active:scale-95 shadow-sm"
+                              className="w-full bg-black text-white py-4 rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95 shadow-lg"
                            >
                               অর্ডার করুন
                            </button>
@@ -175,58 +188,65 @@ export default function LandingPage() {
             </div>
          </section>
 
-         {/* 2. CONTACT SECTION */}
-         <section className="bg-white border-y border-gray-200 py-12 my-8">
-            <div className="max-w-4xl mx-auto px-4 text-center">
-               <h2 className="text-xl md:text-2xl font-black text-[#0F1111] mb-6 uppercase tracking-tighter">সরাসরি কথা বলতে কল করুন</h2>
-               <a href={`tel:${settings.contactNumber}`} className="inline-flex items-center gap-3 bg-[#FFD814] px-8 md:px-10 py-4 rounded-full font-black shadow-sm border border-[#FCD200] hover:bg-[#F7CA00] transition text-base md:text-lg">
-                  <HiOutlinePhone className="text-2xl" />
+         {/* CALL TO ACTION / PHONE SECTION */}
+         <section className="bg-gray-50 py-24 md:py-32 relative overflow-hidden border-y border-gray-100">
+            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+               <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-10 uppercase tracking-tighter leading-tight">অর্ডার করতে বা বিস্তারিত জানতে কল করুন</h2>
+               <a 
+                  href={`tel:${settings.contactNumber}`} 
+                  className="inline-flex items-center gap-4 bg-black text-white px-10 md:px-16 py-6 rounded-3xl font-black shadow-2xl hover:bg-blue-600 transition-all text-xl md:text-3xl tracking-tighter"
+               >
+                  <HiOutlinePhone className="text-3xl md:text-5xl text-blue-500" />
                   {settings.contactNumber}
                </a>
             </div>
          </section>
 
-         {/* 3. ORDER FORM SECTION - AT THE BOTTOM */}
-         <section ref={formRef} className="max-w-2xl mx-auto px-4 py-12">
-            <div className="bg-white shadow-xl border border-gray-100 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem]">
-               <div className="border-b border-gray-100 pb-6 mb-8 text-center">
-                  <h2 className="text-2xl md:text-3xl font-black text-[#0F1111] uppercase tracking-tighter">অর্ডার নিশ্চিত করতে ফর্মটি পূরণ করুন</h2>
-                  <p className="text-xs md:text-sm text-[#565959] mt-2 font-medium">খুব দ্রুত আমরা আপনার সাথে যোগাযোগ করব</p>
+         {/* ORDER FORM SECTION */}
+         <section ref={formRef} className="max-w-3xl mx-auto px-6 py-20 md:py-32">
+            <div className="bg-white shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem]">
+               <div className="text-center mb-12 md:mb-16">
+                  <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter mb-4">অর্ডার নিশ্চিত করুন</h2>
+                  <p className="text-sm text-gray-500 font-medium tracking-wide">সঠিক তথ্য দিয়ে নিচের ফর্মটি পূরণ করুন</p>
                </div>
 
-               <form onSubmit={handleOrder} className="space-y-6">
+               <form onSubmit={handleOrder} className="space-y-8">
                   {selectedProduct && (
-                     <div className="bg-[#F7F7F7] p-4 md:p-6 rounded-xl flex items-center gap-4 mb-8 border border-gray-100">
-                        <img
-                           src={selectedProduct.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
-                           className="w-16 h-16 md:w-20 md:h-20 rounded-lg shadow-sm bg-white object-contain p-1 border border-gray-100"
-                        />
+                     <div className="bg-gray-50 p-6 md:p-8 rounded-[2.5rem] flex items-center gap-6 mb-10 border border-gray-100 relative group">
+                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-100 p-2">
+                           <img
+                              src={selectedProduct.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
+                              className="w-full h-full object-contain"
+                              alt={selectedProduct.name}
+                           />
+                        </div>
                         <div>
-                           <h4 className="text-sm font-bold text-[#0F1111] line-clamp-1">{selectedProduct.name}</h4>
-                           <p className="text-xl font-black text-[#B12704]">৳{selectedProduct.price.toLocaleString()}</p>
+                           <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">নির্বাচিত পণ্য</h4>
+                           <h3 className="text-lg md:text-xl font-bold text-gray-900 line-clamp-1">{selectedProduct.name}</h3>
+                           <p className="text-2xl font-black text-blue-600">৳{(selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price).toLocaleString()}</p>
                         </div>
                      </div>
                   )}
 
-                  <div className="grid gap-5">
+                  <div className="grid gap-6 md:gap-8">
                      <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">আপনার নাম</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">আপনার নাম</label>
                         <input
                            type="text"
                            required
-                           className="store-input bg-gray-50 border-gray-100 focus:bg-white transition-all text-sm font-bold"
-                           placeholder="সম্পূর্ণ নাম লিখুন"
+                           className="store-input"
+                           placeholder="আপনার নাম লিখুন"
                            value={customer.name}
                            onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
                         />
                      </div>
 
                      <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">মোবাইল নম্বর</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">মোবাইল নম্বর</label>
                         <input
                            type="tel"
                            required
-                           className="store-input bg-gray-50 border-gray-100 focus:bg-white transition-all text-sm font-bold"
+                           className="store-input"
                            placeholder="১১ ডিজিটের মোবাইল নম্বর"
                            value={customer.phone}
                            onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
@@ -234,21 +254,21 @@ export default function LandingPage() {
                      </div>
 
                      <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">ঠিকানা</label>
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">সম্পূর্ণ ঠিকানা</label>
                         <textarea
                            required
                            rows="3"
-                           className="store-input bg-gray-50 border-gray-100 focus:bg-white transition-all text-sm font-bold resize-none"
-                           placeholder="বাসা নম্বর, রোড, এলাকা এবং জেলা লিখুন"
+                           className="store-input resize-none"
+                           placeholder="বাসা নম্বর, রোড, এলাকা এবং জেলা"
                            value={customer.address}
                            onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
                         ></textarea>
                      </div>
 
                      <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">শিপিং এলাকা</label>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                           <label className="flex-1 cursor-pointer">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 ml-2">শিপিং পদ্ধতি</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                           <label className="cursor-pointer group">
                               <input
                                  type="radio"
                                  className="hidden"
@@ -256,11 +276,11 @@ export default function LandingPage() {
                                  checked={customer.city === "Dhaka"}
                                  onChange={() => setCustomer({ ...customer, city: "Dhaka" })}
                               />
-                              <div className={`text-center py-4 rounded-xl font-black text-[10px] uppercase tracking-widest border transition shadow-sm ${customer.city === "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 hover:border-gray-300"}`}>
+                              <div className={`text-center py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city === "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
                                  ঢাকা সিটি (৳{settings.shippingInsideDhaka})
                               </div>
                            </label>
-                           <label className="flex-1 cursor-pointer">
+                           <label className="cursor-pointer group">
                               <input
                                  type="radio"
                                  className="hidden"
@@ -268,7 +288,7 @@ export default function LandingPage() {
                                  checked={customer.city !== "Dhaka"}
                                  onChange={() => setCustomer({ ...customer, city: "Outside" })}
                               />
-                              <div className={`text-center py-4 rounded-xl font-black text-[10px] uppercase tracking-widest border transition shadow-sm ${customer.city !== "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 hover:border-gray-300"}`}>
+                              <div className={`text-center py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city !== "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
                                  ঢাকার বাইরে (৳{settings.shippingOutsideDhaka})
                               </div>
                            </label>
@@ -276,46 +296,46 @@ export default function LandingPage() {
                      </div>
                   </div>
 
-                  <div className="bg-[#F7F7F7] p-6 rounded-xl border border-gray-100 mt-8">
-                     <div className="space-y-3 text-sm text-gray-500 font-medium border-b border-gray-200 pb-4 mb-4">
+                  <div className="bg-gray-50 p-8 md:p-10 rounded-[2.5rem] mt-10 text-gray-900 border border-gray-100 shadow-sm relative overflow-hidden">
+                     <div className="space-y-4 text-gray-500 font-medium border-b border-gray-200 pb-6 mb-6">
                         <div className="flex justify-between">
-                           <span>পণ্যের মূল্য</span>
-                           <span className="font-black text-gray-900">৳{selectedProduct ? selectedProduct.price.toLocaleString() : 0}</span>
+                           <span className="text-[10px] uppercase tracking-widest">পণ্যের মূল্য</span>
+                           <span className="font-black text-gray-900">৳{(selectedProduct ? (selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price) : 0).toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between">
-                           <span>শিপিং চার্জ</span>
+                           <span className="text-[10px] uppercase tracking-widest">শিপিং চার্জ</span>
                            <span className="font-black text-gray-900">৳{customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka}</span>
                         </div>
                      </div>
-                     <div className="flex justify-between text-2xl font-black text-[#B12704] uppercase tracking-tighter">
-                        <span>সর্বমোট</span>
-                        <span>৳{selectedProduct ? (selectedProduct.price + (customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka)).toLocaleString() : 0}</span>
+                     <div className="flex justify-between items-center">
+                        <span className="text-[10px] uppercase tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
+                        <span className="text-3xl md:text-4xl font-black text-blue-600">৳{(selectedProduct ? ((selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price) + (customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka)) : 0).toLocaleString()}</span>
                      </div>
                   </div>
 
                   <button
                      type="submit"
                      disabled={orderLoading}
-                     className="w-full py-4.5 bg-[#FFD814] text-[#0F1111] rounded-full font-black uppercase tracking-widest text-sm hover:bg-[#F7CA00] transition shadow-xl border border-[#FCD200] disabled:opacity-50"
+                     className="w-full py-6 bg-blue-600 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-blue-700 transition-all shadow-2xl disabled:opacity-50 active:scale-[0.98]"
                   >
-                     {orderLoading ? "অর্ডার সম্পন্ন হচ্ছে..." : "অর্ডার কনফার্ম করুন"}
+                     {orderLoading ? "অর্ডার সম্পন্ন হচ্ছে..." : "অর্ডার নিশ্চিত করুন"}
                   </button>
 
-                  <div className="flex items-center justify-center gap-2 text-[10px] text-gray-400 mt-6 font-black uppercase tracking-widest">
-                     <HiCheckCircle className="text-green-600 text-lg" />
+                  <div className="flex items-center justify-center gap-3 text-[9px] text-gray-400 font-black uppercase tracking-widest">
+                     <HiCheckCircle className="text-blue-500 text-xl" />
                      ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা দিন)
                   </div>
                </form>
             </div>
          </section>
 
-         {/* STICKY FOOTER CTA FOR MOBILE */}
-         <div className="fixed bottom-0 left-0 w-full p-4 md:hidden z-[100]">
+         {/* MOBILE STICKY CTA */}
+         <div className="fixed bottom-6 left-6 right-6 md:hidden z-[100]">
             <button
                onClick={() => scrollToForm(null)}
-               className="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-base shadow-2xl flex items-center justify-center gap-2 animate-bounce-subtle"
+               className="w-full py-5 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl flex items-center justify-center gap-3 border border-white/10 backdrop-blur-md"
             >
-               <HiOutlineShoppingBag />
+               <HiOutlineShoppingBag className="text-lg" />
                পছন্দের ল্যাম্পটি অর্ডার করুন
             </button>
          </div>
