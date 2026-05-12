@@ -20,11 +20,12 @@ export async function GET(request) {
 
     // If keyword is provided, search by tags or name
     if (keyword) {
+      const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape regex special chars
       query = {
         $or: [
-          { tags: { $in: [new RegExp(keyword, "i")] } },
-          { name: { $regex: keyword, $options: "i" } },
-          { category: { $regex: keyword, $options: "i" } }
+          { tags: { $regex: safeKeyword, $options: "i" } },
+          { name: { $regex: safeKeyword, $options: "i" } },
+          { category: { $regex: safeKeyword, $options: "i" } }
         ]
       };
     }

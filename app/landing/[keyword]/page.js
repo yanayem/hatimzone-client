@@ -10,7 +10,7 @@ export default function DynamicLandingPage() {
    const [products, setProducts] = useState([]);
    const [loading, setLoading] = useState(true);
    const [orderLoading, setOrderLoading] = useState(false);
-   const [selectedProduct, setSelectedProduct] = useState(null);
+   const [selectedProducts, setSelectedProducts] = useState([]);
    const [showSuccess, setShowSuccess] = useState(false);
    const [lastOrderId, setLastOrderId] = useState("");
 
@@ -37,19 +37,30 @@ export default function DynamicLandingPage() {
          try {
             const url = keyword ? `/api/landing?keyword=${encodeURIComponent(keyword)}` : "/api/landing";
             const res = await fetch(url);
+            
+            if (!res.ok) {
+               const text = await res.text();
+               console.error("API Error Response:", {
+                  status: res.status,
+                  statusText: res.statusText,
+                  body: text.substring(0, 500)
+               });
+               throw new Error(`API returned ${res.status}: ${res.statusText}`);
+            }
+
             const data = await res.json();
             if (data.success) {
                const { products, settings } = data.data;
                setProducts(products || []);
-               if (products?.length > 0) {
-                  setSelectedProduct(products[0]);
-               }
+                if (products?.length > 0) {
+                   setSelectedProducts([{ ...products[0], quantity: 1 }]);
+                }
                if (settings) {
                   setSettings(settings);
                }
             }
          } catch (err) {
-            console.error("Failed to fetch landing data");
+            console.error("Failed to fetch landing data:", err);
          } finally {
             setLoading(false);
          }
@@ -57,36 +68,62 @@ export default function DynamicLandingPage() {
       fetchData();
    }, [keyword]);
 
-   const scrollToForm = (product) => {
-      if (product) setSelectedProduct(product);
-      formRef.current?.scrollIntoView({ behavior: "smooth" });
-   };
+    const toggleProduct = (product) => {
+       setSelectedProducts(prev => {
+          const exists = prev.find(p => p._id === product._id);
+          if (exists) {
+             return prev.filter(p => p._id !== product._id);
+          } else {
+             return [...prev, { ...product, quantity: 1 }];
+          }
+       });
+    };
 
-   const handleOrder = async (e) => {
-      e.preventDefault();
-      if (!selectedProduct) return alert("দয়া করে একটি পণ্য সিলেক্ট করুন");
-      if (!customer.name || !customer.phone || !customer.address) return alert("দয়া করে সব তথ্য পূরণ করুন");
+    const updateQuantity = (id, delta) => {
+       setSelectedProducts(prev => prev.map(p => 
+          p._id === id ? { ...p, quantity: Math.max(1, (p.quantity || 1) + delta) } : p
+       ));
+    };
 
-      setOrderLoading(true);
-      try {
-         const shippingCost = Number(customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka);
-         const currentPrice = Number(selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price);
-         
-         const orderData = {
-            items: [{
-               product: selectedProduct._id,
-               name: selectedProduct.name,
-               price: currentPrice,
-               quantity: 1,
-               image: selectedProduct.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"
-            }],
-            customer,
-            subTotal: currentPrice,
-            shippingCost: shippingCost,
-            totalPrice: currentPrice + shippingCost,
-            paymentMethod: "Cash on Delivery",
-            notes: `Landing Page Order (${keyword || 'Direct'})`
-         };
+    const scrollToForm = (product) => {
+       if (product) {
+          setSelectedProducts(prev => {
+             const exists = prev.find(p => p._id === product._id);
+             if (exists) return prev;
+             return [...prev, { ...product, quantity: 1 }];
+          });
+       }
+       formRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    const handleOrder = async (e) => {
+       e.preventDefault();
+       if (selectedProducts.length === 0) return alert("দয়া করে অন্তত একটি পণ্য সিলেক্ট করুন");
+       if (!customer.name || !customer.phone || !customer.address) return alert("দয়া করে সব তথ্য পূরণ করুন");
+
+       setOrderLoading(true);
+       try {
+          const shippingCost = Number(customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka);
+          
+          const items = selectedProducts.map(p => ({
+             product: p._id,
+             name: p.name,
+             price: Number(p.discountPrice > 0 ? p.discountPrice : p.price),
+             quantity: p.quantity || 1,
+             image: p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"
+          }));
+
+          const subTotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+          
+          const orderData = {
+             items,
+             customer,
+             subTotal,
+             shippingCost,
+             totalPrice: subTotal + shippingCost,
+             paymentMethod: "Cash on Delivery",
+             notes: `Landing Page Order (${keyword || 'Direct'})`
+          };
 
          const res = await fetch("/api/order", {
             method: "POST",
@@ -156,8 +193,14 @@ export default function DynamicLandingPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-               {products.length > 0 ? products.map((p) => (
-                  <div key={p._id} className="store-card group flex flex-col bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500">
+               {products.length > 0 ? products.map((p) => {
+                  const isSelected = selectedProducts.some(sp => sp._id === p._id);
+                  return (
+                  <div 
+                     key={p._id} 
+                     onClick={() => toggleProduct(p)}
+                     className={`store-card group flex flex-col bg-white rounded-3xl overflow-hidden border-2 transition-all duration-500 cursor-pointer ${isSelected ? 'border-blue-600 shadow-2xl scale-[1.02]' : 'border-gray-100 shadow-sm hover:shadow-xl'}`}
+                  >
                      <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative">
                         <img
                            src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
@@ -167,6 +210,11 @@ export default function DynamicLandingPage() {
                         {p.discountPrice > 0 && (
                            <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-xl">
                               সেল
+                           </div>
+                        )}
+                        {isSelected && (
+                           <div className="absolute top-4 right-4 bg-blue-600 text-white p-2 rounded-full shadow-xl">
+                              <HiCheckCircle className="text-xl" />
                            </div>
                         )}
                      </div>
@@ -182,16 +230,20 @@ export default function DynamicLandingPage() {
                               )}
                            </div>
 
-                           <button
-                              onClick={() => scrollToForm(p)}
-                              className="w-full bg-black text-white py-4 rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-95 shadow-lg"
-                           >
-                              অর্ডার করুন
-                           </button>
-                        </div>
-                     </div>
-                  </div>
-               )) : (
+                            <button
+                               onClick={(e) => {
+                                  e.stopPropagation();
+                                  scrollToForm(p);
+                               }}
+                               className={`w-full py-4 rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg ${isSelected ? 'bg-blue-600 text-white' : 'bg-black text-white hover:bg-blue-600'}`}
+                            >
+                               {isSelected ? 'সিলেক্ট করা হয়েছে' : 'অর্ডার করুন'}
+                            </button>
+                         </div>
+                      </div>
+                   </div>
+                  )
+               }) : (
                   <div className="col-span-full text-center py-20">
                       <p className="text-gray-400 font-bold">এই মুহূর্তে কোনো পণ্য পাওয়া যায়নি।</p>
                   </div>
@@ -222,22 +274,58 @@ export default function DynamicLandingPage() {
                </div>
 
                <form onSubmit={handleOrder} className="space-y-8">
-                  {selectedProduct && (
-                     <div className="bg-gray-50 p-6 md:p-8 rounded-[2.5rem] flex items-center gap-6 mb-10 border border-gray-100 relative group">
-                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-100 p-2">
-                           <img
-                              src={selectedProduct.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
-                              className="w-full h-full object-contain"
-                              alt={selectedProduct.name}
-                           />
-                        </div>
-                        <div>
-                           <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">নির্বাচিত পণ্য</h4>
-                           <h3 className="text-lg md:text-xl font-bold text-gray-900 line-clamp-1">{selectedProduct.name}</h3>
-                           <p className="text-2xl font-black text-blue-600">৳{(selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price).toLocaleString()}</p>
-                        </div>
-                     </div>
-                  )}
+                   <div className="space-y-4 mb-10">
+                      {selectedProducts.length > 0 ? selectedProducts.map((p) => (
+                         <div key={p._id} className="bg-gray-50 p-4 md:p-6 rounded-[2rem] flex items-center gap-4 border border-gray-100 relative group">
+                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden shadow-lg bg-white border border-gray-100 p-1 flex-shrink-0">
+                               <img
+                                  src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
+                                  className="w-full h-full object-contain"
+                                  alt={p.name}
+                               />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                               <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-1">{p.name}</h3>
+                               <p className="text-lg font-black text-blue-600">৳{(p.discountPrice > 0 ? p.discountPrice : p.price).toLocaleString()}</p>
+                            </div>
+                            <div className="flex items-center gap-2 bg-white rounded-xl p-1 border border-gray-200">
+                               <button 
+                                  type="button"
+                                  onClick={() => updateQuantity(p._id, -1)}
+                                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500"
+                               >
+                                  -
+                               </button>
+                               <span className="w-6 text-center font-bold text-sm">{p.quantity || 1}</span>
+                               <button 
+                                  type="button"
+                                  onClick={() => updateQuantity(p._id, 1)}
+                                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500"
+                               >
+                                  +
+                               </button>
+                            </div>
+                            <button 
+                               type="button"
+                               onClick={() => toggleProduct(p)}
+                               className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                            >
+                               ✕
+                            </button>
+                         </div>
+                      )) : (
+                         <div className="text-center py-10 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200">
+                            <p className="text-gray-400 font-bold">কোনো পণ্য সিলেক্ট করা নেই</p>
+                            <button 
+                               type="button"
+                               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                               className="text-blue-600 text-sm font-black uppercase tracking-widest mt-2"
+                            >
+                               পণ্য বেছে নিন
+                            </button>
+                         </div>
+                      )}
+                   </div>
 
                   <div className="grid gap-6 md:gap-8">
                      <div>
@@ -307,22 +395,22 @@ export default function DynamicLandingPage() {
                      </div>
                   </div>
 
-                  <div className="bg-gray-50 p-8 md:p-10 rounded-[2.5rem] mt-10 text-gray-900 border border-gray-100 shadow-sm relative overflow-hidden">
-                     <div className="space-y-4 text-gray-500 font-medium border-b border-gray-200 pb-6 mb-6">
-                        <div className="flex justify-between">
-                           <span className="text-[10px] uppercase tracking-widest">পণ্যের মূল্য</span>
-                           <span className="font-black text-gray-900">৳{(selectedProduct ? (selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price) : 0).toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between">
-                           <span className="text-[10px] uppercase tracking-widest">শিপিং চার্জ</span>
-                           <span className="font-black text-gray-900">৳{customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka}</span>
-                        </div>
-                     </div>
-                     <div className="flex justify-between items-center">
-                        <span className="text-[10px] uppercase tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
-                        <span className="text-3xl md:text-4xl font-black text-blue-600">৳{(selectedProduct ? ((selectedProduct.discountPrice > 0 ? selectedProduct.discountPrice : selectedProduct.price) + (customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka)) : 0).toLocaleString()}</span>
-                     </div>
-                  </div>
+                   <div className="bg-gray-50 p-8 md:p-10 rounded-[2.5rem] mt-10 text-gray-900 border border-gray-100 shadow-sm relative overflow-hidden">
+                      <div className="space-y-4 text-gray-500 font-medium border-b border-gray-200 pb-6 mb-6">
+                         <div className="flex justify-between">
+                            <span className="text-[10px] uppercase tracking-widest">পণ্যের মূল্য ({selectedProducts.reduce((acc, p) => acc + (p.quantity || 1), 0)} টি)</span>
+                            <span className="font-black text-gray-900">৳{selectedProducts.reduce((acc, p) => acc + ((p.discountPrice > 0 ? p.discountPrice : p.price) * (p.quantity || 1)), 0).toLocaleString()}</span>
+                         </div>
+                         <div className="flex justify-between">
+                            <span className="text-[10px] uppercase tracking-widest">শিপিং চার্জ</span>
+                            <span className="font-black text-gray-900">৳{customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka}</span>
+                         </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                         <span className="text-[10px] uppercase tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
+                         <span className="text-3xl md:text-4xl font-black text-blue-600">৳{(selectedProducts.reduce((acc, p) => acc + ((p.discountPrice > 0 ? p.discountPrice : p.price) * (p.quantity || 1)), 0) + (customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka)).toLocaleString()}</span>
+                      </div>
+                   </div>
 
                   <button
                      type="submit"
