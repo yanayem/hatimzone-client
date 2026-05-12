@@ -16,7 +16,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
         <div className="bg-white border shadow-sm rounded-[2rem] p-8 md:p-10 text-center max-w-md w-full">
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">
             No lamps in your cart yet
@@ -37,7 +37,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-100 pb-20">
       <div className="max-w-6xl mx-auto px-4 py-8 md:py-10">
 
         {/* HEADER */}
@@ -73,7 +73,7 @@ export default function CartPage() {
 
                 {/* INFO */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{item.brand || 'Premium Lighting'}</p>
+                  <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">{item.brand || 'Premium Lighting'}</p>
                   <h3 className="text-gray-900 font-bold text-lg md:text-xl leading-tight mb-2">
                     {item.name}
                   </h3>
@@ -140,7 +140,7 @@ export default function CartPage() {
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-black mt-8 font-bold uppercase tracking-widest text-[10px] transition-colors"
+              className="inline-flex items-center gap-2 text-gray-400 hover:text-black mt-8 font-bold uppercase tracking-widest text-[11px] transition-colors"
             >
               <HiArrowLeft />
               Continue Shopping
@@ -165,7 +165,7 @@ export default function CartPage() {
 
               <div className="flex justify-between items-center">
                 <span>Shipping</span>
-                <span className="text-green-600 font-bold text-[10px] uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full">
+                <span className="text-green-600 font-bold text-[11px] uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full">
                   Free Over ৳5000
                 </span>
               </div>
@@ -173,7 +173,7 @@ export default function CartPage() {
             </div>
 
             <div className="border-t border-gray-50 mt-6 pt-6 flex justify-between items-center">
-              <span className="text-gray-900 font-bold uppercase tracking-widest text-[10px]">Total Amount</span>
+              <span className="text-gray-900 font-bold uppercase tracking-widest text-[11px]">Total Amount</span>
               <span className="text-2xl font-black text-gray-900">৳{subTotal.toLocaleString()}</span>
             </div>
 
@@ -187,7 +187,7 @@ export default function CartPage() {
                 Proceed to Checkout
               </Link>
 
-              <p className="text-[10px] text-gray-400 text-center font-bold uppercase tracking-widest pt-4">
+              <p className="text-[11px] text-gray-400 text-center font-bold uppercase tracking-widest pt-4">
                 Secure Lighting Checkout
               </p>
 

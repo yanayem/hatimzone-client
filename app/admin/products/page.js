@@ -72,10 +72,10 @@ const ProductsPage = () => {
             placeholder="Search products..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-black transition bg-white text-gray-800 placeholder:text-gray-600 w-full md:w-64"
+            className="px-4 py-3 text-[12px] md:text-base rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-black transition bg-white text-gray-800 placeholder:text-gray-600 w-full md:w-64"
           />
           <Link href="/admin/products/add">
-            <button className="bg-black text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg whitespace-nowrap">
+            <button className="bg-black text-white px-6 py-3 text-[12px] md:text-base rounded-xl font-bold hover:bg-gray-800 transition shadow-lg whitespace-nowrap">
               + Add Product
             </button>
           </Link>

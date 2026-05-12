@@ -12,14 +12,14 @@ import {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-100 pb-20">
       {/* HEADER */}
-      <section className="bg-black text-white py-24 md:py-32">
+      <section className="bg-black text-white py-16 md:py-32">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-6 leading-none">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-none">
             Get in <span className="italic font-light text-slate-400">Touch.</span>
           </h1>
-          <p className="text-slate-400 text-sm md:text-lg font-medium max-w-xl mx-auto uppercase tracking-widest">
+          <p className="text-slate-400 text-[10px] sm:text-sm md:text-lg font-bold max-w-xl mx-auto uppercase tracking-[0.2em]">
             We're here to help you find the perfect lighting for your home.
           </p>
         </div>

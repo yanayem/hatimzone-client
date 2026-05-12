@@ -79,16 +79,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-center md:text-left">
+        <div className="pt-8 md:pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 text-center md:text-left">
             © 2026 HatimZone. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
-             <Link href="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-blue-600 transition">Privacy</Link>
-             <Link href="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-blue-600 transition">Terms</Link>
-             <Link href="/admin" className="flex items-center gap-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:underline">
-               Admin Panel <HiOutlineExternalLink />
-             </Link>
+          <div className="flex items-center gap-4 md:gap-6">
+             <Link href="/policies" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-blue-600 transition">Privacy & Terms</Link>
           </div>
         </div>
       </div>

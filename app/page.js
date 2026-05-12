@@ -6,7 +6,8 @@ import {
   HiOutlineStar, 
   HiOutlineTrendingUp, 
   HiArrowRight, 
-  HiOutlineSparkles 
+  HiOutlineSparkles,
+  HiPlus
 } from "react-icons/hi";
 
 export default async function HomePage() {
@@ -27,39 +28,39 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="bg-white text-slate-950 min-h-screen selection:bg-zinc-200">
+    <div className="bg-gray-100 text-slate-950 min-h-screen selection:bg-zinc-200">
       
       {/* HERO: FEATURING YOUR SELECTED LAMP */}
-      <section className="relative h-[85vh] flex items-center overflow-hidden bg-zinc-100">
+      <section className="relative h-[85vh] md:h-[100vh] flex items-center overflow-hidden bg-zinc-100">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=2070&auto=format&fit=crop" 
+            src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=2070&auto=format&fit=crop" 
             alt="Minimalist Table Lamp"
             className="w-full h-full object-cover animate-slow-zoom"
           />
           {/* Soft vignette to make text readable without hiding the lamp */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-slate-950/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/70 via-slate-950/20 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full">
           <div className="max-w-2xl text-white">
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-8">
-              <HiOutlineSparkles className="text-amber-300" />
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Premium Lighting</span>
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 md:mb-8 transition-transform hover:scale-105">
+              <HiOutlineSparkles className="text-amber-300 text-xs md:text-base" />
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Premium Lighting Collection</span>
             </div>
 
-            <h1 className="text-6xl md:text-8xl font-light leading-tight tracking-tighter mb-8">
+            <h1 className="text-3xl sm:text-5xl md:text-8xl font-black leading-[1.1] tracking-tighter mb-4 md:mb-8 uppercase">
               Perfect light <br />
-              <span className="italic font-serif text-amber-100">for every mood.</span>
+              <span className="italic font-light text-amber-100">for every mood.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-md font-light leading-relaxed">
+            <p className="text-xs sm:text-sm md:text-xl text-slate-200 mb-6 md:mb-10 max-w-md font-medium leading-relaxed">
               Elevate your living space with our collection of modern, minimalist lighting solutions.
             </p>
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-3 bg-white text-slate-950 px-10 py-4 rounded-full font-bold hover:bg-amber-400 transition-all duration-500 group shadow-xl"
+              className="inline-flex items-center gap-3 bg-white text-slate-950 px-8 md:px-10 py-3.5 md:py-4 rounded-full font-bold hover:bg-amber-400 transition-all duration-500 group shadow-xl text-sm md:text-base"
             >
               Shop Collection
               <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
@@ -96,15 +97,23 @@ export default async function HomePage() {
             </div>
             <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-slate-950">Latest Lamp Designs</h2>
           </div>
-          <Link href="/shop" className="text-sm font-medium border-b border-slate-950 pb-1 hover:text-zinc-500 hover:border-zinc-300 transition-all">
-            See All Lamps
-          </Link>
+         
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 md:gap-y-12">
           {newArrival.map((p) => (
             <ProductCard key={p._id.toString()} product={p} />
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link 
+            href="/shop" 
+            className="group flex items-center gap-3 bg-black text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-xl shadow-gray-200 active:scale-95"
+          >
+            See All Lamps Collection
+            <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </section>
 
@@ -123,6 +132,16 @@ export default async function HomePage() {
               <ProductCard key={p._id.toString()} product={p} />
             ))}
           </div>
+
+          <div className="mt-12 flex justify-center">
+            <Link 
+              href="/shop" 
+              className="group flex items-center gap-3 bg-white border-2 border-black text-black px-10 py-4 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-lg active:scale-95"
+            >
+              Shop Best Sellers
+              <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -134,9 +153,9 @@ function ProductCard({ product }) {
   return (
     <Link 
       href={`/product/${product.slug || product._id}`} 
-      className="group flex flex-col h-full"
+      className="group flex flex-col h-full bg-white border border-zinc-200 rounded-lg overflow-hidden transition-all hover:shadow-xl hover:border-zinc-300"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-zinc-100 rounded-2xl mb-4 md:mb-6">
+      <div className="relative aspect-[4/5] overflow-hidden bg-zinc-50 border-b border-zinc-100">
         <img
           src={product.cover || "https://placehold.co/600x800/e4e4e7/52525b?text=No+Image"}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -145,31 +164,36 @@ function ProductCard({ product }) {
         />
         
         {product.isNewArrival && (
-          <div className="absolute top-3 left-3 md:top-4 md:left-4">
-            <span className="bg-white/90 backdrop-blur-sm text-slate-950 text-[9px] md:text-[10px] font-bold px-2 md:px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">
-              New Light
+          <div className="absolute top-3 left-3">
+            <span className="bg-black text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest shadow-lg">
+              New
             </span>
           </div>
         )}
       </div>
 
-      <div className="flex flex-col flex-1">
-        <div className="flex justify-between items-start mb-1 md:mb-2">
-          <p className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+      <div className="flex flex-col flex-1 p-4">
+        <div className="flex justify-between items-start mb-2">
+          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
             {product.brand || 'Premium Lighting'}
           </p>
-          <p className="text-xs md:text-sm font-medium text-slate-950">
+          <p className="text-sm font-black text-slate-950">
             ৳{product.price.toLocaleString()}
           </p>
         </div>
         
-        <h3 className="text-base md:text-lg font-normal text-slate-800 group-hover:text-slate-950 transition-colors line-clamp-1 mb-3 md:mb-4">
+        <h3 className="text-sm font-bold text-slate-800 group-hover:text-black transition-colors line-clamp-1 mb-4">
           {product.name}
         </h3>
 
-        <div className="mt-auto flex items-center gap-2 text-[10px] md:text-[11px] font-bold uppercase tracking-tighter opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all transform translate-y-0 sm:translate-y-2 group-hover:translate-y-0">
-          <span>View Details</span>
-          <HiArrowRight />
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-blue-600">
+            <span>Details</span>
+            <HiArrowRight className="text-[11px]" />
+          </div>
+          <div className="w-6 h-6 rounded-full border border-zinc-200 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
+             <HiPlus className="text-xs" />
+          </div>
         </div>
       </div>
     </Link>

@@ -63,7 +63,8 @@ export default async function ShopPage({ searchParams }) {
         .select("name price discountPrice cover slug brand")
         .sort(sortOption)
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .lean(),
       Product.countDocuments(filter),
       Product.distinct("category"),
       Product.distinct("brand"),
@@ -91,7 +92,7 @@ export default async function ShopPage({ searchParams }) {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-900 pb-20">
+    <div className="bg-gray-100 min-h-screen text-gray-900 pb-20">
 
       {/* HEADER */}
       <div className="bg-white border-b border-gray-100 py-8 md:py-12 px-6">
@@ -109,7 +110,7 @@ export default async function ShopPage({ searchParams }) {
                 name="q"
                 defaultValue={q}
                 placeholder="Search for lamps..."
-                className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-6 py-4 text-gray-900 font-medium outline-none transition-all text-sm"
+                className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-5 py-3.5 md:px-6 md:py-4 text-gray-900 font-bold outline-none transition-all text-xs md:text-sm"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -128,10 +129,10 @@ export default async function ShopPage({ searchParams }) {
           {/* CATEGORIES - Commented Out
           <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
+              <h3 className="text-[11px] font-black uppercase text-gray-400 tracking-widest">
                 Categories
               </h3>
-              <Link href="/shop" className="text-[10px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
+              <Link href="/shop" className="text-[11px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
                 Clear
               </Link>
             </div>
@@ -211,8 +212,7 @@ export default async function ShopPage({ searchParams }) {
         {/* PRODUCTS GRID */}
         <main className="flex-1">
 
-          {/* SORTING BAR */}
-          <div className="mb-10 flex items-center justify-between bg-white px-6 py-4 rounded-2xl border border-gray-100 shadow-sm">
+          <div className="mb-6 md:mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white px-5 py-4 rounded-2xl border border-gray-100 shadow-sm gap-4">
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
                 Sort By
@@ -220,11 +220,11 @@ export default async function ShopPage({ searchParams }) {
               <SortSelect currentSort={sort} />
             </div>
             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-              {products.length} Items Page {page}
+              {products.length} Items · Page {page}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             {products.map((p) => (
               <div key={p._id} className="store-card group flex flex-col">
                 <Link href={`/product/${p.slug || p._id}`} className="block relative aspect-[4/5] bg-gray-50 overflow-hidden m-2 rounded-2xl">
@@ -240,30 +240,22 @@ export default async function ShopPage({ searchParams }) {
                   )}
                 </Link>
 
-                <div className="p-6 flex flex-col flex-1 pt-2">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="p-4 md:p-6 flex flex-col flex-1 pt-2">
+                  <div className="flex justify-between items-center mb-1 md:mb-2">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{p.brand}</span>
-                    {/*<span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{p.category}</span>*/}
                   </div>
 
-                  <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-lg h-7">
+                  <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-sm md:text-lg h-5 md:h-7">
                     {p.name}
                   </h3>
 
-                  <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-50">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl font-black text-gray-900">
-                        TK{p.discountPrice > 0 ? p.discountPrice : p.price}
-                      </span>
-                      {/*{p.discountPrice > 0 && (
-                        <span className="text-xs text-gray-400 line-through font-medium">
-                          TK{p.price}
-                        </span>
-                      )}*/}
-                    </div>
+                  <div className="mt-3 md:mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between pt-3 md:pt-4 border-t border-gray-50 gap-3">
+                    <span className="text-base md:text-xl font-black text-gray-900">
+                      TK{p.discountPrice > 0 ? p.discountPrice : p.price}
+                    </span>
                     <Link
                       href={`/product/${p.slug || p._id}`}
-                      className="text-[10px] font-black uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-lg hover:bg-black hover:text-white transition-all duration-300"
+                      className="text-[10px] font-black uppercase tracking-widest bg-gray-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-black hover:text-white transition-all duration-300 w-full sm:w-auto text-center"
                     >
                       View →
                     </Link>

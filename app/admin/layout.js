@@ -12,6 +12,8 @@ import {
   FiSettings,
   FiLogOut,
   FiHome,
+  FiMenu,
+  FiX,
 } from 'react-icons/fi';
 
 export default function AdminLayout({ children }) {
@@ -19,6 +21,7 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,6 +58,11 @@ export default function AdminLayout({ children }) {
 
     return () => controller.abort();
   }, [pathname, router]);
+
+  // Close sidebar when route changes
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -97,13 +105,33 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col sticky top-0 h-screen">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row relative">
+      {/* Sidebar Overlay (Mobile only) */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
-        <div className="p-6 text-xl font-extrabold text-green-600 flex items-center gap-2"
+      {/* Sidebar */}
+      <aside className={`
+        fixed md:sticky top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col z-50
+        transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
+
+        <div className="p-6 text-xl font-extrabold text-green-600 flex items-center justify-between"
         >
-        <span className='text-black'>HatimZone</span> ADMIN
+          <div className="flex items-center gap-2">
+            <span className='text-black'>HatimZone</span> ADMIN
+          </div>
+          <button 
+            className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <FiX className="text-2xl" />
+          </button>
         </div>
 
         {/* Nav */}
@@ -161,17 +189,29 @@ export default function AdminLayout({ children }) {
         </div>
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
-          <h2 className="font-semibold text-gray-800">
-            {navItems.find(
-              (item) => item.href === pathname
-            )?.name || 'Dashboard'}
-          </h2>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-8 sticky top-0 z-30">
+          <div className="flex items-center gap-4">
+            <button 
+              className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => setIsSidebarOpen(true)}
+            >
+              <FiMenu className="text-2xl" />
+            </button>
+            <h2 className="font-semibold text-gray-800 truncate">
+              {navItems.find(
+                (item) => item.href === pathname
+              )?.name || 'Dashboard'}
+            </h2>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {/* You can add user profile or notifications here later */}
+          </div>
         </header>
 
-        <main className="p-8">{children}</main>
+        <main className="p-4 md:p-8 overflow-x-hidden">{children}</main>
       </div>
     </div>
   );

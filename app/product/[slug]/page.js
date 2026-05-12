@@ -131,7 +131,7 @@ export default function ProductDetailPage() {
     );
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 pb-20 md:pb-32">
+    <div className="min-h-screen bg-gray-100 text-gray-900 pb-20 md:pb-32">
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
 
         {/* MAIN PRODUCT CARD */}
@@ -154,7 +154,7 @@ export default function ProductDetailPage() {
                     ></iframe>
                     <button 
                       onClick={() => setShowVideo(false)}
-                      className="absolute top-4 left-4 z-30 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition"
+                      className="absolute top-4 left-4 z-30 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition"
                     >
                       Back to Photos
                     </button>
@@ -208,7 +208,7 @@ export default function ProductDetailPage() {
                     <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                       <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1" />
                     </div>
-                    <span className="text-[8px] font-black text-white uppercase tracking-widest">Video</span>
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Video</span>
                   </button>
                 )}
               </div>
@@ -218,7 +218,7 @@ export default function ProductDetailPage() {
             <div className="p-6 md:p-8 lg:p-16 flex flex-col justify-center">
               <div className="mb-6 md:mb-8">
                 <div className="flex items-center gap-3 mb-3 md:mb-4">
-                  <span className="bg-blue-50 text-blue-600 px-3 md:px-4 py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest">{product.brand}</span>
+                  <span className="bg-blue-50 text-blue-600 px-3 md:px-4 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest">{product.brand}</span>
                 </div>
 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tighter leading-tight mb-4 md:mb-6">
@@ -284,7 +284,7 @@ export default function ProductDetailPage() {
                   <div className="flex items-center gap-4 bg-green-50/50 p-4 md:p-5 rounded-2xl md:rounded-[2rem] border border-green-100">
                     <div className="w-8 h-8 md:w-10 md:h-10 bg-green-600 text-white rounded-xl md:rounded-2xl flex items-center justify-center text-lg shadow-lg shadow-green-100">🛡️</div>
                     <div>
-                      <p className="text-[9px] md:text-[10px] font-black text-green-600 uppercase tracking-widest">Authorized Warranty</p>
+                      <p className="text-[10px] md:text-xs font-black text-green-600 uppercase tracking-widest">Authorized Warranty</p>
                       <p className="text-sm md:text-md font-black text-gray-900">{product.warranty}</p>
                     </div>
                   </div>
@@ -302,7 +302,7 @@ export default function ProductDetailPage() {
 
         {/* DESCRIPTION TAB */}
         <div className="mt-16 md:mt-20 max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-[0.3em] mb-4 md:mb-6">Product Information</h2>
+          <h2 className="text-xs md:text-sm font-black text-gray-400 uppercase tracking-[0.3em] mb-4 md:mb-6">Product Information</h2>
           <p className="text-lg md:text-xl lg:text-2xl text-gray-700 font-medium leading-relaxed italic">
             "{product.description}"
           </p>
@@ -350,7 +350,7 @@ export default function ProductDetailPage() {
                           addToCart(p, 1);
                           alert("Added to cart!");
                         }}
-                        className="text-[10px] bg-black text-white px-4 py-2 rounded-lg font-black uppercase hover:bg-gray-800 transition"
+                        className="text-[11px] bg-black text-white px-4 py-2 rounded-lg font-black uppercase hover:bg-gray-800 transition"
                       >
                         Add +
                       </button>
@@ -363,7 +363,7 @@ export default function ProductDetailPage() {
             <div className="mt-12 md:mt-16 flex justify-center">
               <Link
                 href="/shop"
-                className="bg-black text-white px-10 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] md:text-xs hover:bg-gray-800 hover:scale-105 transition-all shadow-xl"
+                className="bg-black text-white px-10 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] md:text-xs hover:bg-gray-800 hover:scale-105 transition-all shadow-xl"
               >
                 View Full Collection
               </Link>

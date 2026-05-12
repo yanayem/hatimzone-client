@@ -104,10 +104,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-100 pb-20">
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
         
-        <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 md:mb-8">
+        <div className="flex items-center gap-2 text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 md:mb-8">
           <span>Cart</span>
           <HiChevronRight />
           <span className="text-black">Checkout</span>
@@ -128,7 +128,7 @@ export default function CheckoutPage() {
               <form onSubmit={handleSubmit} id="checkout-form" className="space-y-4 md:space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
                     <input
                       required
                       name="name"
@@ -139,7 +139,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
                     <input
                       required
                       name="phone"
@@ -152,7 +152,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="space-y-1.5 md:space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Delivery Address</label>
+                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Delivery Address</label>
                   <textarea
                     required
                     name="address"
@@ -166,7 +166,7 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Your City</label>
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Your City</label>
                     <select
                       name="city"
                       value={formData.city}
@@ -178,7 +178,7 @@ export default function CheckoutPage() {
                     </select>
                   </div>
                   <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Payment Method</label>
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Payment Method</label>
                     <div className="flex gap-4">
                       <label className={`flex-1 flex items-center justify-center gap-2 p-3.5 md:p-4 rounded-xl border cursor-pointer transition shadow-sm ${formData.paymentMethod === 'Cash on Delivery' ? 'border-black bg-black text-white' : 'border-gray-100 bg-white hover:border-black'}`}>
                         <input 
@@ -189,14 +189,14 @@ export default function CheckoutPage() {
                           onChange={handleChange}
                           className="hidden"
                         />
-                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-center">Cash on Delivery</span>
+                        <span className="text-[11px] md:text-xs font-black uppercase tracking-widest text-center">Cash on Delivery</span>
                       </label>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1.5 md:space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Delivery Notes (Optional)</label>
+                  <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Delivery Notes (Optional)</label>
                   <input
                     name="notes"
                     value={formData.notes}
@@ -233,7 +233,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-xs md:text-sm truncate text-gray-900">{item.name}</p>
-                      <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{item.quantity} x ৳{(item.discountPrice || item.price).toLocaleString()}</p>
+                      <p className="text-[11px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{item.quantity} x ৳{(item.discountPrice || item.price).toLocaleString()}</p>
                     </div>
                     <p className="font-black text-sm md:text-base">৳{((item.discountPrice || item.price) * item.quantity).toLocaleString()}</p>
                   </div>
@@ -266,7 +266,7 @@ export default function CheckoutPage() {
                 {loading ? "Placing Your Order..." : "Place Lamp Order"}
               </button>
 
-              <div className="mt-6 md:mt-8 flex items-center gap-3 text-[10px] md:text-xs text-green-600 font-bold uppercase tracking-widest justify-center">
+              <div className="mt-6 md:mt-8 flex items-center gap-3 text-[11px] md:text-xs text-green-600 font-bold uppercase tracking-widest justify-center">
                 <HiCheckCircle className="text-lg" />
                 Secure Lighting Checkout
               </div>

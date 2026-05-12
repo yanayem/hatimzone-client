@@ -6,24 +6,24 @@ import { HiOutlineLightBulb, HiOutlineStar, HiOutlineUserGroup, HiArrowRight } f
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-100">
       {/* HERO SECTION */}
-      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[50vh] md:h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=2000&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1534073828943-f801091bb18c?q=80&w=2000&auto=format&fit=crop"
             alt="About HatimZone"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px]" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
-          <h1 className="text-4xl md:text-7xl font-black uppercase tracking-tighter mb-6 leading-none">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-none">
             Our Story <br />
             <span className="italic font-light text-slate-300">Of Light.</span>
           </h1>
-          <p className="text-base md:text-xl font-light text-slate-200 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-xl font-light text-slate-200 max-w-2xl mx-auto leading-relaxed">
             HatimZone was born out of a passion for exquisite design and the belief that the right light can transform any space into a masterpiece.
           </p>
         </div>
@@ -54,17 +54,17 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
+            <div className="aspect-square md:aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1542728928-1413eeae4d92?q=80&w=1000&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=1000&auto=format&fit=crop"
                 className="w-full h-full object-cover"
                 alt="Craftsmanship"
               />
             </div>
-            <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100 hidden md:block">
-              <HiOutlineLightBulb className="text-5xl text-blue-600 mb-4" />
-              <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Handpicked Quality</p>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Every lamp tells a story</p>
+            <div className="absolute -bottom-6 md:-bottom-10 -left-6 md:-left-10 bg-white p-6 md:p-8 rounded-2xl md:rounded-[2rem] shadow-xl border border-gray-100 hidden sm:block">
+              <HiOutlineLightBulb className="text-3xl md:text-5xl text-blue-600 mb-2 md:mb-4" />
+              <p className="text-xs md:text-sm font-black text-slate-900 uppercase tracking-tight">Handpicked Quality</p>
+              <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Every lamp tells a story</p>
             </div>
           </div>
         </div>
