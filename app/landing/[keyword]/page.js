@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles } from "react-icons/hi";
 import { useRouter, useParams } from "next/navigation";
 import SuccessModal from "@/components/SuccessModal";
+import Loading from "@/components/ui/Loading";
 
 export default function DynamicLandingPage() {
    const [products, setProducts] = useState([]);
@@ -108,11 +109,7 @@ export default function DynamicLandingPage() {
       }
    };
 
-   if (loading) return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-         <div className="w-10 h-10 border-4 border-gray-100 border-t-black rounded-full animate-spin"></div>
-      </div>
-   );
+   if (loading) return <Loading />;
 
    return (
       <div className="bg-[#ffffff] min-h-screen text-gray-900 selection:bg-blue-100 pb-20 md:pb-32">
