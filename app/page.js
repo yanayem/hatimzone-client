@@ -1,4 +1,6 @@
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Link from "next/link";
@@ -12,21 +14,34 @@ import {
 } from "react-icons/hi";
 
 export default async function HomePage() {
-  await connectDB();
+  let newArrival = [];
+  let topSelling = [];
+  let categories = [];
 
-  // Parallel data fetching for better performance
-  const [newArrival, topSelling, categories] = await Promise.all([
-    Product.find({ isNewArrival: true })
-      .select("name price cover slug brand isNewArrival")
-      .sort({ createdAt: -1 })
-      .limit(8)
-      .lean(),
-    Product.find({ isTopSelling: true })
-      .select("name price cover slug brand isNewArrival")
-      .limit(8)
-      .lean(),
-    Product.distinct("category")
-  ]);
+  try {
+    await connectDB();
+
+    // Parallel data fetching for better performance
+    const results = await Promise.all([
+      Product.find({ isNewArrival: true })
+        .select("name price cover slug brand isNewArrival")
+        .sort({ createdAt: -1 })
+        .limit(8)
+        .lean(),
+      Product.find({ isTopSelling: true })
+        .select("name price cover slug brand isNewArrival")
+        .limit(8)
+        .lean(),
+      Product.distinct("category")
+    ]);
+    
+    newArrival = results[0] || [];
+    topSelling = results[1] || [];
+    categories = results[2] || [];
+  } catch (error) {
+    console.error("Error fetching home page data:", error);
+  }
+
 
   return (
     <div className="bg-gray-100 text-slate-950 min-h-screen selection:bg-zinc-200">

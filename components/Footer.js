@@ -51,7 +51,7 @@ export default function Footer() {
               <li><Link href="/about" className="text-sm font-bold text-gray-800 hover:text-blue-600 transition">About Us</Link></li>
               <li><Link href="/contact" className="text-sm font-bold text-gray-800 hover:text-blue-600 transition">Contact & Support</Link></li>
               <li><Link href="/account" className="text-sm font-bold text-gray-800 hover:text-blue-600 transition">Track Order</Link></li>
-              <li><Link href="/wishlist" className="text-sm font-bold text-gray-800 hover:text-blue-600 transition">My Wishlist</Link></li>
+             {/* <li><Link href="/wishlist" className="text-sm font-bold text-gray-800 hover:text-blue-600 transition">My Wishlist</Link></li> */} 
             </ul>
           </div>
 

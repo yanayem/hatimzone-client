@@ -1,23 +1,18 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Link from "next/link";
 import SortSelect from "@/components/SortSelect";
 
 export default async function ShopPage({ searchParams }) {
-  await connectDB();
-
   const params = await searchParams;
 
   const selectedCategories = params.category
     ? Array.isArray(params.category)
       ? params.category
       : [params.category]
-    : [];
-
-  const selectedSubCategories = params.subCategory
-    ? Array.isArray(params.subCategory)
-      ? params.subCategory
-      : [params.subCategory]
     : [];
 
   const selectedBrands = params.brand
@@ -57,8 +52,14 @@ export default async function ShopPage({ searchParams }) {
   if (sort === "price-low") sortOption = { price: 1 };
   if (sort === "price-high") sortOption = { price: -1 };
 
-  const [products, totalProducts, categories, brands] =
-    await Promise.all([
+  let products = [];
+  let totalProducts = 0;
+  let categories = [];
+  let brands = [];
+
+  try {
+    await connectDB();
+    const results = await Promise.all([
       Product.find(filter)
         .select("name price discountPrice cover slug brand")
         .sort(sortOption)
@@ -69,6 +70,14 @@ export default async function ShopPage({ searchParams }) {
       Product.distinct("category"),
       Product.distinct("brand"),
     ]);
+    products = results[0];
+    totalProducts = results[1];
+    categories = results[2];
+    brands = results[3];
+  } catch (error) {
+    console.error("Error fetching shop data:", error);
+  }
+
 
   const getToggleUrl = (key, value) => {
     const newParams = new URLSearchParams();
