@@ -53,7 +53,7 @@ export default function Navbar() {
     };
   }, [isMenuOpen]);
 
-  if (pathname.startsWith("/admin") || pathname === "/landing")
+  if (pathname.startsWith("/admin") || pathname.startsWith("/landing"))
     return null;
 
   return (

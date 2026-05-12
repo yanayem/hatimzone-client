@@ -3,20 +3,35 @@ import Product from "@/models/Product";
 import Settings from "@/models/Settings";
 import { successResponse, errorResponse } from "@/lib/api-utils";
 
-export async function GET() {
+export async function GET(request) {
   try {
     await connectDB();
 
-    // 1. Fetch featured or latest products
-    // We'll prioritize featured, then top selling, then new arrivals
-    const products = await Product.find({ 
+    const { searchParams } = new URL(request.url);
+    const keyword = searchParams.get("keyword");
+
+    let query = {
       $or: [
         { isFeatured: true },
         { isTopSelling: true },
         { isNewArrival: true }
-      ] 
-    })
-    .select("name price discountPrice cover slug brand")
+      ]
+    };
+
+    // If keyword is provided, search by tags or name
+    if (keyword) {
+      query = {
+        $or: [
+          { tags: { $in: [new RegExp(keyword, "i")] } },
+          { name: { $regex: keyword, $options: "i" } },
+          { category: { $regex: keyword, $options: "i" } }
+        ]
+      };
+    }
+
+    // 1. Fetch featured or latest products
+    const products = await Product.find(query)
+    .select("name price discountPrice cover slug brand tags")
     .sort({ createdAt: -1 })
     .limit(12)
     .lean();

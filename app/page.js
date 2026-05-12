@@ -167,11 +167,10 @@ export default async function HomePage() {
 
 function ProductCard({ product }) {
   return (
-    <Link 
-      href={`/product/${product.slug || product._id}`} 
+    <div 
       className="group flex flex-col h-full bg-white border border-zinc-200 rounded-lg overflow-hidden transition-all hover:shadow-xl hover:border-zinc-300"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-zinc-50 border-b border-zinc-100">
+      <Link href={`/product/${product.slug || product._id}`} className="relative aspect-[4/5] overflow-hidden bg-zinc-50 border-b border-zinc-100 block">
         <img
           src={product.cover || "https://placehold.co/600x800/e4e4e7/52525b?text=No+Image"}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -186,7 +185,7 @@ function ProductCard({ product }) {
             </span>
           </div>
         )}
-      </div>
+      </Link>
 
       <div className="flex flex-col flex-1 p-4">
         <div className="flex justify-between items-start mb-2">
@@ -198,20 +197,27 @@ function ProductCard({ product }) {
           </p>
         </div>
         
-        <h3 className="text-sm font-bold text-slate-800 group-hover:text-black transition-colors line-clamp-1 mb-4">
-          {product.name}
-        </h3>
+        <Link href={`/product/${product.slug || product._id}`}>
+          <h3 className="text-sm font-bold text-slate-800 hover:text-blue-600 transition-colors line-clamp-1 mb-6">
+            {product.name}
+          </h3>
+        </Link>
 
-        <div className="mt-auto flex items-center justify-between">
-          <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-blue-600">
-            <span>Details</span>
-            <HiArrowRight className="text-[11px]" />
-          </div>
-          <div className="w-6 h-6 rounded-full border border-zinc-200 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors">
-             <HiPlus className="text-xs" />
-          </div>
+        <div className="mt-auto grid grid-cols-2 gap-2">
+          <Link 
+            href={`/product/${product.slug || product._id}`}
+            className="flex items-center justify-center gap-1 py-2 px-1 border border-black rounded text-[9px] font-black uppercase tracking-tighter hover:bg-black hover:text-white transition-all"
+          >
+            See Details
+          </Link>
+          <Link 
+            href={`/product/${product.slug || product._id}`}
+            className="flex items-center justify-center gap-1 py-2 px-1 bg-black text-white rounded text-[9px] font-black uppercase tracking-tighter hover:bg-blue-600 transition-all shadow-md"
+          >
+            Buy Now
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
-}
+}

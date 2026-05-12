@@ -14,7 +14,7 @@ export default function Footer() {
   const pathname = usePathname();
   
   // Hide footer on admin and landing pages
-  if (pathname.startsWith("/admin") || pathname === "/landing") return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/landing")) return null;
 
   return (
     <footer className="bg-white border-t border-gray-100 pt-20 pb-10">

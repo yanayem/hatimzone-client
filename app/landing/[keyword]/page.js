@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles } from "react-icons/hi";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
-export default function LandingPage() {
+export default function DynamicLandingPage() {
    const [products, setProducts] = useState([]);
    const [loading, setLoading] = useState(true);
    const [orderLoading, setOrderLoading] = useState(false);
@@ -25,8 +25,8 @@ export default function LandingPage() {
 
    const formRef = useRef(null);
    const router = useRouter();
-   const searchParams = useSearchParams();
-   const keyword = searchParams.get("keyword");
+   const params = useParams();
+   const keyword = params?.keyword;
 
    useEffect(() => {
       const fetchData = async () => {
@@ -81,7 +81,7 @@ export default function LandingPage() {
             shippingCost: shippingCost,
             totalPrice: currentPrice + shippingCost,
             paymentMethod: "Cash on Delivery",
-            notes: "Landing Page Order"
+            notes: `Landing Page Order (${keyword || 'Direct'})`
          };
 
          const res = await fetch("/api/order", {
@@ -148,13 +148,13 @@ export default function LandingPage() {
          <section className="max-w-7xl mx-auto px-6 py-20 md:py-32">
             <div className="text-center mb-16 md:mb-24">
                <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter mb-4">
-                  {keyword ? `${keyword} কালেকশন` : "আমাদের কালেকশন"}
+                  {keyword ? `${decodeURIComponent(keyword)} কালেকশন` : "আমাদের কালেকশন"}
                </h2>
                <div className="w-20 h-1.5 bg-black mx-auto rounded-full"></div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-               {products.map((p) => (
+               {products.length > 0 ? products.map((p) => (
                   <div key={p._id} className="store-card group flex flex-col bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500">
                      <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative">
                         <img
@@ -189,7 +189,11 @@ export default function LandingPage() {
                         </div>
                      </div>
                   </div>
-               ))}
+               )) : (
+                  <div className="col-span-full text-center py-20">
+                      <p className="text-gray-400 font-bold">এই মুহূর্তে কোনো পণ্য পাওয়া যায়নি।</p>
+                  </div>
+               )}
             </div>
          </section>
 

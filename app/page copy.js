@@ -91,11 +91,13 @@ export default async function HomePage() {
       <section className="max-w-7xl mx-auto px-6 -mt-12 relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
+          {/* 
           <FeatureCard
             icon={<HiOutlineTruck />}
             title="Free Shipping"
             desc="On orders over ৳5000"
           />
+          */}
 
           <FeatureCard
             icon={<HiOutlineShieldCheck />}

@@ -85,7 +85,9 @@ export default function CheckoutPage() {
 
       if (data.success) {
         clearCart();
-        // Redirect to success page or account page
+        // Save phone to localStorage for auto-login on account page
+        localStorage.setItem("userPhone", formData.phone);
+        // Redirect to success page
         router.push(`/order-success?id=${data.data.orderId}`);
       } else {
         alert(data.message || "Failed to place order");

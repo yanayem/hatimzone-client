@@ -2,12 +2,30 @@
 
 import React, { Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { HiCheckCircle, HiShoppingBag, HiUser } from "react-icons/hi";
+import { useEffect, useState } from "react";
 
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const orderId = searchParams.get("id");
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push("/account");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
@@ -39,8 +57,13 @@ function OrderSuccessContent() {
           </Link>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-50 text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">
-          A confirmation SMS will be sent shortly
+        <div className="mt-12 pt-8 border-t border-gray-50 flex flex-col items-center gap-2">
+          <div className="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">
+            A confirmation SMS will be sent shortly
+          </div>
+          <div className="text-[9px] md:text-[10px] text-gray-300 font-bold uppercase tracking-widest">
+            Redirecting to your dashboard in {countdown}s...
+          </div>
         </div>
       </div>
     </div>
