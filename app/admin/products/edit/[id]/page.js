@@ -333,7 +333,7 @@ const EditProductPage = () => {
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
                           Tags / Keywords (Comma separated)
                         </label>
-                        <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. modern, glass, luxury, collection1" />
+                        <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. table-lamp,stand-lamp....." />
                     </div>
                 </div>
             </section>

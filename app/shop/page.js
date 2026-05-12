@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Link from "next/link";
 import SortSelect from "@/components/SortSelect";
+import ShopSearch from "@/components/shop/ShopSearch";
 
 export default async function ShopPage({ searchParams }) {
   const params = await searchParams;
@@ -27,7 +28,7 @@ export default async function ShopPage({ searchParams }) {
   const sort = params.sort || "newest";
   const page = Number(params.page) || 1;
 
-  const limit = 12;
+  const limit = 6;
   const skip = (page - 1) * limit;
 
   const filter = {};
@@ -114,17 +115,7 @@ export default async function ShopPage({ searchParams }) {
               </p>
             </div>
 
-            <form action="/shop" className="w-full lg:w-[400px] relative">
-              <input
-                name="q"
-                defaultValue={q}
-                placeholder="Search for lamps..."
-                className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-5 py-3.5 md:px-6 md:py-4 text-gray-900 font-bold outline-none transition-all text-xs md:text-sm"
-              />
-              <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              </button>
-            </form>
+            <ShopSearch initialQuery={q} />
           </div>
         </div>
       </div>
@@ -274,20 +265,49 @@ export default async function ShopPage({ searchParams }) {
             ))}
           </div>
 
-          {/* PAGINATION FALLBACK */}
-          {totalProducts > limit && (
-            <div className="mt-16 flex justify-center gap-2">
-              {[...Array(Math.ceil(totalProducts / limit))].map((_, i) => (
+          {/* PAGINATION */}
+          <div className="mt-16 flex justify-center items-center gap-3">
+            {/* Prev Button */}
+            {page > 1 ? (
+              <Link
+                href={`/shop?${new URLSearchParams({...params, page: page - 1}).toString()}`}
+                className="px-4 py-2 bg-white border border-gray-200 rounded-xl font-bold text-sm hover:bg-gray-50 transition"
+              >
+                Prev
+              </Link>
+            ) : (
+              <span className="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl font-bold text-sm text-gray-300 cursor-not-allowed">
+                Prev
+              </span>
+            )}
+
+            {/* Page Numbers */}
+            <div className="flex gap-2">
+              {[...Array(Math.max(1, Math.ceil(totalProducts / limit)))].map((_, i) => (
                 <Link
                   key={i}
-                  href={`/shop?page=${i + 1}`}
-                  className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition ${page === i + 1 ? 'bg-black text-white' : 'bg-white border hover:bg-gray-50'}`}
+                  href={`/shop?${new URLSearchParams({...params, page: i + 1}).toString()}`}
+                  className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition ${page === i + 1 ? 'bg-black text-white shadow-lg shadow-gray-200' : 'bg-white border hover:bg-gray-50 text-gray-600'}`}
                 >
                   {i + 1}
                 </Link>
               ))}
             </div>
-          )}
+
+            {/* Next Button */}
+            {page < Math.ceil(totalProducts / limit) ? (
+              <Link
+                href={`/shop?${new URLSearchParams({...params, page: page + 1}).toString()}`}
+                className="px-4 py-2 bg-white border border-gray-200 rounded-xl font-bold text-sm hover:bg-gray-50 transition"
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl font-bold text-sm text-gray-300 cursor-not-allowed">
+                Next
+              </span>
+            )}
+          </div>
 
         </main>
       </div>

@@ -10,7 +10,7 @@ function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("id");
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(2);
 
   useEffect(() => {
     const timer = setInterval(() => {

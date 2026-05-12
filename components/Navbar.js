@@ -126,9 +126,10 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* ACCOUNT */}
-          <Link href="/account" className="hidden sm:block p-2">
-            <HiOutlineUser className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 hover:text-blue-600 transition" />
+          {/* ACCOUNT / TRACKING */}
+          <Link href="/account" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-black hover:text-white rounded-full transition-all duration-300 group border border-gray-100">
+            <HiOutlineUser className="w-4 h-4 text-gray-800 group-hover:text-white transition" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Tracking Order</span>
           </Link>
 
           {/* MOBILE MENU BUTTON */}

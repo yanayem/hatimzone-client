@@ -206,13 +206,13 @@ function ProductCard({ product }) {
         <div className="mt-auto grid grid-cols-2 gap-2">
           <Link 
             href={`/product/${product.slug || product._id}`}
-            className="flex items-center justify-center gap-1 py-2 px-1 border border-black rounded text-[9px] font-black uppercase tracking-tighter hover:bg-black hover:text-white transition-all"
+            className="flex items-center justify-center  md:text-sm gap-1 py-2 px-1 border border-black rounded text-[9px] font-black uppercase tracking-tighter hover:bg-black hover:text-white transition-all"
           >
             See Details
           </Link>
           <Link 
             href={`/product/${product.slug || product._id}`}
-            className="flex items-center justify-center gap-1 py-2 px-1 bg-black text-white rounded text-[9px] font-black uppercase tracking-tighter hover:bg-blue-600 transition-all shadow-md"
+            className="flex items-center justify-center  md:text-sm gap-1 py-2 px-1 bg-black text-white rounded text-[9px] font-black uppercase tracking-tighter hover:bg-blue-600 transition-all shadow-md"
           >
             Buy Now
           </Link>
@@ -220,4 +220,4 @@ function ProductCard({ product }) {
       </div>
     </div>
   );
-}
+}
