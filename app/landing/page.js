@@ -110,10 +110,10 @@ export default function LandingPage() {
       <div className="bg-[#ffffff] min-h-screen text-gray-900 selection:bg-blue-100 pb-20 md:pb-32">
 
          {/* HERO SECTION - PREMIUM BOUTIQUE STYLE */}
-         <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center overflow-hidden">
+         <section className="relative h-screen flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 z-0">
                <img
-                  src="https://images.unsplash.com/photo-1581210020469-hp1kWCABonI?auto=format&fit=crop&w=2000&q=80"
+                  src="/imgq.jpg"
                   alt="Exclusive Lamp"
                   className="w-full h-full object-cover scale-105 animate-slow-zoom"
                />

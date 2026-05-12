@@ -98,9 +98,19 @@ export default function CheckoutPage() {
     }
   };
 
+  // Redirect if cart is empty - handle in useEffect to avoid SSR issues
+  React.useEffect(() => {
+    if (cart.length === 0) {
+      router.push("/cart");
+    }
+  }, [cart, router]);
+
   if (cart.length === 0) {
-    router.push("/cart");
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="font-bold text-gray-500 uppercase tracking-widest animate-pulse">Redirecting to cart...</p>
+      </div>
+    );
   }
 
   return (
