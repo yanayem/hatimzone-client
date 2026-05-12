@@ -1,17 +1,17 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 import React, { useState, useEffect, useRef } from "react";
 import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles } from "react-icons/hi";
 import { useRouter, useParams } from "next/navigation";
+import SuccessModal from "@/components/SuccessModal";
 
 export default function DynamicLandingPage() {
    const [products, setProducts] = useState([]);
    const [loading, setLoading] = useState(true);
    const [orderLoading, setOrderLoading] = useState(false);
    const [selectedProduct, setSelectedProduct] = useState(null);
+   const [showSuccess, setShowSuccess] = useState(false);
+   const [lastOrderId, setLastOrderId] = useState("");
 
    const [settings, setSettings] = useState({
       shippingInsideDhaka: 70,
@@ -95,7 +95,9 @@ export default function DynamicLandingPage() {
 
          const data = await res.json();
          if (data.success) {
-            router.push(`/order-success?id=${data.data.orderId}`);
+            localStorage.setItem("userPhone", customer.phone);
+            setLastOrderId(data.data.orderId);
+            setShowSuccess(true);
          } else {
             alert(data.message || "অর্ডার সম্পন্ন করা যায়নি");
          }
@@ -351,6 +353,12 @@ export default function DynamicLandingPage() {
                পছন্দের ল্যাম্পটি অর্ডার করুন
             </button>
          </div>
+
+         <SuccessModal 
+            isOpen={showSuccess} 
+            onClose={() => setShowSuccess(false)} 
+            orderId={lastOrderId} 
+         />
 
       </div>
    );

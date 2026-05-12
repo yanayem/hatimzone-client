@@ -1,13 +1,22 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 import React, { useState, useEffect, useRef } from "react";
 import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles } from "react-icons/hi";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LandingPage() {
+   return (
+      <React.Suspense fallback={
+         <div className="min-h-screen flex items-center justify-center bg-white">
+            <div className="w-10 h-10 border-4 border-gray-100 border-t-black rounded-full animate-spin"></div>
+         </div>
+      }>
+         <LandingPageContent />
+      </React.Suspense>
+   );
+}
+
+function LandingPageContent() {
    const [products, setProducts] = useState([]);
    const [loading, setLoading] = useState(true);
    const [orderLoading, setOrderLoading] = useState(false);

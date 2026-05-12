@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartContext";
 import { HiCheckCircle, HiChevronRight, HiShoppingBag } from "react-icons/hi";
+import SuccessModal from "@/components/SuccessModal";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, clearCart } = useCart();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -87,8 +90,10 @@ export default function CheckoutPage() {
         clearCart();
         // Save phone to localStorage for auto-login on account page
         localStorage.setItem("userPhone", formData.phone);
-        // Redirect to success page
-        router.push(`/order-success?id=${data.data.orderId}`);
+        
+        // Show Success Modal instead of redirect
+        setLastOrderId(data.data.orderId);
+        setShowSuccess(true);
       } else {
         alert(data.message || "Failed to place order");
       }
@@ -102,12 +107,12 @@ export default function CheckoutPage() {
 
   // Redirect if cart is empty - handle in useEffect to avoid SSR issues
   React.useEffect(() => {
-    if (cart.length === 0) {
+    if (cart.length === 0 && !showSuccess) {
       router.push("/cart");
     }
-  }, [cart, router]);
+  }, [cart, router, showSuccess]);
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && !showSuccess) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <p className="font-bold text-gray-500 uppercase tracking-widest animate-pulse">Redirecting to cart...</p>
@@ -286,6 +291,15 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      <SuccessModal 
+        isOpen={showSuccess} 
+        onClose={() => {
+            setShowSuccess(false);
+            router.push("/shop");
+        }} 
+        orderId={lastOrderId} 
+      />
     </div>
   );
 }
