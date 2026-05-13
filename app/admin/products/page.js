@@ -93,12 +93,12 @@ const ProductsPage = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
 
-            <thead className="bg-gray-50 text-gray-500 uppercase text-[10px] font-extrabold tracking-widest border-b border-gray-100">
+            <thead className="bg-gray-50 text-gray-500 uppercase text-[12px] font-extrabold tracking-widest border-b border-gray-100">
               <tr>
                 <th className="px-6 py-5">Product Info</th>
                 <th className="px-6 py-5">Price</th>
                 {/* <th className="px-6 py-5">Discount Price</th> */}
-               {/* <th className="px-6 py-5">Stock Value</th> */}
+                {/* <th className="px-6 py-5">Stock Value</th> */}
                 {/* <th className="px-6 py-5">Category & Tags</th> */}
                 <th className="px-6 py-5 text-right">Actions</th>
               </tr>
@@ -133,7 +133,7 @@ const ProductsPage = () => {
                         </div>
                         <div>
                           <p className="font-bold text-gray-800 text-sm line-clamp-1">{product.name}</p>
-                          <p className="text-[10px] text-gray-400 font-medium">ID: {product._id.substring(18)}</p>
+                          <p className="text-[12px] text-gray-400 font-medium">ID: {product._id.substring(18)}</p>
                         </div>
                       </div>
                     </td>
@@ -178,9 +178,9 @@ const ProductsPage = () => {
                     {/* <td className="px-6 py-4">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">{product.category}</span>
+                          <span className="text-[12px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded w-fit">{product.category}</span>
                           {product.subCategory && (
-                            <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded w-fit border border-blue-100">{product.subCategory}</span>
+                            <span className="text-[12px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded w-fit border border-blue-100">{product.subCategory}</span>
                           )}
                         </div>
                         <div className="flex flex-wrap gap-1">

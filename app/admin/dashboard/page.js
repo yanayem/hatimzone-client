@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { 
-  HiOutlineShoppingBag, 
-  HiOutlineCurrencyBangladeshi, 
-  HiOutlineCube, 
-  HiOutlineClock,
-  HiOutlineTrendingUp,
-  HiOutlineArrowRight
+import {
+    HiOutlineShoppingBag,
+    HiOutlineCurrencyBangladeshi,
+    HiOutlineCube,
+    HiOutlineClock,
+    HiOutlineTrendingUp,
+    HiOutlineArrowRight
 } from "react-icons/hi";
 import Link from "next/link";
 
@@ -41,35 +41,35 @@ export default function AdminDashboard() {
     );
 
     const stats = [
-        { 
-            label: "Total Revenue", 
-            value: `৳${data?.totalRevenue?.toLocaleString() || 0}`, 
-            icon: HiOutlineCurrencyBangladeshi, 
-            color: "text-green-600", 
+        {
+            label: "Total Revenue",
+            value: `৳${data?.totalRevenue?.toLocaleString() || 0}`,
+            icon: HiOutlineCurrencyBangladeshi,
+            color: "text-green-600",
             bg: "bg-green-50",
             trend: "+12.5% this month"
         },
-        { 
-            label: "Total Orders", 
-            value: data?.totalOrders || 0, 
-            icon: HiOutlineShoppingBag, 
-            color: "text-blue-600", 
+        {
+            label: "Total Orders",
+            value: data?.totalOrders || 0,
+            icon: HiOutlineShoppingBag,
+            color: "text-blue-600",
             bg: "bg-blue-50",
             trend: "Overall sales"
         },
-        { 
-            label: "Pending Orders", 
-            value: data?.pendingOrders || 0, 
-            icon: HiOutlineClock, 
-            color: "text-orange-600", 
+        {
+            label: "Pending Orders",
+            value: data?.pendingOrders || 0,
+            icon: HiOutlineClock,
+            color: "text-orange-600",
             bg: "bg-orange-50",
             trend: "Action required"
         },
-        { 
-            label: "Products", 
-            value: data?.totalProducts || 0, 
-            icon: HiOutlineCube, 
-            color: "text-purple-600", 
+        {
+            label: "Products",
+            value: data?.totalProducts || 0,
+            icon: HiOutlineCube,
+            color: "text-purple-600",
             bg: "bg-purple-50",
             trend: "In inventory"
         },
@@ -122,10 +122,10 @@ export default function AdminDashboard() {
                         <table className="w-full text-left">
                             <thead className="bg-gray-50/50">
                                 <tr>
-                                    <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">ID</th>
-                                    <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
-                                    <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                                    <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                                    <th className="px-8 py-4 text-[12px] font-black text-gray-400 uppercase tracking-widest">ID</th>
+                                    <th className="px-8 py-4 text-[12px] font-black text-gray-400 uppercase tracking-widest">Customer</th>
+                                    <th className="px-8 py-4 text-[12px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
+                                    <th className="px-8 py-4 text-[12px] font-black text-gray-400 uppercase tracking-widest">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
@@ -134,23 +134,22 @@ export default function AdminDashboard() {
                                         <tr key={order._id} className="hover:bg-gray-50/30 transition">
                                             <td className="px-8 py-5">
                                                 <p className="text-sm font-black text-gray-900">#{order.orderId}</p>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                                <p className="text-[12px] font-bold text-gray-400 uppercase tracking-tighter">
                                                     {new Date(order.createdAt).toLocaleDateString()}
                                                 </p>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <p className="text-sm font-bold text-gray-900">{order.customer.name}</p>
-                                                <p className="text-[10px] text-gray-400 font-medium">{order.customer.phone}</p>
+                                                <p className="text-[12px] text-gray-400 font-medium">{order.customer.phone}</p>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <p className="text-sm font-black text-gray-900">৳{order.totalPrice}</p>
                                             </td>
                                             <td className="px-8 py-5">
-                                                <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
-                                                    order.status === 'Pending' ? 'bg-orange-50 text-orange-500' :
-                                                    order.status === 'Delivered' ? 'bg-green-50 text-green-500' :
-                                                    'bg-blue-50 text-blue-500'
-                                                }`}>
+                                                <span className={`text-[12px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${order.status === 'Pending' ? 'bg-orange-50 text-orange-500' :
+                                                        order.status === 'Delivered' ? 'bg-green-50 text-green-500' :
+                                                            'bg-blue-50 text-blue-500'
+                                                    }`}>
                                                     {order.status}
                                                 </span>
                                             </td>

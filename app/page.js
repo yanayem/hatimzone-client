@@ -4,11 +4,11 @@ export const revalidate = 0;
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Link from "next/link";
-import { 
-  HiOutlineCollection, 
-  HiOutlineStar, 
-  HiOutlineTrendingUp, 
-  HiArrowRight, 
+import {
+  HiOutlineCollection,
+  HiOutlineStar,
+  HiOutlineTrendingUp,
+  HiArrowRight,
   HiOutlineSparkles,
   HiPlus
 } from "react-icons/hi";
@@ -34,7 +34,7 @@ export default async function HomePage() {
         .lean(),
       Product.distinct("category")
     ]);
-    
+
     newArrival = results[0] || [];
     topSelling = results[1] || [];
     categories = results[2] || [];
@@ -45,12 +45,12 @@ export default async function HomePage() {
 
   return (
     <div className="bg-gray-100 text-slate-950 min-h-screen selection:bg-zinc-200">
-      
+
       {/* HERO: FEATURING YOUR SELECTED LAMP */}
       <section className="relative h-[85vh] md:h-[100vh] flex items-center overflow-hidden bg-zinc-100">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=2070&auto=format&fit=crop" 
+            src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?q=80&w=2070&auto=format&fit=crop"
             alt="Minimalist Table Lamp"
             className="w-full h-full object-cover animate-slow-zoom"
           />
@@ -62,7 +62,7 @@ export default async function HomePage() {
           <div className="max-w-2xl text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 md:mb-8 transition-transform hover:scale-105">
               <HiOutlineSparkles className="text-amber-300 text-xs md:text-base" />
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Premium Lighting Collection</span>
+              <span className="text-[12px] font-bold tracking-[0.3em] uppercase">Premium Lighting Collection</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl md:text-8xl font-black leading-[1.1] tracking-tighter mb-4 md:mb-8 uppercase">
@@ -113,7 +113,7 @@ export default async function HomePage() {
             </div>
             <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-slate-950">Latest Lamp Designs</h2>
           </div>
-         
+
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 md:gap-y-12">
@@ -123,8 +123,8 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <Link 
-            href="/shop" 
+          <Link
+            href="/shop"
             className="group flex items-center gap-3 bg-black text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-xl shadow-gray-200 active:scale-95"
           >
             See All Lamps Collection
@@ -150,8 +150,8 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-12 flex justify-center">
-            <Link 
-              href="/shop" 
+            <Link
+              href="/shop"
               className="group flex items-center gap-3 bg-white border-2 border-black text-black px-10 py-4 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-lg active:scale-95"
             >
               Shop Best Sellers
@@ -167,7 +167,7 @@ export default async function HomePage() {
 
 function ProductCard({ product }) {
   return (
-    <div 
+    <div
       className="group flex flex-col h-full bg-white border border-zinc-200 rounded-lg overflow-hidden transition-all hover:shadow-xl hover:border-zinc-300"
     >
       <Link href={`/product/${product.slug || product._id}`} className="relative aspect-[4/5] overflow-hidden bg-zinc-50 border-b border-zinc-100 block">
@@ -177,10 +177,10 @@ function ProductCard({ product }) {
           alt={product.name}
           loading="lazy"
         />
-        
+
         {product.isNewArrival && (
           <div className="absolute top-3 left-3">
-            <span className="bg-black text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest shadow-lg">
+            <span className="bg-black text-white text-[12px] font-black px-2 py-1 rounded uppercase tracking-widest shadow-lg">
               New
             </span>
           </div>
@@ -189,14 +189,14 @@ function ProductCard({ product }) {
 
       <div className="flex flex-col flex-1 p-4">
         <div className="flex justify-between items-start mb-2">
-          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+          <p className="text-[12px] font-bold text-zinc-400 uppercase tracking-widest">
             {product.brand || 'Premium Lighting'}
           </p>
           <p className="text-sm font-black text-slate-950">
             ৳{product.price.toLocaleString()}
           </p>
         </div>
-        
+
         <Link href={`/product/${product.slug || product._id}`}>
           <h3 className="text-sm font-bold text-slate-800 hover:text-blue-600 transition-colors line-clamp-1 mb-6">
             {product.name}
@@ -204,13 +204,13 @@ function ProductCard({ product }) {
         </Link>
 
         <div className="mt-auto grid grid-cols-2 gap-2">
-          <Link 
+          <Link
             href={`/product/${product.slug || product._id}`}
             className="flex items-center justify-center  md:text-sm gap-1 py-2 px-1 border border-black rounded text-[9px] font-black uppercase tracking-tighter hover:bg-black hover:text-white transition-all"
           >
             See Details
           </Link>
-          <Link 
+          <Link
             href={`/product/${product.slug || product._id}`}
             className="flex items-center justify-center  md:text-sm gap-1 py-2 px-1 bg-black text-white rounded text-[9px] font-black uppercase tracking-tighter hover:bg-blue-600 transition-all shadow-md"
           >

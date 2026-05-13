@@ -10,8 +10,8 @@ export default function SuccessModal({ isOpen, onClose, orderId }) {
     return (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
             {/* Overlay */}
-            <div 
-                className="absolute inset-0 bg-black/60 backdrop-blur-md animate-fade-in" 
+            <div
+                className="absolute inset-0 bg-black/60 backdrop-blur-md animate-fade-in"
                 onClick={onClose}
             ></div>
 
@@ -19,8 +19,8 @@ export default function SuccessModal({ isOpen, onClose, orderId }) {
             <div className="relative bg-white w-full max-w-md rounded-[3rem] p-8 md:p-12 text-center shadow-2xl animate-scale-up overflow-hidden border border-gray-100">
                 {/* Decorative Background Element */}
                 <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-green-50 to-transparent -z-10"></div>
-                
-                <button 
+
+                <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-full transition"
                 >
@@ -60,7 +60,7 @@ export default function SuccessModal({ isOpen, onClose, orderId }) {
                 </div>
 
                 <div className="mt-10 flex flex-col items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-gray-400">
                         HatimZone · Premium Lighting
                     </span>
                 </div>

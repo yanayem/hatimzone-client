@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  HiOutlineMail, 
-  HiOutlinePhone, 
-  HiOutlineLocationMarker, 
+import {
+  HiOutlineMail,
+  HiOutlinePhone,
+  HiOutlineLocationMarker,
   HiOutlineChatAlt2,
   HiCheckCircle,
   HiOutlineArrowRight
@@ -19,7 +19,7 @@ export default function ContactPage() {
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-none">
             Get in <span className="italic font-light text-slate-400">Touch.</span>
           </h1>
-          <p className="text-slate-400 text-[10px] sm:text-sm md:text-lg font-bold max-w-xl mx-auto uppercase tracking-[0.2em]">
+          <p className="text-slate-400 text-[12px] sm:text-sm md:text-lg font-bold max-w-xl mx-auto uppercase tracking-[0.2em]">
             We're here to help you find the perfect lighting for your home.
           </p>
         </div>

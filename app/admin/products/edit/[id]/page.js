@@ -2,343 +2,343 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { 
-  HiOutlinePhotograph, 
-  HiOutlineCube, 
-  HiOutlineTag, 
-  HiOutlineCurrencyBangladeshi,
-  HiOutlineInformationCircle,
-  HiOutlineTruck,
-  HiOutlinePlusCircle,
-  HiOutlineTrash,
-  HiOutlineSave,
-  HiX
+import {
+    HiOutlinePhotograph,
+    HiOutlineCube,
+    HiOutlineTag,
+    HiOutlineCurrencyBangladeshi,
+    HiOutlineInformationCircle,
+    HiOutlineTruck,
+    HiOutlinePlusCircle,
+    HiOutlineTrash,
+    HiOutlineSave,
+    HiX
 } from "react-icons/hi";
 
 const EditProductPage = () => {
-  const router = useRouter();
-  const { id } = useParams();
-  
-  const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-    description: "",
-    price: "",
-    discountPrice: "",
-    category: "",
-    subCategory: "",
-    stockQuantity: "",
-    material: "",
-    color: "",
-    bulbType: "",
-    wattage: "",
-    powerSource: "",
-    warranty: "",
-    isNewArrival: false,
-    isTopSelling: false,
-    isFeatured: false,
-    tags: "",
-    videoUrl: "",
-  });
+    const router = useRouter();
+    const { id } = useParams();
 
-  const [dimensions, setDimensions] = useState({ length: "", width: "", height: "" });
-  const [deliveryCost, setDeliveryCost] = useState({ insideDhaka: 60, outsideDhaka: 120 });
-  const [specifications, setSpecifications] = useState([{ key: "", value: "" }]);
-  const [variants, setVariants] = useState([{ size: "", color: "", material: "", stock: 0, additionalPrice: 0 }]);
-  const [usageInstructions, setUsageInstructions] = useState([""]);
-  const [videos, setVideos] = useState([""]);
-  
-  const [images, setImages] = useState([]);
-  const [imagePreviews, setImagePreviews] = useState([]);
-  const [existingImages, setExistingImages] = useState([]);
-  const [cover, setCover] = useState(null);
-  const [coverPreview, setCoverPreview] = useState(null);
-  const [existingCover, setExistingCover] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [categories, setCategories] = useState([]);
+    const [formData, setFormData] = useState({
+        name: "",
+        brand: "",
+        description: "",
+        price: "",
+        discountPrice: "",
+        category: "",
+        subCategory: "",
+        stockQuantity: "",
+        material: "",
+        color: "",
+        bulbType: "",
+        wattage: "",
+        powerSource: "",
+        warranty: "",
+        isNewArrival: false,
+        isTopSelling: false,
+        isFeatured: false,
+        tags: "",
+        videoUrl: "",
+    });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch Categories
-        const catRes = await fetch("/api/admin/categories");
-        const catData = await catRes.json();
-        if (catData.success) {
-            setCategories(catData.data || catData.categories || []);
-        }
+    const [dimensions, setDimensions] = useState({ length: "", width: "", height: "" });
+    const [deliveryCost, setDeliveryCost] = useState({ insideDhaka: 60, outsideDhaka: 120 });
+    const [specifications, setSpecifications] = useState([{ key: "", value: "" }]);
+    const [variants, setVariants] = useState([{ size: "", color: "", material: "", stock: 0, additionalPrice: 0 }]);
+    const [usageInstructions, setUsageInstructions] = useState([""]);
+    const [videos, setVideos] = useState([""]);
 
-        // Fetch Product
-        const prodRes = await fetch(`/api/admin/products/${id}`);
-        const prodData = await prodRes.json();
-        if (prodData.success) {
-            const p = prodData.data || prodData.product;
-            setFormData({
-                name: p.name || "",
-                brand: p.brand || "",
-                description: p.description || "",
-                price: p.price || "",
-                discountPrice: p.discountPrice || "",
-                category: p.category || "",
-                subCategory: p.subCategory || "",
-                stockQuantity: p.stockQuantity ?? 0,
-                material: p.material || "",
-                color: p.color || "",
-                bulbType: p.bulbType || "",
-                wattage: p.wattage || "",
-                powerSource: p.powerSource || "",
-                warranty: p.warranty || "",
-                isNewArrival: !!p.isNewArrival,
-                isTopSelling: !!p.isTopSelling,
-                isFeatured: !!p.isFeatured,
-                tags: p.tags?.join(", ") || "",
-                videoUrl: p.videoUrl || "",
-            });
-            setDimensions(p.dimensions || { length: "", width: "", height: "" });
-            setDeliveryCost(p.deliveryCost || { insideDhaka: 60, outsideDhaka: 120 });
-            
-            const specs = Object.entries(p.specifications || {}).map(([key, value]) => ({ key, value }));
-            setSpecifications(specs.length > 0 ? specs : [{ key: "", value: "" }]);
-            
-            setVariants(p.variants?.length > 0 ? p.variants : [{ size: "", color: "", material: "", stock: 0, additionalPrice: 0 }]);
-            setUsageInstructions(p.usageInstructions?.length > 0 ? p.usageInstructions : [""]);
-            setVideos(p.videos?.length > 0 ? p.videos : [""]);
-            setExistingImages(p.images || []);
-            setExistingCover(p.cover || null);
-        }
-      } catch (err) {
-        setError("Failed to load data. Please refresh.");
-      } finally {
-        setLoading(false);
-      }
+    const [images, setImages] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
+    const [existingImages, setExistingImages] = useState([]);
+    const [cover, setCover] = useState(null);
+    const [coverPreview, setCoverPreview] = useState(null);
+    const [existingCover, setExistingCover] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch Categories
+                const catRes = await fetch("/api/admin/categories");
+                const catData = await catRes.json();
+                if (catData.success) {
+                    setCategories(catData.data || catData.categories || []);
+                }
+
+                // Fetch Product
+                const prodRes = await fetch(`/api/admin/products/${id}`);
+                const prodData = await prodRes.json();
+                if (prodData.success) {
+                    const p = prodData.data || prodData.product;
+                    setFormData({
+                        name: p.name || "",
+                        brand: p.brand || "",
+                        description: p.description || "",
+                        price: p.price || "",
+                        discountPrice: p.discountPrice || "",
+                        category: p.category || "",
+                        subCategory: p.subCategory || "",
+                        stockQuantity: p.stockQuantity ?? 0,
+                        material: p.material || "",
+                        color: p.color || "",
+                        bulbType: p.bulbType || "",
+                        wattage: p.wattage || "",
+                        powerSource: p.powerSource || "",
+                        warranty: p.warranty || "",
+                        isNewArrival: !!p.isNewArrival,
+                        isTopSelling: !!p.isTopSelling,
+                        isFeatured: !!p.isFeatured,
+                        tags: p.tags?.join(", ") || "",
+                        videoUrl: p.videoUrl || "",
+                    });
+                    setDimensions(p.dimensions || { length: "", width: "", height: "" });
+                    setDeliveryCost(p.deliveryCost || { insideDhaka: 60, outsideDhaka: 120 });
+
+                    const specs = Object.entries(p.specifications || {}).map(([key, value]) => ({ key, value }));
+                    setSpecifications(specs.length > 0 ? specs : [{ key: "", value: "" }]);
+
+                    setVariants(p.variants?.length > 0 ? p.variants : [{ size: "", color: "", material: "", stock: 0, additionalPrice: 0 }]);
+                    setUsageInstructions(p.usageInstructions?.length > 0 ? p.usageInstructions : [""]);
+                    setVideos(p.videos?.length > 0 ? p.videos : [""]);
+                    setExistingImages(p.images || []);
+                    setExistingCover(p.cover || null);
+                }
+            } catch (err) {
+                setError("Failed to load data. Please refresh.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [id]);
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData((prev) => {
+            const updated = { ...prev, [name]: type === "checkbox" ? checked : value };
+            if (name === "category") updated.subCategory = "";
+            return updated;
+        });
     };
-    fetchData();
-  }, [id]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => {
-      const updated = { ...prev, [name]: type === "checkbox" ? checked : value };
-      if (name === "category") updated.subCategory = "";
-      return updated;
-    });
-  };
+    const handleDimensionChange = (e) => {
+        const { name, value } = e.target;
+        setDimensions(prev => ({ ...prev, [name]: value }));
+    };
 
-  const handleDimensionChange = (e) => {
-    const { name, value } = e.target;
-    setDimensions(prev => ({ ...prev, [name]: value }));
-  };
+    const handleDeliveryChange = (e) => {
+        const { name, value } = e.target;
+        setDeliveryCost(prev => ({ ...prev, [name]: Number(value) }));
+    };
 
-  const handleDeliveryChange = (e) => {
-    const { name, value } = e.target;
-    setDeliveryCost(prev => ({ ...prev, [name]: Number(value) }));
-  };
+    const handleVariantChange = (index, field, value) => {
+        setVariants(prev => {
+            const updated = [...prev];
+            updated[index][field] = (field === 'stock' || field === 'additionalPrice') ? Number(value) : value;
+            return updated;
+        });
+    };
 
-  const handleVariantChange = (index, field, value) => {
-    setVariants(prev => {
-        const updated = [...prev];
-        updated[index][field] = (field === 'stock' || field === 'additionalPrice') ? Number(value) : value;
-        return updated;
-    });
-  };
+    const handleSpecChange = (index, field, value) => {
+        setSpecifications(prev => {
+            const updated = [...prev];
+            updated[index][field] = value;
+            return updated;
+        });
+    };
 
-  const handleSpecChange = (index, field, value) => {
-    setSpecifications(prev => {
-        const updated = [...prev];
-        updated[index][field] = value;
-        return updated;
-    });
-  };
+    const addListItem = (setter, defaultValue = "") => setter(prev => [...prev, defaultValue]);
+    const removeListItem = (index, setter) => setter(prev => prev.filter((_, i) => i !== index));
 
-  const addListItem = (setter, defaultValue = "") => setter(prev => [...prev, defaultValue]);
-  const removeListItem = (index, setter) => setter(prev => prev.filter((_, i) => i !== index));
+    const handleCoverChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setCover(file);
+            setCoverPreview(URL.createObjectURL(file));
+            setExistingCover(null);
+        }
+    };
 
-  const handleCoverChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setCover(file);
-      setCoverPreview(URL.createObjectURL(file));
-      setExistingCover(null);
-    }
-  };
+    const removeNewImage = (index) => {
+        setImages((prev) => prev.filter((_, i) => i !== index));
+        setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    };
 
-  const removeNewImage = (index) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  };
+    const removeExistingImage = (index) => setExistingImages(prev => prev.filter((_, i) => i !== index));
 
-  const removeExistingImage = (index) => setExistingImages(prev => prev.filter((_, i) => i !== index));
+    const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
 
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
+    const validateForm = () => {
+        if (formData.name.trim().length < 3) return "Product title must be at least 3 characters.";
+        if (!formData.price || Number(formData.price) <= 0) return "Please enter a valid base price.";
+        if (!cover && !existingCover) return "Cover image is required.";
+        return null;
+    };
 
-  const validateForm = () => {
-    if (formData.name.trim().length < 3) return "Product title must be at least 3 characters.";
-    if (!formData.price || Number(formData.price) <= 0) return "Please enter a valid base price.";
-    if (!cover && !existingCover) return "Cover image is required.";
-    return null;
-  };
+    const handleSubmit = async (e) => {
+        if (e) e.preventDefault();
+        setSaving(true);
+        setError("");
+        setSuccess("");
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    setSaving(true);
-    setError("");
-    setSuccess("");
+        const validationError = validateForm();
+        if (validationError) {
+            setError(validationError);
+            setSaving(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      setSaving(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+        try {
+            const base64Images = await Promise.all(images.map((img) => fileToBase64(img)));
+            const base64Cover = cover ? await fileToBase64(cover) : null;
 
-    try {
-      const base64Images = await Promise.all(images.map((img) => fileToBase64(img)));
-      const base64Cover = cover ? await fileToBase64(cover) : null;
-      
-      const specsObj = {};
-      specifications.forEach(s => {
-        if (s.key.trim()) specsObj[s.key.trim()] = s.value.trim();
-      });
+            const specsObj = {};
+            specifications.forEach(s => {
+                if (s.key.trim()) specsObj[s.key.trim()] = s.value.trim();
+            });
 
-      const payload = {
-        ...formData,
-        price: Number(formData.price),
-        discountPrice: Number(formData.discountPrice || 0),
-        stockQuantity: Math.max(0, Number(formData.stockQuantity || 0)),
-        tags: formData.tags.split(",").map(t => t.trim()).filter(Boolean),
-        dimensions,
-        deliveryCost,
-        specifications: specsObj,
-        variants: variants.map(v => ({
-            ...v,
-            stock: Math.max(0, Number(v.stock || 0)),
-            additionalPrice: Math.max(0, Number(v.additionalPrice || 0))
-        })).filter(v => v.size || v.color || v.material),
-        usageInstructions: usageInstructions.filter(i => i.trim()),
-        videos: videos.filter(v => v.trim()),
-        images: [...existingImages, ...base64Images],
-        cover: base64Cover || existingCover,
-      };
+            const payload = {
+                ...formData,
+                price: Number(formData.price),
+                discountPrice: Number(formData.discountPrice || 0),
+                stockQuantity: Math.max(0, Number(formData.stockQuantity || 0)),
+                tags: formData.tags.split(",").map(t => t.trim()).filter(Boolean),
+                dimensions,
+                deliveryCost,
+                specifications: specsObj,
+                variants: variants.map(v => ({
+                    ...v,
+                    stock: Math.max(0, Number(v.stock || 0)),
+                    additionalPrice: Math.max(0, Number(v.additionalPrice || 0))
+                })).filter(v => v.size || v.color || v.material),
+                usageInstructions: usageInstructions.filter(i => i.trim()),
+                videos: videos.filter(v => v.trim()),
+                images: [...existingImages, ...base64Images],
+                cover: base64Cover || existingCover,
+            };
 
-      const res = await fetch(`/api/admin/products/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+            const res = await fetch(`/api/admin/products/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
 
-      const data = await res.json();
-      if (data.success) {
-        setSuccess("Product saved successfully!");
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => router.push("/admin/products"), 1500);
-      } else {
-        setError(data.message || "Failed to save changes.");
-      }
-    } catch (err) {
-      setError("Network error. Please check your connection.");
-    } finally {
-      setSaving(false);
-    }
-  };
+            const data = await res.json();
+            if (data.success) {
+                setSuccess("Product saved successfully!");
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => router.push("/admin/products"), 1500);
+            } else {
+                setError(data.message || "Failed to save changes.");
+            }
+        } catch (err) {
+            setError("Network error. Please check your connection.");
+        } finally {
+            setSaving(false);
+        }
+    };
 
-  if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
-        <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-black font-black uppercase tracking-widest text-xs">Syncing Product Data...</p>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-gray-100 pb-32">
-      {/* HEADER */}
-      <div className="bg-white border-b sticky top-0 z-40 px-4 md:px-6 py-4 md:py-6 shadow-sm">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h1 className="text-2xl md:text-3xl font-black text-black tracking-tighter uppercase">Edit Collection</h1>
-                <p className="text-gray-500 text-xs md:text-sm font-bold">Managing: {formData.name || "Untitled Product"}</p>
-            </div>
-            <div className="flex gap-2 md:gap-4 w-full sm:w-auto">
-                <button onClick={() => router.back()} className="flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-3 border-2 border-gray-100 rounded-xl md:rounded-2xl font-bold text-gray-400 hover:text-black hover:border-black transition text-sm md:text-base">Cancel</button>
-                <button 
-                    onClick={handleSubmit}
-                    disabled={saving}
-                    className="flex-1 sm:flex-none px-4 md:px-8 py-2 md:py-3 bg-black text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition shadow-xl text-sm md:text-base"
-                >
-                    <HiOutlineSave className="text-lg md:text-xl" />
-                    {saving ? "..." : "Save"}
-                </button>
-            </div>
+    if (loading) return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+            <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-black font-black uppercase tracking-widest text-xs">Syncing Product Data...</p>
         </div>
-      </div>
+    );
 
-      <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10">
-        
-        {/* LEFT COLUMN - MAIN FORM */}
-        <div className="lg:col-span-8 space-y-6 md:space-y-10">
-            
-            {error && <div className="bg-red-50 text-red-600 p-4 md:p-6 rounded-2xl md:rounded-[2rem] border-2 border-red-100 font-bold flex items-center gap-3 text-sm md:text-base"><HiX className="text-xl" /> {error}</div>}
-            {success && <div className="bg-green-50 text-green-600 p-4 md:p-6 rounded-2xl md:rounded-[2rem] border-2 border-green-100 font-bold text-sm md:text-base">🎉 {success}</div>}
-
-            {/* 1. BASIC INFORMATION */}
-            <section className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6 md:space-y-8">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-black text-white rounded-xl md:rounded-2xl flex items-center justify-center"><HiOutlineInformationCircle className="text-lg md:text-xl" /></div>
-                    <h2 className="text-xl md:text-2xl font-black text-black uppercase tracking-tight">Basic Details</h2>
-                </div>
-
-                <div className="space-y-4 md:space-y-6">
+    return (
+        <div className="min-h-screen bg-gray-100 pb-32">
+            {/* HEADER */}
+            <div className="bg-white border-b sticky top-0 z-40 px-4 md:px-6 py-4 md:py-6 shadow-sm">
+                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
-                          Product Name <span className="text-red-500">*</span>
-                        </label>
-                        <input name="name" value={formData.name} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Premium Leather Sofa" />
+                        <h1 className="text-2xl md:text-3xl font-black text-black tracking-tighter uppercase">Edit Collection</h1>
+                        <p className="text-gray-500 text-xs md:text-sm font-bold">Managing: {formData.name || "Untitled Product"}</p>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                        <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Brand</label>
-                            <input name="brand" value={formData.brand} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Hatim Zone" />
-                        </div>
-                        <div>
-                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Warranty</label>
-                            <input name="warranty" value={formData.warranty} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. 5 Years" />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
-                          Description
-                        </label>
-                        <textarea name="description" rows="5" value={formData.description} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="Tell the product's story..."></textarea>
-                    </div>
-
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
-                          Video URL (YouTube/Direct)
-                        </label>
-                        <input name="videoUrl" value={formData.videoUrl} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. https://youtube.com/watch?v=..." />
-                    </div>
-
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
-                          Tags / Keywords (Comma separated)
-                        </label>
-                        <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. table-lamp,stand-lamp....." />
+                    <div className="flex gap-2 md:gap-4 w-full sm:w-auto">
+                        <button onClick={() => router.back()} className="flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-3 border-2 border-gray-100 rounded-xl md:rounded-2xl font-bold text-gray-400 hover:text-black hover:border-black transition text-sm md:text-base">Cancel</button>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={saving}
+                            className="flex-1 sm:flex-none px-4 md:px-8 py-2 md:py-3 bg-black text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition shadow-xl text-sm md:text-base"
+                        >
+                            <HiOutlineSave className="text-lg md:text-xl" />
+                            {saving ? "..." : "Save"}
+                        </button>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            {/* 
+            <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10">
+
+                {/* LEFT COLUMN - MAIN FORM */}
+                <div className="lg:col-span-8 space-y-6 md:space-y-10">
+
+                    {error && <div className="bg-red-50 text-red-600 p-4 md:p-6 rounded-2xl md:rounded-[2rem] border-2 border-red-100 font-bold flex items-center gap-3 text-sm md:text-base"><HiX className="text-xl" /> {error}</div>}
+                    {success && <div className="bg-green-50 text-green-600 p-4 md:p-6 rounded-2xl md:rounded-[2rem] border-2 border-green-100 font-bold text-sm md:text-base">🎉 {success}</div>}
+
+                    {/* 1. BASIC INFORMATION */}
+                    <section className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6 md:space-y-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 md:w-10 md:h-10 bg-black text-white rounded-xl md:rounded-2xl flex items-center justify-center"><HiOutlineInformationCircle className="text-lg md:text-xl" /></div>
+                            <h2 className="text-xl md:text-2xl font-black text-black uppercase tracking-tight">Basic Details</h2>
+                        </div>
+
+                        <div className="space-y-4 md:space-y-6">
+                            <div>
+                                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                                    Product Name <span className="text-red-500">*</span>
+                                </label>
+                                <input name="name" value={formData.name} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Premium Leather Sofa" />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                                <div>
+                                    <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Brand</label>
+                                    <input name="brand" value={formData.brand} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Hatim Zone" />
+                                </div>
+                                <div>
+                                    <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Warranty</label>
+                                    <input name="warranty" value={formData.warranty} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. 5 Years" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                                    Description
+                                </label>
+                                <textarea name="description" rows="5" value={formData.description} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="Tell the product's story..."></textarea>
+                            </div>
+
+                            <div>
+                                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                                    Video URL (YouTube/Direct)
+                                </label>
+                                <input name="videoUrl" value={formData.videoUrl} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. https://youtube.com/watch?v=..." />
+                            </div>
+
+                            <div>
+                                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                                    Tags / Keywords (Comma separated)
+                                </label>
+                                <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. table-lamp,stand-lamp....." />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* 
             // 2. CATEGORY & INVENTORY
             <section className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6 md:space-y-8">
                 <div className="flex items-center gap-3">
@@ -348,7 +348,7 @@ const EditProductPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Category</label>
+                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Category</label>
                         <select 
                             name="category" 
                             value={formData.category} 
@@ -362,7 +362,7 @@ const EditProductPage = () => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Stock Quantity</label>
+                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Stock Quantity</label>
                         <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="0" />
                     </div>
                 </div>
@@ -402,15 +402,15 @@ const EditProductPage = () => {
 
                 <div className="grid grid-cols-3 gap-4">
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Length</label>
+                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Length</label>
                         <input name="length" value={dimensions.length} onChange={handleDimensionChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-6 py-4 font-bold outline-none transition" placeholder="e.g. 20cm" />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Width</label>
+                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Width</label>
                         <input name="width" value={dimensions.width} onChange={handleDimensionChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-6 py-4 font-bold outline-none transition" placeholder="e.g. 10cm" />
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Height</label>
+                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Height</label>
                         <input name="height" value={dimensions.height} onChange={handleDimensionChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-6 py-4 font-bold outline-none transition" placeholder="e.g. 30cm" />
                     </div>
                 </div>
@@ -466,38 +466,38 @@ const EditProductPage = () => {
                 </div>
             </section>
             */}
-        </div>
-        {/* RIGHT COLUMN - SIDEBAR */}
-        <div className="lg:col-span-4 space-y-6 md:space-y-10">
-            
-            {/* PRICING & CLASSIFICATION */}
-            <div className="bg-gray-100 text-gray-800 p-6 md:p-10 rounded-3xl md:rounded-[3rem] shadow-xl space-y-6 md:space-y-8">
-                <div className="flex items-center gap-3 border-b border-gray-200 pb-4 md:pb-6">
-                    <HiOutlineCurrencyBangladeshi className="text-2xl md:text-3xl text-green-500" />
-                    <h3 className="text-lg md:text-xl font-black uppercase tracking-tight">Market Values</h3>
                 </div>
+                {/* RIGHT COLUMN - SIDEBAR */}
+                <div className="lg:col-span-4 space-y-6 md:space-y-10">
 
-                <div className="space-y-6">
+                    {/* PRICING & CLASSIFICATION */}
+                    <div className="bg-gray-100 text-gray-800 p-6 md:p-10 rounded-3xl md:rounded-[3rem] shadow-xl space-y-6 md:space-y-8">
+                        <div className="flex items-center gap-3 border-b border-gray-200 pb-4 md:pb-6">
+                            <HiOutlineCurrencyBangladeshi className="text-2xl md:text-3xl text-green-500" />
+                            <h3 className="text-lg md:text-xl font-black uppercase tracking-tight">Market Values</h3>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-[12px] font-black uppercase tracking-widest text-gray-700 mb-2">
+                                    Original Price (Taka) <span className="text-red-500">*</span>
+                                </label>
+                                <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full bg-white border-2 border-transparent focus:border-green-400 rounded-2xl md:rounded-3xl px-6 py-4 md:py-5 text-2xl md:text-3xl font-black text-gray-800 outline-none transition" placeholder="0.00" />
+                            </div>
+                            {/* 
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-700 mb-2">
-                          Original Price (Taka) <span className="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="price" value={formData.price} onChange={handleChange} className="w-full bg-white border-2 border-transparent focus:border-green-400 rounded-2xl md:rounded-3xl px-6 py-4 md:py-5 text-2xl md:text-3xl font-black text-gray-800 outline-none transition" placeholder="0.00" />
-                    </div>
-                    {/* 
-                    <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Discount Price (Optional)</label>
+                        <label className="block text-[12px] font-black uppercase tracking-widest text-gray-500 mb-2">Discount Price (Optional)</label>
                         <input type="number" name="discountPrice" value={formData.discountPrice} onChange={handleChange} className="w-full bg-white border-2 border-transparent focus:border-blue-400 rounded-2xl md:rounded-3xl px-6 py-4 font-bold text-gray-800 outline-none transition" placeholder="0.00" />
                     </div>
                     */}
-                </div>
+                        </div>
 
-                <div className="pt-4 md:pt-6 border-t border-gray-200 space-y-6">
-                    {/* 
+                        <div className="pt-4 md:pt-6 border-t border-gray-200 space-y-6">
+                            {/* 
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 mb-2">
                             <HiOutlineTruck className="text-xl text-blue-500" />
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Shipping Costs</h4>
+                            <h4 className="text-[12px] font-black uppercase tracking-widest text-gray-400">Shipping Costs</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -511,92 +511,92 @@ const EditProductPage = () => {
                         </div>
                     </div>
                     */}
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="isNewArrival" checked={formData.isNewArrival} onChange={handleChange} className="w-5 h-5 md:w-6 md:h-6 rounded-lg accent-pink-600" />
-                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest group-hover:text-pink-400 transition">New Arrival</span>
-                    </label>
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="isTopSelling" checked={formData.isTopSelling} onChange={handleChange} className="w-5 h-5 md:w-6 md:h-6 rounded-lg accent-blue-600" />
-                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest group-hover:text-blue-400 transition">Top Selling</span>
-                    </label>
-                    <label className="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="w-5 h-5 md:w-6 md:h-6 rounded-lg accent-amber-600" />
-                        <span className="text-[10px] md:text-xs font-black uppercase tracking-widest group-hover:text-amber-400 transition">Featured Product</span>
-                    </label>
-                </div>
-            </div>
-
-            {/* COVER IMAGE */}
-            <div className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
-                <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-                    <h3 className="text-xs md:text-sm font-black uppercase text-gray-400 tracking-widest">
-                      Cover Image <span className="text-red-500">*</span>
-                    </h3>
-                    <div className="relative">
-                        <input type="file" accept="image/*" onChange={handleCoverChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-                        <button className="text-[10px] md:text-xs font-black bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl">Select Cover</button>
-                    </div>
-                </div>
-                {(coverPreview || existingCover) && (
-                    <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden shadow-md border-2 border-blue-100">
-                        <img src={coverPreview || existingCover} className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => {setCover(null); setCoverPreview(null); setExistingCover(null);}} className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold">✕</button>
-                    </div>
-                )}
-            </div>
-
-            {/* GALLERY & MEDIA */}
-            <div className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6 md:space-y-8">
-                <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-                    <h3 className="text-xs md:text-sm font-black uppercase text-gray-400 tracking-widest">
-                      Gallery
-                    </h3>
-                    <div className="relative">
-                        <input type="file" multiple accept="image/*" onChange={(e) => {
-                             const files = Array.from(e.target.files);
-                             setImages((prev) => [...prev, ...files]);
-                             const newPreviews = files.map((file) => URL.createObjectURL(file));
-                             setImagePreviews((prev) => [...prev, ...newPreviews]);
-                        }} className="absolute inset-0 opacity-0 cursor-pointer" />
-                        <button className="text-[10px] md:text-xs font-black bg-black text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl">+ Add Images</button>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 md:gap-3">
-                    {/* EXISTING */}
-                    {existingImages.map((img, i) => (
-                        <div key={i} className="group relative aspect-square rounded-xl md:rounded-2xl overflow-hidden shadow-sm border">
-                            <img src={img} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
-                            <button type="button" onClick={() => removeExistingImage(i)} className="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center font-bold text-xl">✕</button>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="isNewArrival" checked={formData.isNewArrival} onChange={handleChange} className="w-5 h-5 md:w-6 md:h-6 rounded-lg accent-pink-600" />
+                                <span className="text-[12px] md:text-xs font-black uppercase tracking-widest group-hover:text-pink-400 transition">New Arrival</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="isTopSelling" checked={formData.isTopSelling} onChange={handleChange} className="w-5 h-5 md:w-6 md:h-6 rounded-lg accent-blue-600" />
+                                <span className="text-[12px] md:text-xs font-black uppercase tracking-widest group-hover:text-blue-400 transition">Top Selling</span>
+                            </label>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} className="w-5 h-5 md:w-6 md:h-6 rounded-lg accent-amber-600" />
+                                <span className="text-[12px] md:text-xs font-black uppercase tracking-widest group-hover:text-amber-400 transition">Featured Product</span>
+                            </label>
                         </div>
-                    ))}
-                    {/* NEW PREVIEWS */}
-                    {imagePreviews.map((img, i) => (
-                        <div key={i} className="group relative aspect-square rounded-xl md:rounded-2xl overflow-hidden shadow-sm border-2 border-blue-400">
-                            <img src={img} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
-                            <button type="button" onClick={() => removeNewImage(i)} className="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center font-bold text-xl">✕</button>
-                            <div className="absolute top-1 right-1 bg-blue-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">NEW</div>
+                    </div>
+
+                    {/* COVER IMAGE */}
+                    <div className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
+                        <div className="flex items-center justify-between border-b border-gray-50 pb-4">
+                            <h3 className="text-xs md:text-sm font-black uppercase text-gray-400 tracking-widest">
+                                Cover Image <span className="text-red-500">*</span>
+                            </h3>
+                            <div className="relative">
+                                <input type="file" accept="image/*" onChange={handleCoverChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                <button className="text-[12px] md:text-xs font-black bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl">Select Cover</button>
+                            </div>
                         </div>
-                    ))}
+                        {(coverPreview || existingCover) && (
+                            <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden shadow-md border-2 border-blue-100">
+                                <img src={coverPreview || existingCover} className="w-full h-full object-cover" />
+                                <button type="button" onClick={() => { setCover(null); setCoverPreview(null); setExistingCover(null); }} className="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold">✕</button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* GALLERY & MEDIA */}
+                    <div className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6 md:space-y-8">
+                        <div className="flex items-center justify-between border-b border-gray-50 pb-4">
+                            <h3 className="text-xs md:text-sm font-black uppercase text-gray-400 tracking-widest">
+                                Gallery
+                            </h3>
+                            <div className="relative">
+                                <input type="file" multiple accept="image/*" onChange={(e) => {
+                                    const files = Array.from(e.target.files);
+                                    setImages((prev) => [...prev, ...files]);
+                                    const newPreviews = files.map((file) => URL.createObjectURL(file));
+                                    setImagePreviews((prev) => [...prev, ...newPreviews]);
+                                }} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                <button className="text-[12px] md:text-xs font-black bg-black text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg md:rounded-xl">+ Add Images</button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 md:gap-3">
+                            {/* EXISTING */}
+                            {existingImages.map((img, i) => (
+                                <div key={i} className="group relative aspect-square rounded-xl md:rounded-2xl overflow-hidden shadow-sm border">
+                                    <img src={img} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
+                                    <button type="button" onClick={() => removeExistingImage(i)} className="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center font-bold text-xl">✕</button>
+                                </div>
+                            ))}
+                            {/* NEW PREVIEWS */}
+                            {imagePreviews.map((img, i) => (
+                                <div key={i} className="group relative aspect-square rounded-xl md:rounded-2xl overflow-hidden shadow-sm border-2 border-blue-400">
+                                    <img src={img} className="w-full h-full object-cover transition duration-500 group-hover:scale-110" />
+                                    <button type="button" onClick={() => removeNewImage(i)} className="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center font-bold text-xl">✕</button>
+                                    <div className="absolute top-1 right-1 bg-blue-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">NEW</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
+            {/* STICKY BOTTOM SAVE BAR */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t px-6 py-4 flex justify-center z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] sm:hidden">
+                <button
+                    onClick={handleSubmit}
+                    disabled={saving}
+                    className="w-full bg-black text-white py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl active:scale-95 transition"
+                >
+                    <HiOutlineSave className="text-xl" />
+                    {saving ? "Syncing..." : "Save Changes"}
+                </button>
+            </div>
         </div>
-      </div>
-
-      {/* STICKY BOTTOM SAVE BAR */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t px-6 py-4 flex justify-center z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] sm:hidden">
-        <button 
-            onClick={handleSubmit}
-            disabled={saving}
-            className="w-full bg-black text-white py-4 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl active:scale-95 transition"
-        >
-            <HiOutlineSave className="text-xl" />
-            {saving ? "Syncing..." : "Save Changes"}
-        </button>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default EditProductPage;

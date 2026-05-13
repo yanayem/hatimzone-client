@@ -32,7 +32,7 @@ export async function GET(request) {
 
     // 1. Fetch featured or latest products
     const products = await Product.find(query)
-    .select("name price discountPrice cover slug brand tags")
+    .select("name price discountPrice cover slug brand tags images description")
     .sort({ createdAt: -1 })
     .limit(12)
     .lean();

@@ -13,7 +13,7 @@ export default function PoliciesPage() {
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter mb-4 md:mb-6 leading-none">
             Policies & <span className="italic font-light text-slate-400">Terms.</span>
           </h1>
-          <p className="text-slate-400 text-[10px] sm:text-sm md:text-lg font-bold max-w-xl mx-auto uppercase tracking-[0.2em]">
+          <p className="text-slate-400 text-[12px] sm:text-sm md:text-lg font-bold max-w-xl mx-auto uppercase tracking-[0.2em]">
             Your trust and security are our top priorities.
           </p>
         </div>
@@ -21,21 +21,21 @@ export default function PoliciesPage() {
 
       <div className="max-w-4xl mx-auto px-6 -mt-10 md:-mt-16">
         <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-100 overflow-hidden">
-          
+
           {/* TABS / QUICK LINKS */}
           <div className="flex border-b border-gray-100">
             <div className="flex-1 px-6 py-5 text-center border-r border-gray-100 bg-gray-50/50">
               <HiOutlineShieldCheck className="mx-auto text-2xl text-blue-600 mb-2" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Privacy</span>
+              <span className="text-[12px] font-black uppercase tracking-widest text-slate-900">Privacy</span>
             </div>
             <div className="flex-1 px-6 py-5 text-center">
               <HiOutlineDocumentText className="mx-auto text-2xl text-orange-600 mb-2" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Terms</span>
+              <span className="text-[12px] font-black uppercase tracking-widest text-slate-400">Terms</span>
             </div>
           </div>
 
           <div className="p-8 md:p-16 space-y-12 md:space-y-16">
-            
+
             {/* PRIVACY POLICY */}
             <section>
               <div className="flex items-center gap-4 mb-6">
@@ -44,12 +44,12 @@ export default function PoliciesPage() {
                 </div>
                 <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tighter">Privacy Policy</h2>
               </div>
-              
+
               <div className="prose prose-slate max-w-none space-y-6">
                 <p className="text-slate-600 font-medium leading-relaxed">
                   At HatimZone, we are committed to protecting your privacy. This policy outlines how we collect, use, and safeguard your personal information when you visit our store or make a purchase.
                 </p>
-                
+
                 <div className="space-y-4">
                   <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">1. Information We Collect</h3>
                   <p className="text-slate-500 text-sm leading-relaxed">
@@ -76,12 +76,12 @@ export default function PoliciesPage() {
                 </div>
                 <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tighter">Terms of Service</h2>
               </div>
-              
+
               <div className="prose prose-slate max-w-none space-y-6">
                 <p className="text-slate-600 font-medium leading-relaxed">
                   By accessing and using HatimZone, you agree to comply with the following terms and conditions. Please read them carefully before making a purchase.
                 </p>
-                
+
                 <div className="space-y-4">
                   <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">1. Product Descriptions</h3>
                   <p className="text-slate-500 text-sm leading-relaxed">
@@ -110,7 +110,7 @@ export default function PoliciesPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-black font-black uppercase tracking-widest text-[10px] transition">
+          <Link href="/" className="inline-flex items-center gap-2 text-slate-400 hover:text-black font-black uppercase tracking-widest text-[12px] transition">
             <HiArrowLeft /> Back to Home
           </Link>
         </div>

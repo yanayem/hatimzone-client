@@ -52,13 +52,13 @@ export default function AdminOrdersPage() {
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch =
+      order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.customer.phone.includes(searchTerm) ||
       order.customer.name.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === "All" || order.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -81,7 +81,7 @@ export default function AdminOrdersPage() {
             <h1 className="text-3xl font-black text-gray-900">Orders Management</h1>
             <p className="text-gray-500 font-medium">Manage and track all customer orders</p>
           </div>
-          <button 
+          <button
             onClick={fetchOrders}
             className="flex items-center gap-2 bg-white px-6 py-3 rounded-2xl font-bold shadow-sm border border-gray-100 hover:bg-gray-50 transition"
           >
@@ -94,7 +94,7 @@ export default function AdminOrdersPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="relative md:col-span-2">
             <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-            <input 
+            <input
               type="text"
               placeholder="Search by Order ID, Customer, or Phone..."
               value={searchTerm}
@@ -104,7 +104,7 @@ export default function AdminOrdersPage() {
           </div>
           <div className="relative">
             <HiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-            <select 
+            <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white border-none shadow-sm focus:ring-2 focus:ring-black outline-none transition appearance-none"
@@ -168,11 +168,11 @@ export default function AdminOrdersPage() {
                       <td className="px-8 py-6">
                         <p className="font-bold text-gray-900">{order.customer.name}</p>
                         <p className="text-xs font-medium text-gray-500">{order.customer.phone}</p>
-                        <p className="text-[10px] text-gray-400 mt-1 line-clamp-1">{order.customer.address}</p>
+                        <p className="text-[12px] text-gray-400 mt-1 line-clamp-1">{order.customer.address}</p>
                       </td>
                       <td className="px-8 py-6">
                         <p className="text-lg font-black text-gray-900">৳{order.totalPrice}</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">{order.paymentMethod}</p>
+                        <p className="text-[12px] font-bold text-gray-400 uppercase">{order.paymentMethod}</p>
                       </td>
                       <td className="px-8 py-6">
                         <div className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>
@@ -180,7 +180,7 @@ export default function AdminOrdersPage() {
                         </div>
                       </td>
                       <td className="px-8 py-6 text-right">
-                        <select 
+                        <select
                           value={order.status}
                           disabled={updating === order._id}
                           onChange={(e) => updateStatus(order._id, e.target.value)}
@@ -201,17 +201,17 @@ export default function AdminOrdersPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Zoom Modal */}
       {zoomedImage && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-200"
           onClick={() => setZoomedImage(null)}
         >
-          <img 
-            src={zoomedImage} 
-            className="max-w-full max-h-[90vh] rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300" 
-            alt="Zoomed" 
+          <img
+            src={zoomedImage}
+            className="max-w-full max-h-[90vh] rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300"
+            alt="Zoomed"
           />
           <button className="absolute top-8 right-8 text-white text-4xl hover:scale-110 transition">✕</button>
         </div>

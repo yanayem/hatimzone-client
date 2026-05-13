@@ -327,7 +327,7 @@ function ProductCard({ product }) {
           </span>
 
           {product.isNewArrival && (
-            <span className="text-[10px] bg-black text-white px-2 py-1 rounded-full uppercase">
+            <span className="text-[12px] bg-black text-white px-2 py-1 rounded-full uppercase">
               New
             </span>
           )}

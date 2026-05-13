@@ -15,10 +15,12 @@ export default function ProductDetailPage() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [mainImage, setMainImage] = useState("");
   const [showVideo, setShowVideo] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   const [showDesc, setShowDesc] = useState(false);
   const [reviews, setReviews] = useState([]);
@@ -39,7 +41,6 @@ export default function ProductDetailPage() {
           const p = data.product;
           setProduct(p);
           setRelated(data.related || []);
-          setMainImage(p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image");
           if (p.variants?.length > 0) {
             setSelectedVariant(p.variants[0]);
           }
@@ -83,6 +84,30 @@ export default function ProductDetailPage() {
 
     fetchProduct();
   }, [slug]);
+
+  // Auto-slide logic
+  useEffect(() => {
+    let interval;
+    if (product && !showVideo) {
+      const images = [product.cover, ...(product.images || [])].filter(Boolean);
+      if (images.length > 1) {
+        interval = setInterval(() => {
+          setActiveSlide((prev) => (prev + 1) % images.length);
+        }, 4000);
+      }
+    }
+    return () => clearInterval(interval);
+  }, [product, showVideo]);
+
+  const nextSlide = () => {
+    const images = [product?.cover, ...(product?.images || [])].filter(Boolean);
+    setActiveSlide((prev) => (prev >= images.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    const images = [product?.cover, ...(product?.images || [])].filter(Boolean);
+    setActiveSlide((prev) => (prev <= 0 ? images.length - 1 : prev - 1));
+  };
 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedVariant);
@@ -135,12 +160,20 @@ export default function ProductDetailPage() {
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
 
         {/* MAIN PRODUCT CARD */}
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-3xl md:rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2">
 
             {/* ================= LEFT GALLERY ================= */}
             <div className="p-4 md:p-8 lg:p-12 bg-gray-50/50 border-b lg:border-b-0 lg:border-r border-gray-100">
-              <div className="aspect-[4/5] bg-white rounded-2xl md:rounded-[2.5rem] overflow-hidden relative shadow-inner border border-gray-100 group">
+              <div 
+                className="aspect-[4/5] bg-white rounded-3xl md:rounded-3xl overflow-hidden relative shadow-inner border border-gray-100 group"
+                onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+                onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+                onTouchEnd={() => {
+                  if (touchStart - touchEnd > 70) nextSlide();
+                  if (touchStart - touchEnd < -70) prevSlide();
+                }}
+              >
                 {showVideo ? (
                   <div className="w-full h-full relative">
                     <iframe
@@ -152,63 +185,65 @@ export default function ProductDetailPage() {
                       allow="autoplay; encrypted-media"
                       allowFullScreen
                     ></iframe>
-                    <button 
+                    <button
                       onClick={() => setShowVideo(false)}
-                      className="absolute top-4 left-4 z-30 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition"
+                      className="absolute top-4 left-4 z-30 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-3xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition"
                     >
                       Back to Photos
                     </button>
                   </div>
                 ) : (
                   <>
-                    <img
-                      src={mainImage}
-                      alt={product.name}
-                      className="w-full h-full object-contain p-6 md:p-10 transition duration-700 group-hover:scale-105"
-                    />
-                    {/* WISHLIST (Commented out)
-                    <button
-                      onClick={() => toggleWishlist(product)}
-                      className="absolute top-4 right-4 md:top-6 md:right-6 p-3 md:p-4 bg-white/90 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl border border-gray-100 hover:scale-110 active:scale-95 transition-all duration-300"
-                    >
-                      {isInWishlist(product._id) ? (
-                        <HiHeart className="text-red-500 text-xl md:text-2xl" />
-                      ) : (
-                        <HiOutlineHeart className="text-gray-400 text-xl md:text-2xl" />
-                      )}
-                    </button>
-                    */}
+                    {(() => {
+                      const images = [product.cover, ...(product.images || [])].filter(Boolean);
+                      if (images.length === 0) images.push("https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image");
+                      return (
+                        <div className="flex h-full w-full transition-transform duration-500 ease-out" style={{ transform: `translateX(-${activeSlide * 100}%)` }}>
+                          {images.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img}
+                              className="w-full h-full object-contain p-6 md:p-10 flex-shrink-0"
+                              alt={`${product.name} ${idx + 1}`}
+                            />
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </>
                 )}
               </div>
 
               {/* THUMBNAILS */}
               <div className="flex gap-3 md:gap-4 mt-6 md:mt-8 overflow-x-auto pb-2 no-scrollbar">
-                {product.images?.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setMainImage(img);
-                      setShowVideo(false);
-                    }}
-                    className={`w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden flex-shrink-0 border-2 transition-all ${!showVideo && mainImage === img ? "border-black shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
-                  >
-                    <img src={img} className="w-full h-full object-cover" />
-                  </button>
-                ))}
+                {(() => {
+                  const images = [product.cover, ...(product.images || [])].filter(Boolean);
+                  return images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setActiveSlide(i);
+                        setShowVideo(false);
+                      }}
+                      className={`w-16 h-16 md:w-20 md:h-20 rounded-3xl md:rounded-3xl overflow-hidden flex-shrink-0 border-2 transition-all ${!showVideo && activeSlide === i ? "border-black shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
+                        }`}
+                    >
+                      <img src={img} className="w-full h-full object-cover" />
+                    </button>
+                  ));
+                })()}
 
                 {/* VIDEO THUMBNAIL */}
                 {product.videoUrl && (
                   <button
                     onClick={() => setShowVideo(true)}
-                    className={`w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl flex-shrink-0 border-2 transition-all bg-black flex flex-col items-center justify-center gap-1 ${showVideo ? "border-blue-600 shadow-lg" : "border-transparent opacity-80 hover:opacity-100"
+                    className={`w-16 h-16 md:w-20 md:h-20 rounded-3xl md:rounded-3xl flex-shrink-0 border-2 transition-all bg-black flex flex-col items-center justify-center gap-1 ${showVideo ? "border-green-600 shadow-lg" : "border-transparent opacity-80 hover:opacity-100"
                       }`}
                   >
                     <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                       <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1" />
                     </div>
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Video</span>
+                    <span className="text-[12px] font-black text-white uppercase tracking-widest">Video</span>
                   </button>
                 )}
               </div>
@@ -218,7 +253,7 @@ export default function ProductDetailPage() {
             <div className="p-6 md:p-8 lg:p-16 flex flex-col justify-center">
               <div className="mb-6 md:mb-8">
                 <div className="flex items-center gap-3 mb-3 md:mb-4">
-                  <span className="bg-blue-50 text-blue-600 px-3 md:px-4 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest">{product.brand}</span>
+                  <span className="bg-green-50 text-green-600 px-3 md:px-4 py-1 rounded-full text-[12px] md:text-xs font-black uppercase tracking-widest">{product.brand}</span>
                 </div>
 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tighter leading-tight mb-4 md:mb-6">
@@ -226,7 +261,7 @@ export default function ProductDetailPage() {
                 </h1>
 
                 {/* PRICE */}
-                <div className="flex items-center gap-4 bg-gray-50 w-fit px-5 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl">
+                <div className="flex items-center gap-4 bg-gray-50 w-fit px-5 md:px-6 py-2 md:py-3 rounded-3xl md:rounded-3xl">
                   <p className="text-2xl md:text-3xl font-black text-gray-900">
                     ৳{product.price.toLocaleString()}
                   </p>
@@ -244,17 +279,17 @@ export default function ProductDetailPage() {
               {/* ACTIONS */}
               <div className="space-y-4">
                 {/* QUANTITY */}
-                <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8 bg-gray-50 w-fit p-1.5 md:p-2 rounded-xl md:rounded-2xl border border-gray-100">
+                <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8 bg-gray-50 w-fit p-1.5 md:p-2 rounded-3xl md:rounded-3xl border border-gray-100">
                   <button
                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white rounded-lg md:rounded-xl shadow-sm hover:bg-gray-100 transition"
+                    className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white rounded-lg md:rounded-3xl shadow-sm hover:bg-gray-100 transition"
                   >
                     <HiMinus />
                   </button>
                   <span className="font-black text-lg md:text-xl w-6 md:w-8 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(q => q + 1)}
-                    className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white rounded-lg md:rounded-xl shadow-sm hover:bg-gray-100 transition"
+                    className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white rounded-lg md:rounded-3xl shadow-sm hover:bg-gray-100 transition"
                   >
                     <HiPlus />
                   </button>
@@ -263,7 +298,7 @@ export default function ProductDetailPage() {
                 <div className="grid grid-cols-2 gap-3 md:gap-4">
                   <button
                     onClick={handleAddToCart}
-                    className="bg-white border-2 border-black text-black py-3 md:py-5 rounded-2xl md:rounded-3xl font-black uppercase tracking-widest flex items-center justify-center gap-2 md:gap-3 hover:bg-gray-50 transition shadow-sm text-[10px] md:text-xs"
+                    className="bg-white border-2 border-black text-black py-3 md:py-5 rounded-3xl md:rounded-3xl font-black uppercase tracking-widest flex items-center justify-center gap-2 md:gap-3 hover:bg-gray-50 transition shadow-sm text-[12px] md:text-xs"
                   >
                     <HiShoppingCart className="text-lg" />
                     Cart
@@ -271,7 +306,7 @@ export default function ProductDetailPage() {
 
                   <button
                     onClick={handleBuyNow}
-                    className="bg-black text-white py-3 md:py-5 rounded-2xl md:rounded-3xl font-black uppercase tracking-widest hover:bg-gray-800 transition shadow-2xl text-[10px] md:text-xs"
+                    className="bg-black text-white py-3 md:py-5 rounded-3xl md:rounded-3xl font-black uppercase tracking-widest hover:bg-gray-800 transition shadow-2xl text-[12px] md:text-xs"
                   >
                     Buy Now
                   </button>
@@ -281,17 +316,17 @@ export default function ProductDetailPage() {
               {/* WARRANTY & SPECS */}
               <div className="mt-8 md:mt-12 space-y-4 md:space-y-6 pt-8 md:pt-10 border-t border-gray-100">
                 {product.warranty && (
-                  <div className="flex items-center gap-4 bg-green-50/50 p-4 md:p-5 rounded-2xl md:rounded-[2rem] border border-green-100">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-green-600 text-white rounded-xl md:rounded-2xl flex items-center justify-center text-lg shadow-lg shadow-green-100">🛡️</div>
+                  <div className="flex items-center gap-4 bg-green-50/50 p-4 md:p-5 rounded-3xl md:rounded-3xl border border-green-100">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-green-600 text-white rounded-3xl md:rounded-3xl flex items-center justify-center text-lg shadow-lg shadow-green-100">🛡️</div>
                     <div>
-                      <p className="text-[10px] md:text-xs font-black text-green-600 uppercase tracking-widest">Authorized Warranty</p>
+                      <p className="text-[12px] md:text-xs font-black text-green-600 uppercase tracking-widest">Authorized Warranty</p>
                       <p className="text-sm md:text-md font-black text-gray-900">{product.warranty}</p>
                     </div>
                   </div>
                 )}
 
                 {/* TECHNICAL SPECS (Commented out)
-                <div className="bg-gray-50 rounded-2xl md:rounded-[2.5rem] p-6 md:p-8">
+                <div className="bg-gray-50 rounded-3xl md:rounded-3xl p-6 md:p-8">
                   ...
                 </div>
                 */}
@@ -322,13 +357,13 @@ export default function ProductDetailPage() {
                 <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter">Other Beautiful Lamps</h2>
                 <p className="text-gray-500 font-medium mt-2 text-sm md:text-base">Other lights you might love</p>
               </div>
-             
+
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {related.map((p) => (
                 <div key={p._id} className="store-card group flex flex-col">
-                  <Link href={`/product/${p.slug || p._id}`} className="block relative aspect-square bg-gray-50 overflow-hidden m-2 rounded-2xl">
+                  <Link href={`/product/${p.slug || p._id}`} className="block relative aspect-square bg-gray-50 overflow-hidden m-2 rounded-3xl">
                     <img
                       src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
                       alt={p.name}
@@ -336,7 +371,7 @@ export default function ProductDetailPage() {
                     />
                   </Link>
                   <div className="p-6 flex flex-col flex-1 pt-2">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{p.brand}</span>
+                    <span className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2">{p.brand}</span>
                     <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-lg mb-4">
                       {p.name}
                     </h3>
@@ -354,11 +389,11 @@ export default function ProductDetailPage() {
                       >
                         Add +
                       </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
             <div className="mt-12 md:mt-16 flex justify-center">
               <Link

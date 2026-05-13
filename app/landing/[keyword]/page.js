@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles } from "react-icons/hi";
+import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles, HiX, HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { useRouter, useParams } from "next/navigation";
 import SuccessModal from "@/components/SuccessModal";
 import Loading from "@/components/ui/Loading";
@@ -13,6 +13,11 @@ export default function DynamicLandingPage() {
    const [selectedProducts, setSelectedProducts] = useState([]);
    const [showSuccess, setShowSuccess] = useState(false);
    const [lastOrderId, setLastOrderId] = useState("");
+   const [showDetail, setShowDetail] = useState(false);
+   const [detailProduct, setDetailProduct] = useState(null);
+   const [activeSlide, setActiveSlide] = useState(0);
+   const [touchStart, setTouchStart] = useState(0);
+   const [touchEnd, setTouchEnd] = useState(0);
 
    const [settings, setSettings] = useState({
       shippingInsideDhaka: 70,
@@ -37,30 +42,19 @@ export default function DynamicLandingPage() {
          try {
             const url = keyword ? `/api/landing?keyword=${encodeURIComponent(keyword)}` : "/api/landing";
             const res = await fetch(url);
-            
-            if (!res.ok) {
-               const text = await res.text();
-               console.error("API Error Response:", {
-                  status: res.status,
-                  statusText: res.statusText,
-                  body: text.substring(0, 500)
-               });
-               throw new Error(`API returned ${res.status}: ${res.statusText}`);
-            }
-
             const data = await res.json();
             if (data.success) {
                const { products, settings } = data.data;
                setProducts(products || []);
-                if (products?.length > 0) {
-                   setSelectedProducts([{ ...products[0], quantity: 1 }]);
-                }
+               if (products?.length > 0) {
+                  setSelectedProducts([{ ...products[0], quantity: 1 }]);
+               }
                if (settings) {
                   setSettings(settings);
                }
             }
          } catch (err) {
-            console.error("Failed to fetch landing data:", err);
+            console.error("Failed to fetch landing data");
          } finally {
             setLoading(false);
          }
@@ -68,62 +62,92 @@ export default function DynamicLandingPage() {
       fetchData();
    }, [keyword]);
 
-    const toggleProduct = (product) => {
-       setSelectedProducts(prev => {
-          const exists = prev.find(p => p._id === product._id);
-          if (exists) {
-             return prev.filter(p => p._id !== product._id);
-          } else {
-             return [...prev, { ...product, quantity: 1 }];
-          }
-       });
-    };
+   const toggleProduct = (product) => {
+      setSelectedProducts(prev => {
+         const exists = prev.find(p => p._id === product._id);
+         if (exists) {
+            return prev.filter(p => p._id !== product._id);
+         } else {
+            return [...prev, { ...product, quantity: 1 }];
+         }
+      });
+   };
 
-    const updateQuantity = (id, delta) => {
-       setSelectedProducts(prev => prev.map(p => 
-          p._id === id ? { ...p, quantity: Math.max(1, (p.quantity || 1) + delta) } : p
-       ));
-    };
+   const openDetail = (product) => {
+      setDetailProduct(product);
+      setShowDetail(true);
+      setActiveSlide(0);
+   };
 
-    const scrollToForm = (product) => {
-       if (product) {
-          setSelectedProducts(prev => {
-             const exists = prev.find(p => p._id === product._id);
-             if (exists) return prev;
-             return [...prev, { ...product, quantity: 1 }];
-          });
-       }
-       formRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+   // Auto-slide for detail modal
+   useEffect(() => {
+      let interval;
+      if (showDetail && detailProduct) {
+         const images = [detailProduct.cover, ...(detailProduct.images || [])].filter(Boolean);
+         if (images.length > 1) {
+            interval = setInterval(() => {
+               setActiveSlide((prev) => (prev + 1) % images.length);
+            }, 3000); // Change slide every 3 seconds
+         }
+      }
+      return () => clearInterval(interval);
+   }, [showDetail, detailProduct]);
 
-    const handleOrder = async (e) => {
-       e.preventDefault();
-       if (selectedProducts.length === 0) return alert("দয়া করে অন্তত একটি পণ্য সিলেক্ট করুন");
-       if (!customer.name || !customer.phone || !customer.address) return alert("দয়া করে সব তথ্য পূরণ করুন");
+   const nextSlide = () => {
+      const images = [detailProduct?.cover, ...(detailProduct?.images || [])].filter(Boolean);
+      setActiveSlide(prev => (prev >= images.length - 1 ? 0 : prev + 1));
+   };
 
-       setOrderLoading(true);
-       try {
-          const shippingCost = Number(customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka);
-          
-          const items = selectedProducts.map(p => ({
-             product: p._id,
-             name: p.name,
-             price: Number(p.discountPrice > 0 ? p.discountPrice : p.price),
-             quantity: p.quantity || 1,
-             image: p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"
-          }));
+   const prevSlide = () => {
+      const images = [detailProduct?.cover, ...(detailProduct?.images || [])].filter(Boolean);
+      setActiveSlide(prev => (prev <= 0 ? images.length - 1 : prev - 1));
+   };
 
-          const subTotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-          
-          const orderData = {
-             items,
-             customer,
-             subTotal,
-             shippingCost,
-             totalPrice: subTotal + shippingCost,
-             paymentMethod: "Cash on Delivery",
-             notes: `Landing Page Order (${keyword || 'Direct'})`
-          };
+   const updateQuantity = (id, delta) => {
+      setSelectedProducts(prev => prev.map(p =>
+         p._id === id ? { ...p, quantity: Math.max(1, (p.quantity || 1) + delta) } : p
+      ));
+   };
+
+   const scrollToForm = (product) => {
+      if (product) {
+         setSelectedProducts(prev => {
+            const exists = prev.find(p => p._id === product._id);
+            if (exists) return prev;
+            return [...prev, { ...product, quantity: 1 }];
+         });
+      }
+      formRef.current?.scrollIntoView({ behavior: "smooth" });
+   };
+
+   const handleOrder = async (e) => {
+      e.preventDefault();
+      if (selectedProducts.length === 0) return alert("দয়া করে অন্তত একটি পণ্য সিলেক্ট করুন");
+      if (!customer.name || !customer.phone || !customer.address) return alert("দয়া করে সব তথ্য পূরণ করুন");
+
+      setOrderLoading(true);
+      try {
+         const shippingCost = Number(customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka);
+
+         const items = selectedProducts.map(p => ({
+            product: p._id,
+            name: p.name,
+            price: Number(p.discountPrice > 0 ? p.discountPrice : p.price),
+            quantity: p.quantity || 1,
+            image: p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"
+         }));
+
+         const subTotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+         const orderData = {
+            items,
+            customer,
+            subTotal,
+            shippingCost,
+            totalPrice: subTotal + shippingCost,
+            paymentMethod: "Cash on Delivery",
+            notes: `Landing Page Order (${keyword || 'Direct'})`
+         };
 
          const res = await fetch("/api/order", {
             method: "POST",
@@ -137,7 +161,7 @@ export default function DynamicLandingPage() {
             setLastOrderId(data.data.orderId);
             setShowSuccess(true);
          } else {
-            alert(data.message || "অর্ডার সম্পন্ন করা যায়নি");
+            alert(data.message || "অর্ডার সম্পন্ন করা যায়নি");
          }
       } catch (err) {
          alert("সার্ভার সমস্যা, আবার চেষ্টা করুন");
@@ -148,281 +172,287 @@ export default function DynamicLandingPage() {
 
    if (loading) return <Loading />;
 
+   const totalProductPrice = selectedProducts.reduce((acc, p) => acc + ((p.discountPrice > 0 ? p.discountPrice : p.price) * (p.quantity || 1)), 0);
+   const shippingCharge = customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka;
+
    return (
-      <div className="bg-[#ffffff] min-h-screen text-gray-900 selection:bg-blue-100 pb-20 md:pb-32">
+      <div className="bg-[#ffffff] min-h-screen text-gray-900 selection:bg-green-100 pb-20 md:pb-32 font-hind">
 
-         {/* HERO SECTION - PREMIUM BOUTIQUE STYLE */}
-         <section className="relative h-screen flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 z-0">
-               <img
-                  src="/imgq.jpg"
-                  alt="Exclusive Lamp"
-                  className="w-full h-full object-cover scale-105 animate-slow-zoom"
-               />
-               <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
-            </div>
-            
-            <div className="relative z-10 text-center px-6 max-w-5xl">
-               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full mb-8">
-                  <HiOutlineSparkles className="text-blue-400" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-[0.4em]">প্রিমিয়াম কালেকশন</span>
-               </div>
-               <h1 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter mb-8 leading-none">
-                  আলোকিত করুন <br />
-                  <span className="text-blue-400 italic font-serif normal-case tracking-normal">আপনার পৃথিবী</span>
-               </h1>
-               <p className="text-sm md:text-xl text-white/90 font-medium max-w-2xl mx-auto mb-10 leading-relaxed">
-                  হাতে তৈরি অসাধারণ সব ল্যাম্পের কালেকশন থেকে আপনার পছন্দেরটি বেছে নিন। প্রতিটি পণ্য আমাদের নিজস্ব কারখানায় নিপুণভাবে তৈরি।
-               </p>
-               <button 
-                  onClick={() => formRef.current?.scrollIntoView({ behavior: "smooth" })}
-                  className="bg-white text-black px-12 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-blue-500 hover:text-white transition-all shadow-2xl active:scale-95"
-               >
-                  অর্ডার করুন <HiArrowRight className="inline-block ml-2" />
-               </button>
-            </div>
-         </section>
+         {/* HERO SECTION - COMMENTED OUT */}
+         {/*<section className="relative h-[80vh] md:h-screen flex items-center justify-center overflow-hidden">
+            ...
+         </section>*/}
 
-         {/* PRODUCT GRID SECTION */}
+         {/* PRODUCT LIST SECTION */}
          <section className="max-w-7xl mx-auto px-6 py-20 md:py-32">
-            <div className="text-center mb-16 md:mb-24">
-               <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter mb-4">
-                  {keyword ? `${decodeURIComponent(keyword)} কালেকশন` : "আমাদের কালেকশন"}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-16 md:mb-24 border-b-2 border-gray-100 pb-10">
+               <div className="flex items-center gap-4">
+                  <img src="/logo.jpg" alt="HatimZone logo" className="w-16 h-16 md:w-24 md:h-24 object-contain animate-float" alt="HatimZone Icon" />
+                  <div className="w-1.5 h-12 bg-green-600 rounded-full hidden md:block" />
+               </div>
+               <h2 className="text-2xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter text-center md:text-right leading-none">
+                  {keyword ? `${decodeURIComponent(keyword)} কালেকশন` : "table-lamp কালেকশন"}
                </h2>
-               <div className="w-20 h-1.5 bg-black mx-auto rounded-full"></div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
                {products.length > 0 ? products.map((p) => {
                   const isSelected = selectedProducts.some(sp => sp._id === p._id);
                   return (
-                  <div 
-                     key={p._id} 
-                     onClick={() => toggleProduct(p)}
-                     className={`store-card group flex flex-col bg-white rounded-3xl overflow-hidden border-2 transition-all duration-500 cursor-pointer ${isSelected ? 'border-blue-600 shadow-2xl scale-[1.02]' : 'border-gray-100 shadow-sm hover:shadow-xl'}`}
-                  >
-                     <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative">
-                        <img
-                           src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
-                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                           alt={p.name}
-                        />
-                        {p.discountPrice > 0 && (
-                           <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest shadow-xl">
-                              সেল
+                     <div
+                        key={p._id}
+                        onClick={() => toggleProduct(p)}
+                        className={`store-card group flex flex-col bg-white rounded-lg overflow-hidden border-2 transition-all duration-500 cursor-pointer ${isSelected ? 'border-green-600 shadow-xl' : 'border-gray-50 shadow-sm hover:shadow-md'}`}
+                     >
+                        <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative">
+                           <img
+                              src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                              alt={p.name}
+                           />
+                           {isSelected && (
+                              <div className="absolute top-2 right-2 bg-green-600 text-white p-1.5 rounded-full shadow-2xl z-20 animate-in zoom-in duration-300">
+                                 <HiCheckCircle className="text-xl" />
+                              </div>
+                           )}
+                           {p.discountPrice > 0 && (
+                              <div className="absolute top-2 left-2 bg-black text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl z-10">
+                                 সেল
+                              </div>
+                           )}
+                        </div>
+                        <div className="p-4 md:p-6 flex flex-col flex-1">
+                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{p.brand || "প্রিমিয়াম ব্র্যান্ড"}</p>
+                           <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-2 mb-4 h-10 leading-tight group-hover:text-green-600 transition-colors">{p.name}</h3>
+
+                           <div className="mt-auto space-y-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                 <span className="text-xl font-black text-gray-900">৳{(p.discountPrice > 0 ? p.discountPrice : p.price).toLocaleString()}</span>
+                                 {p.discountPrice > 0 && (
+                                    <span className="text-xs text-gray-400 line-through font-medium">৳{p.price.toLocaleString()}</span>
+                                 )}
+                              </div>
+
+                              <button
+                                 onClick={(e) => { e.stopPropagation(); openDetail(p); }}
+                                 className="w-full bg-gray-100 text-gray-900 py-2.5 rounded-3xl text-[11px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all active:scale-95 border border-gray-200"
+                              >
+                                 বিস্তারিত দেখুন
+                              </button>
+
+                              <div className="grid grid-cols-2 gap-2">
+                                 <button
+                                    onClick={(e) => { e.stopPropagation(); scrollToForm(p); }}
+                                    className="bg-black text-white py-3 rounded-3xl text-[11px] font-black uppercase tracking-widest hover:bg-green-600 transition-all active:scale-95 shadow-lg"
+                                 >
+                                    অর্ডার
+                                 </button>
+                                 <button
+                                    onClick={(e) => { e.stopPropagation(); toggleProduct(p); }}
+                                    className={`py-3 rounded-3xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm border-2 ${isSelected ? "bg-red-50 border-red-200 text-red-600" : "bg-white border-green-50 text-green-600 hover:border-green-100"}`}
+                                 >
+                                    {isSelected ? "বাদ দিন" : "সিলেক্ট"}
+                                 </button>
+                              </div>
                            </div>
-                        )}
-                        {isSelected && (
-                           <div className="absolute top-4 right-4 bg-blue-600 text-white p-2 rounded-full shadow-xl">
-                              <HiCheckCircle className="text-xl" />
-                           </div>
-                        )}
+                        </div>
                      </div>
-                     <div className="p-6 md:p-8 flex flex-col flex-1">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{p.brand || "প্রিমিয়াম ব্র্যান্ড"}</p>
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 line-clamp-2 mb-6 h-14 leading-tight group-hover:text-blue-600 transition-colors">{p.name}</h3>
-
-                        <div className="mt-auto">
-                           <div className="flex items-center gap-3 mb-6">
-                              <span className="text-2xl font-black text-gray-900">৳{(p.discountPrice > 0 ? p.discountPrice : p.price).toLocaleString()}</span>
-                              {p.discountPrice > 0 && (
-                                 <span className="text-sm text-gray-400 line-through font-medium">৳{p.price.toLocaleString()}</span>
-                              )}
-                           </div>
-
-                            <button
-                               onClick={(e) => {
-                                  e.stopPropagation();
-                                  scrollToForm(p);
-                               }}
-                               className={`w-full py-4 rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg ${isSelected ? 'bg-blue-600 text-white' : 'bg-black text-white hover:bg-blue-600'}`}
-                            >
-                               {isSelected ? 'সিলেক্ট করা হয়েছে' : 'অর্ডার করুন'}
-                            </button>
-                         </div>
-                      </div>
-                   </div>
-                  )
+                  );
                }) : (
                   <div className="col-span-full text-center py-20">
-                      <p className="text-gray-400 font-bold">এই মুহূর্তে কোনো পণ্য পাওয়া যায়নি।</p>
+                     <p className="text-gray-400 font-bold">এই মুহূর্তে কোনো পণ্য পাওয়া যায়নি।</p>
                   </div>
                )}
             </div>
          </section>
 
          {/* CALL TO ACTION / PHONE SECTION */}
-         <section className="bg-gray-50 py-24 md:py-32 relative overflow-hidden border-y border-gray-100">
-            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-               <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-10 uppercase tracking-tighter leading-tight">অর্ডার করতে বা বিস্তারিত জানতে কল করুন</h2>
-               <a 
-                  href={`tel:${settings.contactNumber}`} 
-                  className="inline-flex items-center gap-4 bg-black text-white px-10 md:px-16 py-6 rounded-3xl font-black shadow-2xl hover:bg-blue-600 transition-all text-xl md:text-3xl tracking-tighter"
+         <section className="bg-gray-50 py-16 md:py-20 relative overflow-hidden border-y border-gray-100">
+            <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+               <h2 className="text-2xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter leading-tight max-w-2xl text-center md:text-left">
+                  অর্ডার করতে বা বিস্তারিত জানতে কল করুন
+               </h2>
+               <a
+                  href={`tel:${settings.contactNumber}`}
+                  className="inline-flex items-center gap-4 bg-black text-white px-10 md:px-14 py-5 rounded-3xl font-black shadow-2xl hover:bg-green-600 transition-all text-xl md:text-2xl tracking-tighter shrink-0"
                >
-                  <HiOutlinePhone className="text-3xl md:text-5xl text-blue-500" />
+                  <HiOutlinePhone className="text-2xl md:text-3xl text-green-500" />
                   {settings.contactNumber}
                </a>
             </div>
          </section>
 
-         {/* ORDER FORM SECTION */}
-         <section ref={formRef} className="max-w-3xl mx-auto px-6 py-20 md:py-32">
-            <div className="bg-white shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-gray-100 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem]">
-               <div className="text-center mb-12 md:mb-16">
-                  <h2 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter mb-4">অর্ডার নিশ্চিত করুন</h2>
-                  <p className="text-sm text-gray-500 font-medium tracking-wide">সঠিক তথ্য দিয়ে নিচের ফর্মটি পূরণ করুন</p>
+         {/* ORDER SECTION - SPLIT LAYOUT */}
+         <section ref={formRef} className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+            <div className="bg-white shadow-lg border border-gray-100 p-8 md:p-20 rounded-base md:rounded-3xl">
+               <div className="flex flex-col items-center justify-center gap-4 mb-16 md:mb-24">
+                  <div className="w-20 h-20  flex items-center justify-center ">
+                     <img src="/logo.jpg" alt="HatimZone logo" className="w-20 h-20 md:w-24 md:h-24 object-contain animate-float" alt="HatimZone Icon" />
+                  </div>
+                  <div className="text-center">
+                     <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">অর্ডার নিশ্চিত করুন</h2>
+                     <p className="text-sm text-gray-500 font-medium tracking-wide">সঠিক তথ্য দিয়ে নিচের ফর্মটি পূরণ করুন</p>
+                  </div>
                </div>
 
-               <form onSubmit={handleOrder} className="space-y-8">
-                   <div className="space-y-4 mb-10">
-                      {selectedProducts.length > 0 ? selectedProducts.map((p) => (
-                         <div key={p._id} className="bg-gray-50 p-4 md:p-6 rounded-[2rem] flex items-center gap-4 border border-gray-100 relative group">
-                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden shadow-lg bg-white border border-gray-100 p-1 flex-shrink-0">
-                               <img
-                                  src={p.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
-                                  className="w-full h-full object-contain"
-                                  alt={p.name}
-                               />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                               <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-1">{p.name}</h3>
-                               <p className="text-lg font-black text-blue-600">৳{(p.discountPrice > 0 ? p.discountPrice : p.price).toLocaleString()}</p>
-                            </div>
-                            <div className="flex items-center gap-2 bg-white rounded-xl p-1 border border-gray-200">
-                               <button 
-                                  type="button"
-                                  onClick={() => updateQuantity(p._id, -1)}
-                                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500"
-                               >
-                                  -
-                               </button>
-                               <span className="w-6 text-center font-bold text-sm">{p.quantity || 1}</span>
-                               <button 
-                                  type="button"
-                                  onClick={() => updateQuantity(p._id, 1)}
-                                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500"
-                               >
-                                  +
-                               </button>
-                            </div>
-                            <button 
-                               type="button"
-                               onClick={() => toggleProduct(p)}
-                               className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                            >
-                               ✕
-                            </button>
-                         </div>
-                      )) : (
-                         <div className="text-center py-10 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200">
-                            <p className="text-gray-400 font-bold">কোনো পণ্য সিলেক্ট করা নেই</p>
-                            <button 
-                               type="button"
-                               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                               className="text-blue-600 text-sm font-black uppercase tracking-widest mt-2"
-                            >
-                               পণ্য বেছে নিন
-                            </button>
-                         </div>
-                      )}
-                   </div>
-
-                  <div className="grid gap-6 md:gap-8">
-                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">আপনার নাম</label>
-                        <input
-                           type="text"
-                           required
-                           className="store-input"
-                           placeholder="আপনার নাম লিখুন"
-                           value={customer.name}
-                           onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                        />
-                     </div>
-
-                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">মোবাইল নম্বর</label>
-                        <input
-                           type="tel"
-                           required
-                           className="store-input"
-                           placeholder="১১ ডিজিটের মোবাইল নম্বর"
-                           value={customer.phone}
-                           onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                        />
-                     </div>
-
-                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">সম্পূর্ণ ঠিকানা</label>
-                        <textarea
-                           required
-                           rows="3"
-                           className="store-input resize-none"
-                           placeholder="বাসা নম্বর, রোড, এলাকা এবং জেলা"
-                           value={customer.address}
-                           onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
-                        ></textarea>
-                     </div>
-
-                     <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 ml-2">শিপিং পদ্ধতি</label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                           <label className="cursor-pointer group">
-                              <input
-                                 type="radio"
-                                 className="hidden"
-                                 name="city"
-                                 checked={customer.city === "Dhaka"}
-                                 onChange={() => setCustomer({ ...customer, city: "Dhaka" })}
-                              />
-                              <div className={`text-center py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city === "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
-                                 ঢাকা সিটি (৳{settings.shippingInsideDhaka})
+               <form onSubmit={handleOrder}>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+                     {/* LEFT COLUMN: ORDER FORM */}
+                     <div className="space-y-8">
+                        <div className="bg-gray-50/50 p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
+                           <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">১</span>
+                              আপনার তথ্য
+                           </h3>
+                           <div className="grid gap-6">
+                              <div>
+                                 <label className="block text-[12px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">আপনার নাম</label>
+                                 <input
+                                    type="text"
+                                    required
+                                    className="store-input"
+                                    placeholder="আপনার নাম লিখুন"
+                                    value={customer.name}
+                                    onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                                 />
                               </div>
-                           </label>
-                           <label className="cursor-pointer group">
-                              <input
-                                 type="radio"
-                                 className="hidden"
-                                 name="city"
-                                 checked={customer.city !== "Dhaka"}
-                                 onChange={() => setCustomer({ ...customer, city: "Outside" })}
-                              />
-                              <div className={`text-center py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city !== "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
-                                 ঢাকার বাইরে (৳{settings.shippingOutsideDhaka})
+
+                              <div>
+                                 <label className="block text-[12px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">মোবাইল নম্বর</label>
+                                 <input
+                                    type="tel"
+                                    required
+                                    className="store-input"
+                                    placeholder="১১ ডিজিটের মোবাইল নম্বর"
+                                    value={customer.phone}
+                                    onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                                 />
                               </div>
-                           </label>
+
+                              <div>
+                                 <label className="block text-[12px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">সম্পূর্ণ ঠিকানা</label>
+                                 <textarea
+                                    required
+                                    rows="3"
+                                    className="store-input resize-none"
+                                    placeholder="বাসা নম্বর, রোড, এলাকা এবং জেলা"
+                                    value={customer.address}
+                                    onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
+                                 ></textarea>
+                              </div>
+                           </div>
+                        </div>
+
+                        <div className="bg-gray-50/50 p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
+                           <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">২</span>
+                              শিপিং পদ্ধতি
+                           </h3>
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <label className="cursor-pointer group">
+                                 <input
+                                    type="radio"
+                                    className="hidden"
+                                    name="city"
+                                    checked={customer.city === "Dhaka"}
+                                    onChange={() => setCustomer({ ...customer, city: "Dhaka" })}
+                                 />
+                                 <div className={`text-center py-5 rounded-3xl font-black text-[12px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city === "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
+                                    ঢাকা সিটি (৳{settings.shippingInsideDhaka})
+                                 </div>
+                              </label>
+                              <label className="cursor-pointer group">
+                                 <input
+                                    type="radio"
+                                    className="hidden"
+                                    name="city"
+                                    checked={customer.city !== "Dhaka"}
+                                    onChange={() => setCustomer({ ...customer, city: "Outside" })}
+                                 />
+                                 <div className={`text-center py-5 rounded-3xl font-black text-[12px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city !== "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
+                                    ঢাকার বাইরে (৳{settings.shippingOutsideDhaka})
+                                 </div>
+                              </label>
+                           </div>
                         </div>
                      </div>
-                  </div>
 
-                   <div className="bg-gray-50 p-8 md:p-10 rounded-[2.5rem] mt-10 text-gray-900 border border-gray-100 shadow-sm relative overflow-hidden">
-                      <div className="space-y-4 text-gray-500 font-medium border-b border-gray-200 pb-6 mb-6">
-                         <div className="flex justify-between">
-                            <span className="text-[10px] uppercase tracking-widest">পণ্যের মূল্য ({selectedProducts.reduce((acc, p) => acc + (p.quantity || 1), 0)} টি)</span>
-                            <span className="font-black text-gray-900">৳{selectedProducts.reduce((acc, p) => acc + ((p.discountPrice > 0 ? p.discountPrice : p.price) * (p.quantity || 1)), 0).toLocaleString()}</span>
-                         </div>
-                         <div className="flex justify-between">
-                            <span className="text-[10px] uppercase tracking-widest">শিপিং চার্জ</span>
-                            <span className="font-black text-gray-900">৳{customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka}</span>
-                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                         <span className="text-[10px] uppercase tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
-                         <span className="text-3xl md:text-4xl font-black text-blue-600">৳{(selectedProducts.reduce((acc, p) => acc + ((p.discountPrice > 0 ? p.discountPrice : p.price) * (p.quantity || 1)), 0) + (customer.city === "Dhaka" ? settings.shippingInsideDhaka : settings.shippingOutsideDhaka)).toLocaleString()}</span>
-                      </div>
-                   </div>
+                     {/* RIGHT COLUMN: SELECTED PRODUCTS & SUMMARY */}
+                     <div className="space-y-8">
+                        <div className="bg-gray-50/50 p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col h-full">
+                           <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                              <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">৩</span>
+                              আপনার নির্বাচন
+                           </h3>
 
-                  <button
-                     type="submit"
-                     disabled={orderLoading}
-                     className="w-full py-6 bg-blue-600 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-blue-700 transition-all shadow-2xl disabled:opacity-50 active:scale-[0.98]"
-                  >
-                     {orderLoading ? "অর্ডার সম্পন্ন হচ্ছে..." : "অর্ডার নিশ্চিত করুন"}
-                  </button>
+                           {selectedProducts.length > 0 ? (
+                              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar flex-1 mb-8">
+                                 {selectedProducts.map((item) => (
+                                    <div key={item._id} className="bg-white p-4 rounded-3xl flex items-center gap-4 border border-gray-100 shadow-sm relative group transition-all hover:scale-[1.02]">
+                                       <div className="w-16 h-16 rounded-3xl overflow-hidden shadow-md flex-shrink-0 bg-gray-50">
+                                          <img
+                                             src={item.cover || "https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image"}
+                                             className="w-full h-full object-cover"
+                                             alt={item.name}
+                                          />
+                                       </div>
+                                       <div className="flex-1 min-w-0">
+                                          <h3 className="text-xs font-bold text-gray-900 line-clamp-1">{item.name}</h3>
+                                          <p className="text-lg font-black text-green-600">৳{(item.discountPrice > 0 ? item.discountPrice : item.price).toLocaleString()}</p>
 
-                  <div className="flex items-center justify-center gap-3 text-[9px] text-gray-400 font-black uppercase tracking-widest">
-                     <HiCheckCircle className="text-blue-500 text-xl" />
-                     ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা দিন)
+                                          <div className="flex items-center gap-2 mt-2">
+                                             <button type="button" onClick={() => updateQuantity(item._id, -1)} className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center text-xs">-</button>
+                                             <span className="text-xs font-bold">{item.quantity || 1}</span>
+                                             <button type="button" onClick={() => updateQuantity(item._id, 1)} className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center text-xs">+</button>
+                                          </div>
+                                       </div>
+                                       <button
+                                          type="button"
+                                          onClick={() => toggleProduct(item)}
+                                          className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                                       >
+                                          ✕
+                                       </button>
+                                    </div>
+                                 ))}
+                              </div>
+                           ) : (
+                              <div className="bg-white border border-dashed border-gray-200 p-12 rounded-[2rem] text-center flex-1 mb-8 flex items-center justify-center">
+                                 <p className="text-gray-400 font-bold text-sm leading-relaxed">এখনো কোনো পণ্য নির্বাচন করা হয়নি।</p>
+                              </div>
+                           )}
+
+                           <div className="mt-auto space-y-6 pt-10 border-t border-gray-100">
+                              <div className="space-y-4 text-gray-500 font-medium">
+                                 <div className="flex justify-between">
+                                    <span className="text-[12px] uppercase tracking-widest">পণ্যের মূল্য</span>
+                                    <span className="font-black text-gray-900">৳{totalProductPrice.toLocaleString()}</span>
+                                 </div>
+                                 <div className="flex justify-between">
+                                    <span className="text-[12px] uppercase tracking-widest">শিপিং চার্জ</span>
+                                    <span className="font-black text-gray-900">৳{shippingCharge}</span>
+                                 </div>
+                              </div>
+                              <div className="flex justify-between items-center bg-black text-white p-8 rounded-3xl shadow-2xl">
+                                 <span className="text-[12px] uppercase tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
+                                 <span className="text-3xl font-black">৳{(totalProductPrice + shippingCharge).toLocaleString()}</span>
+                              </div>
+
+                              <button
+                                 type="submit"
+                                 disabled={orderLoading}
+                                 className="w-full py-6 bg-green-600 text-white rounded-3xl font-black uppercase tracking-[0.2em] text-sm hover:bg-green-700 transition-all shadow-2xl disabled:opacity-50 active:scale-[0.98]"
+                              >
+                                 {orderLoading ? "অর্ডার সম্পন্ন হচ্ছে..." : "অর্ডার নিশ্চিত করুন"}
+                              </button>
+
+                              <div className="flex items-center justify-center gap-3 text-[9px] text-gray-400 font-black uppercase tracking-widest">
+                                 <HiCheckCircle className="text-green-500 text-xl" />
+                                 ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা দিন)
+                              </div>
+                           </div>
+                        </div>
+                     </div>
                   </div>
                </form>
             </div>
@@ -432,17 +462,176 @@ export default function DynamicLandingPage() {
          <div className="fixed bottom-6 left-6 right-6 md:hidden z-[100]">
             <button
                onClick={() => scrollToForm(null)}
-               className="w-full py-5 bg-black text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl flex items-center justify-center gap-3 border border-white/10 backdrop-blur-md"
+               className="w-full py-5 bg-black text-white rounded-3xl font-black uppercase tracking-widest text-sm shadow-2xl flex items-center justify-center gap-3 border border-white/10 backdrop-blur-md"
             >
                <HiOutlineShoppingBag className="text-lg" />
-               পছন্দের ল্যাম্পটি অর্ডার করুন
+               পছন্দের পণ্যটি অর্ডার করুন
             </button>
          </div>
 
-         <SuccessModal 
-            isOpen={showSuccess} 
-            onClose={() => setShowSuccess(false)} 
-            orderId={lastOrderId} 
+         {/* PRODUCT DETAIL MODAL */}
+         {showDetail && detailProduct && (
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6">
+               <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDetail(false)} />
+               <div className="relative bg-white w-full max-w-5xl rounded-3xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[95vh] border border-gray-100">
+
+                  {/* IMAGE SIDE WITH SLIDER */}
+                  <div 
+                      className="w-full md:w-[55%] bg-gray-50 h-[350px] md:h-auto overflow-hidden relative group"
+                      onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+                      onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+                      onTouchEnd={() => {
+                         if (touchStart - touchEnd > 70) nextSlide();
+                         if (touchStart - touchEnd < -70) prevSlide();
+                      }}
+                   >
+                     {(() => {
+                        const images = [detailProduct.cover, ...(detailProduct.images || [])].filter(Boolean);
+                        if (images.length === 0) images.push("https://placehold.co/400x500/6B7280/FFFFFF?text=No+Image");
+
+                        return (
+                           <>
+                              <div className="flex h-full w-full transition-transform duration-500 ease-out" style={{ transform: `translateX(-${activeSlide * 100}%)` }}>
+                                 {images.map((img, idx) => (
+                                    <img
+                                       key={idx}
+                                       src={img}
+                                       className="w-full h-full object-cover flex-shrink-0"
+                                       alt={`${detailProduct.name} ${idx + 1}`}
+                                    />
+                                 ))}
+                              </div>
+
+                              {images.length > 1 && (
+                                 <>
+                                    {/* Navigation Arrows */}
+                                    <button
+                                       onClick={() => setActiveSlide((prev) => (prev - 1 + images.length) % images.length)}
+                                       className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white z-20"
+                                    >
+                                       <HiChevronLeft className="text-xl" />
+                                    </button>
+                                    <button
+                                       onClick={() => setActiveSlide((prev) => (prev + 1) % images.length)}
+                                       className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white z-20"
+                                    >
+                                       <HiChevronRight className="text-xl" />
+                                    </button>
+
+                                    {/* Slider Navigation Dots */}
+                                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+                                       {images.map((_, i) => (
+                                          <button
+                                             key={i}
+                                             onClick={() => setActiveSlide(i)}
+                                             className={`w-2 md:w-10 h-1 rounded-full transition-all ${activeSlide === i ? 'bg-green-600 w-12' : 'bg-white/40'}`}
+                                          />
+                                       ))}
+                                    </div>
+                                 </>
+                              )}
+                           </>
+                        );
+                     })()}
+
+                     {/* Corner Selection Indicator */}
+                     {selectedProducts.some(sp => sp._id === detailProduct._id) && (
+                        <div className="absolute top-8 left-8 bg-green-600 text-white p-4 rounded-full shadow-2xl animate-bounce z-20">
+                           <HiCheckCircle className="text-3xl" />
+                        </div>
+                     )}
+                  </div>
+
+                  {/* INFO SIDE */}
+                  <div className="w-full md:w-[45%] p-8 md:p-16 overflow-y-auto bg-white flex flex-col">
+                     <button
+                        onClick={() => setShowDetail(false)}
+                        className="absolute top-8 right-8 w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-900 hover:bg-black hover:text-white transition-all shadow-sm z-20"
+                     >
+                        ✕
+                     </button>
+
+                     <div className="mb-auto">
+                        <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-full mb-8">
+                           <HiOutlineSparkles className="text-sm" />
+                           <span className="text-[12px] font-black uppercase tracking-widest">{detailProduct.brand || "প্রিমিয়াম ব্র্যান্ড"}</span>
+                        </div>
+                        <h2 className="text-2xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter mb-8 leading-[0.9]">{detailProduct.name}</h2>
+
+                        <div className="flex items-center gap-6 mb-12">
+                           <span className="text-3xl md:text-6xl font-black text-gray-900">৳{(detailProduct.discountPrice > 0 ? detailProduct.discountPrice : detailProduct.price).toLocaleString()}</span>
+                           {detailProduct.discountPrice > 0 && (
+                              <div className="flex flex-col">
+                                 <span className="text-base text-gray-400 line-through font-medium leading-none mb-1">৳{detailProduct.price.toLocaleString()}</span>
+                                 <span className="text-[12px] bg-red-100 text-red-600 px-3 py-1 rounded-full font-black uppercase tracking-tighter">সেভ ৳{(detailProduct.price - detailProduct.discountPrice).toLocaleString()}</span>
+                              </div>
+                           )}
+                        </div>
+
+                        <div className="space-y-8 text-sm md:text-base text-gray-500 font-medium mb-12 leading-relaxed">
+                           <p>{detailProduct.description || "এই পণ্যটি সম্পর্কে বিস্তারিত তথ্য শীঘ্রই যোগ করা হবে। আমাদের প্রতিটি পণ্য সর্বোচ্চ গুণমান নিশ্চিত করে তৈরি করা হয়।"}</p>
+                           <div className="grid grid-cols-2 gap-6 pt-6">
+                              <div className="bg-gray-50 p-4 rounded-3xl flex flex-col gap-2">
+                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">কোয়ালিটি</span>
+                                 <span className="text-xs font-black text-gray-900">১০০% অরিজিনাল</span>
+                              </div>
+                              <div className="bg-gray-50 p-4 rounded-3xl flex flex-col gap-2">
+                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">ডেলিভারি</span>
+                                 <span className="text-xs font-black text-gray-900">ফাস্ট শিপিং</span>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="grid grid-cols-1 gap-4 pt-12 border-t border-gray-100">
+                        {(() => {
+                           const selected = selectedProducts.find(sp => sp._id === detailProduct._id);
+                           return (
+                              <>
+                                 {selected && (
+                                    <div className="flex items-center justify-center gap-6 mb-4 bg-gray-50 py-4 rounded-3xl border border-gray-100">
+                                       <button 
+                                          type="button" 
+                                          onClick={() => updateQuantity(detailProduct._id, -1)}
+                                          className="w-10 h-10 bg-white shadow-sm rounded-3xl flex items-center justify-center font-black text-xl hover:bg-black hover:text-white transition"
+                                       >
+                                          -
+                                       </button>
+                                       <span className="text-xl font-black">{selected.quantity || 1}</span>
+                                       <button 
+                                          type="button" 
+                                          onClick={() => updateQuantity(detailProduct._id, 1)}
+                                          className="w-10 h-10 bg-white shadow-sm rounded-3xl flex items-center justify-center font-black text-xl hover:bg-black hover:text-white transition"
+                                       >
+                                          +
+                                       </button>
+                                    </div>
+                                 )}
+                                 <button
+                                    onClick={() => { scrollToForm(detailProduct); setShowDetail(false); }}
+                                    className="w-full bg-black text-white py-6 rounded-3xl font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-green-600 transition-all active:scale-[0.98]"
+                                 >
+                                    এখনই অর্ডার করুন
+                                 </button>
+                                 <button
+                                    onClick={() => { toggleProduct(detailProduct); }}
+                                    className={`w-full py-5 rounded-3xl font-black uppercase tracking-widest text-xs border-2 transition-all ${selected ? "bg-red-50 border-red-500 text-red-600" : "bg-white border-gray-200 text-gray-900 hover:border-black"}`}
+                                 >
+                                    {selected ? "বাদ দিন" : "নির্বাচন করুন"}
+                                 </button>
+                              </>
+                           );
+                        })()}
+                     </div>
+                  </div>
+               </div>
+            </div>
+         )}
+
+         <SuccessModal
+            isOpen={showSuccess}
+            onClose={() => setShowSuccess(false)}
+            orderId={lastOrderId}
          />
 
       </div>

@@ -68,7 +68,7 @@ export default function Navbar() {
             className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 object-contain"
           />
 
-          <span className="text-lg sm:text-xl lg:text-2xl font-black uppercase tracking-tight text-black hover:text-blue-600 transition truncate max-w-[150px] xs:max-w-none">
+          <span className="text-lg sm:text-xl lg:text-2xl font-black uppercase tracking-tight text-black hover:text-green-600 transition truncate max-w-[150px] xs:max-w-none">
             HatimZone
           </span>
         </Link>
@@ -88,10 +88,9 @@ export default function Navbar() {
                 relative text-[11px] lg:text-[12px]
                 font-bold uppercase tracking-[2px]
                 transition-all duration-300
-                ${
-                  pathname === item.href
-                    ? "text-blue-600"
-                    : "text-gray-800 hover:text-blue-600"
+                ${pathname === item.href
+                  ? "text-green-600"
+                  : "text-gray-800 hover:text-green-600"
                 }
               `}
             >
@@ -100,11 +99,10 @@ export default function Navbar() {
               <span
                 className={`
                   absolute left-0 -bottom-1 h-[2px]
-                  bg-blue-600 transition-all duration-300
-                  ${
-                    pathname === item.href
-                      ? "w-full"
-                      : "w-0 group-hover:w-full"
+                  bg-green-600 transition-all duration-300
+                  ${pathname === item.href
+                    ? "w-full"
+                    : "w-0 group-hover:w-full"
                   }
                 `}
               />
@@ -117,10 +115,10 @@ export default function Navbar() {
 
           {/* CART */}
           <Link href="/cart" className="relative p-2 group">
-            <HiOutlineShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 group-hover:text-blue-600 transition" />
+            <HiOutlineShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 group-hover:text-green-600 transition" />
 
             {cart.length > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black text-white text-[12px] font-bold flex items-center justify-center">
                 {cart.length}
               </span>
             )}
@@ -129,7 +127,7 @@ export default function Navbar() {
           {/* ACCOUNT / TRACKING */}
           <Link href="/account" className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-black hover:text-white rounded-full transition-all duration-300 group border border-gray-100">
             <HiOutlineUser className="w-4 h-4 text-gray-800 group-hover:text-white transition" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Tracking Order</span>
+            <span className="text-[12px] font-black uppercase tracking-widest">Tracking Order</span>
           </Link>
 
           {/* MOBILE MENU BUTTON */}
@@ -149,10 +147,9 @@ export default function Navbar() {
           fixed inset-0 bg-black/50 backdrop-blur-sm
           transition-all duration-300 md:hidden
           z-[1000]
-          ${
-            isMenuOpen
-              ? "opacity-100 visible"
-              : "opacity-0 invisible"
+          ${isMenuOpen
+            ? "opacity-100 visible"
+            : "opacity-0 invisible"
           }
         `}
       />
@@ -212,10 +209,9 @@ export default function Navbar() {
                 md:text-lg text-xs
                 font-black uppercase tracking-wide
                 transition-all duration-300
-                ${
-                  pathname === item.href
-                    ? "bg-black text-white shadow-lg scale-[1.02]"
-                    : "text-black hover:bg-gray-100"
+                ${pathname === item.href
+                  ? "bg-black text-white shadow-lg scale-[1.02]"
+                  : "text-black hover:bg-gray-100"
                 }
               `}
             >
@@ -226,12 +222,12 @@ export default function Navbar() {
 
         {/* FOOTER */}
         <div className="border-t border-gray-100 p-5 bg-gray-50/50">
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">
+          <p className="text-[12px] font-black uppercase tracking-widest text-gray-400 text-center">
             © 2026 HatimZone
           </p>
-          <Link 
-            href="/policies" 
-            className="block text-[10px] font-black uppercase tracking-widest text-blue-600 text-center mt-2 hover:underline"
+          <Link
+            href="/policies"
+            className="block text-[12px] font-black uppercase tracking-widest text-green-600 text-center mt-2 hover:underline"
           >
             Privacy & Terms
           </Link>

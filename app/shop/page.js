@@ -158,10 +158,10 @@ export default async function ShopPage({ searchParams }) {
           {/* BRANDS FILTER */}
           <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
+              <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest">
                 Brands
               </h3>
-              <Link href="/shop" className="text-[10px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
+              <Link href="/shop" className="text-[12px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
                 Clear
               </Link>
             </div>
@@ -172,8 +172,8 @@ export default async function ShopPage({ searchParams }) {
                   key={i}
                   href={getToggleUrl("brand", brand)}
                   className={`text-sm px-5 py-3 rounded-xl border transition-all font-bold ${selectedBrands.includes(brand)
-                      ? "bg-black text-white border-black"
-                      : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
+                    ? "bg-black text-white border-black"
+                    : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
                     }`}
                 >
                   {brand}
@@ -184,7 +184,7 @@ export default async function ShopPage({ searchParams }) {
 
           {/* PRICE RANGE */}
           <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-            <h3 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6">
+            <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest mb-6">
               Price Range
             </h3>
             <form action="/shop" className="space-y-4">
@@ -202,7 +202,7 @@ export default async function ShopPage({ searchParams }) {
                   className="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 text-sm font-bold outline-none transition"
                 />
               </div>
-              <button className="w-full bg-gray-900 text-white py-3.5 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-black transition shadow-lg shadow-gray-100">
+              <button className="w-full bg-gray-900 text-white py-3.5 rounded-xl font-black uppercase tracking-widest text-[12px] hover:bg-black transition shadow-lg shadow-gray-100">
                 Update List
               </button>
             </form>
@@ -214,12 +214,12 @@ export default async function ShopPage({ searchParams }) {
 
           <div className="mb-6 md:mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white px-5 py-4 rounded-2xl border border-gray-100 shadow-sm gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">
+              <span className="text-[12px] font-black uppercase text-gray-400 tracking-widest">
                 Sort By
               </span>
               <SortSelect currentSort={sort} />
             </div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest">
               {products.length} Items · Page {page}
             </p>
           </div>
@@ -234,7 +234,7 @@ export default async function ShopPage({ searchParams }) {
                     className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                   />
                   {p.discountPrice > 0 && (
-                    <span className="absolute top-4 left-4 bg-black text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
+                    <span className="absolute top-4 left-4 bg-black text-white text-[12px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-xl">
                       Sale
                     </span>
                   )}
@@ -242,7 +242,7 @@ export default async function ShopPage({ searchParams }) {
 
                 <div className="p-4 md:p-6 flex flex-col flex-1 pt-2">
                   <div className="flex justify-between items-center mb-1 md:mb-2">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{p.brand}</span>
+                    <span className="text-[12px] font-black text-gray-400 uppercase tracking-widest">{p.brand}</span>
                   </div>
 
                   <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-sm md:text-lg h-5 md:h-7">
@@ -255,7 +255,7 @@ export default async function ShopPage({ searchParams }) {
                     </span>
                     <Link
                       href={`/product/${p.slug || p._id}`}
-                      className="text-[10px] font-black uppercase tracking-widest bg-gray-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-black hover:text-white transition-all duration-300 w-full sm:w-auto text-center"
+                      className="text-[12px] font-black uppercase tracking-widest bg-gray-50 px-3 py-1.5 md:px-4 md:py-2 rounded-lg hover:bg-black hover:text-white transition-all duration-300 w-full sm:w-auto text-center"
                     >
                       View →
                     </Link>
@@ -270,7 +270,7 @@ export default async function ShopPage({ searchParams }) {
             {/* Prev Button */}
             {page > 1 ? (
               <Link
-                href={`/shop?${new URLSearchParams({...params, page: page - 1}).toString()}`}
+                href={`/shop?${new URLSearchParams({ ...params, page: page - 1 }).toString()}`}
                 className="px-4 py-2 bg-white border border-gray-200 rounded-xl font-bold text-sm hover:bg-gray-50 transition"
               >
                 Prev
@@ -286,7 +286,7 @@ export default async function ShopPage({ searchParams }) {
               {[...Array(Math.max(1, Math.ceil(totalProducts / limit)))].map((_, i) => (
                 <Link
                   key={i}
-                  href={`/shop?${new URLSearchParams({...params, page: i + 1}).toString()}`}
+                  href={`/shop?${new URLSearchParams({ ...params, page: i + 1 }).toString()}`}
                   className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition ${page === i + 1 ? 'bg-black text-white shadow-lg shadow-gray-200' : 'bg-white border hover:bg-gray-50 text-gray-600'}`}
                 >
                   {i + 1}
@@ -297,7 +297,7 @@ export default async function ShopPage({ searchParams }) {
             {/* Next Button */}
             {page < Math.ceil(totalProducts / limit) ? (
               <Link
-                href={`/shop?${new URLSearchParams({...params, page: page + 1}).toString()}`}
+                href={`/shop?${new URLSearchParams({ ...params, page: page + 1 }).toString()}`}
                 className="px-4 py-2 bg-white border border-gray-200 rounded-xl font-bold text-sm hover:bg-gray-50 transition"
               >
                 Next

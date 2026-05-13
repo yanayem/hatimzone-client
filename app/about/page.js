@@ -33,7 +33,7 @@ export default function AboutPage() {
       <section className="py-24 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-[12px] font-black uppercase tracking-[0.2em]">
               The Mission
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
@@ -64,7 +64,7 @@ export default function AboutPage() {
             <div className="absolute -bottom-6 md:-bottom-10 -left-6 md:-left-10 bg-white p-6 md:p-8 rounded-2xl md:rounded-[2rem] shadow-xl border border-gray-100 hidden sm:block">
               <HiOutlineLightBulb className="text-3xl md:text-5xl text-blue-600 mb-2 md:mb-4" />
               <p className="text-xs md:text-sm font-black text-slate-900 uppercase tracking-tight">Handpicked Quality</p>
-              <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Every lamp tells a story</p>
+              <p className="text-[9px] md:text-[12px] text-slate-400 font-bold uppercase tracking-widest mt-1">Every lamp tells a story</p>
             </div>
           </div>
         </div>
