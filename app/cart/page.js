@@ -163,12 +163,12 @@ export default function CartPage() {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center">
+              {/*<div className="flex justify-between items-center">
                 <span>Shipping</span>
                 <span className="text-green-600 font-bold text-[11px] uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full">
                   Free Over ৳5000
                 </span>
-              </div>
+              </div>*/}
 
             </div>
 

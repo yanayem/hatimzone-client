@@ -59,44 +59,58 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+            <div className="w-full max-w-md">
+                <div className="text-center mb-10">
+                    <h1 className="text-3xl font-black tracking-tighter text-gray-900 uppercase">
+                        <span className="text-green-600">HatimZone</span> Admin
+                    </h1>
+                    <p className="text-gray-500 font-medium mt-2">Sign in to manage your store</p>
+                </div>
 
-                <h1 className="text-xl text-gray-800 font-bold mb-5">Admin Login</h1>
+                <form onSubmit={handleLogin} className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-gray-100 space-y-6">
+                    <div>
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="admin@example.com"
+                            value={identifier}
+                            onChange={(e) => setIdentifier(e.target.value)}
+                            className="w-full text-gray-800 placeholder:text-gray-300 p-4 bg-gray-50 border border-transparent focus:border-black rounded-2xl outline-none transition-all font-bold"
+                            required
+                        />
+                    </div>
 
-                <input
-                    type="email"
-                    placeholder="Email Address"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    className="w-full text-gray-800 placeholder:text-gray-600 p-4 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black outline-none"
-                />
+                    <div>
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">Password</label>
+                        <input
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full text-gray-800 placeholder:text-gray-300 p-4 bg-gray-50 border border-transparent focus:border-black rounded-2xl outline-none transition-all font-bold"
+                            required
+                        />
+                    </div>
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full text-gray-800 placeholder:text-gray-600 p-4 border mb-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-black outline-none"
-                />
+                    <button 
+                        disabled={loading}
+                        className="w-full bg-black text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-green-600 transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+                    >
+                        {loading ? "Verifying..." : "Access Dashboard"}
+                    </button>
 
-                <button className="w-full bg-black text-white p-3">
-                    {loading ? "Checking..." : "Login"}
-                </button>
+                    {message && (
+                        <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold text-center border border-red-100 animate-pulse">
+                            {message}
+                        </div>
+                    )}
+                </form>
 
-                {/* 🔥 Forgot password link */}
-                {/* <p className="text-center mt-3 text-sm">
-                    <Link href="/admin/forgot-password" title="Forgot Password" id="forgot-password-link" className="text-blue-500 hover:underline">
-                        Forgot Password?
-                    </Link>
-                </p> */}
-
-                {message && (
-                    <p className="mt-3 text-center text-sm text-gray-600">
-                        {message}
-                    </p>
-                )}
-            </form>
+                <p className="text-center mt-8 text-gray-400 text-xs font-bold uppercase tracking-widest">
+                    &copy; {new Date().getFullYear()} HatimZone. All rights reserved.
+                </p>
+            </div>
         </div>
     );
 }

@@ -119,9 +119,10 @@ export default function AdminOrdersPage() {
           </div>
         </div>
 
-        {/* Table */}
+        {/* Table/Card View */}
         <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-50/50 border-b border-gray-100">
@@ -137,12 +138,12 @@ export default function AdminOrdersPage() {
                 {loading ? (
                   Array(5).fill(0).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan="5" className="px-8 py-8 h-20 bg-gray-50/20"></td>
+                      <td colSpan="6" className="px-8 py-8 h-20 bg-gray-50/20"></td>
                     </tr>
                   ))
                 ) : filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="px-8 py-20 text-center text-gray-400 font-medium italic">
+                    <td colSpan="6" className="px-8 py-20 text-center text-gray-400 font-medium italic">
                       No orders found matching your filters.
                     </td>
                   </tr>
@@ -152,15 +153,14 @@ export default function AdminOrdersPage() {
                       <td className="px-8 py-6">
                         <p className="font-black text-gray-900">#{order.orderId}</p>
                         <p className="text-[11px] font-bold text-gray-500 uppercase tracking-tight">
-                          {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'short' })} {new Date(order.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                          {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, {new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'short' })}
                         </p>
                       </td>
                       <td className="px-8 py-6">
                         <div className="flex gap-1.5">
                           {order.items.map((item, i) => (
-                            <div key={i} className="relative group cursor-zoom-in" onClick={() => setZoomedImage(item.image)}>
+                            <div key={i} className="relative group cursor-zoom-in shrink-0" onClick={() => setZoomedImage(item.image)}>
                               <img src={item.image} className="w-10 h-10 rounded-lg bg-gray-50 object-cover border border-gray-100 shadow-sm transition hover:scale-110" alt="" />
-                              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 rounded-lg transition"></div>
                             </div>
                           ))}
                         </div>
@@ -168,7 +168,6 @@ export default function AdminOrdersPage() {
                       <td className="px-8 py-6">
                         <p className="font-bold text-gray-900">{order.customer.name}</p>
                         <p className="text-xs font-medium text-gray-500">{order.customer.phone}</p>
-                        <p className="text-[12px] text-gray-400 mt-1 line-clamp-1">{order.customer.address}</p>
                       </td>
                       <td className="px-8 py-6">
                         <p className="text-lg font-black text-gray-900">৳{order.totalPrice}</p>
@@ -198,6 +197,75 @@ export default function AdminOrdersPage() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden divide-y divide-gray-100">
+            {loading ? (
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className="p-6 animate-pulse space-y-4">
+                  <div className="h-4 bg-gray-100 rounded w-1/3"></div>
+                  <div className="h-10 bg-gray-100 rounded w-full"></div>
+                </div>
+              ))
+            ) : filteredOrders.length === 0 ? (
+               <div className="p-10 text-center text-gray-400 italic">No orders found.</div>
+            ) : (
+              filteredOrders.map((order) => (
+                <div key={order._id} className="p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-black text-gray-900">#{order.orderId}</p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase">
+                        {new Date(order.createdAt).toLocaleDateString()} • {new Date(order.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </p>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(order.status)}`}>
+                      {order.status}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {order.items.map((item, i) => (
+                      <img 
+                        key={i} 
+                        src={item.image} 
+                        className="w-12 h-12 rounded-xl object-cover border border-gray-100 shadow-sm shrink-0" 
+                        onClick={() => setZoomedImage(item.image)}
+                        alt="" 
+                      />
+                    ))}
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-2xl space-y-2">
+                    <div className="flex justify-between items-center">
+                       <span className="text-xs font-bold text-gray-900">{order.customer.name}</span>
+                       <span className="text-xs font-medium text-gray-500">{order.customer.phone}</span>
+                    </div>
+                    <p className="text-[11px] text-gray-400 line-clamp-1">{order.customer.address}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 pt-2">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Amount</span>
+                      <span className="text-xl font-black text-gray-900">৳{order.totalPrice}</span>
+                    </div>
+                    <select
+                      value={order.status}
+                      disabled={updating === order._id}
+                      onChange={(e) => updateStatus(order._id, e.target.value)}
+                      className="bg-black text-white border-none rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:ring-2 focus:ring-green-500 cursor-pointer disabled:opacity-50"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

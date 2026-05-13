@@ -169,7 +169,7 @@ export default function AdminDashboard() {
 
                 {/* Quick Actions / Tips */}
                 <div className="space-y-8">
-                    <div className="bg-gray-200 text-gray-800 p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                    {/*<div className="bg-gray-200 text-gray-800 p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
                         <h3 className="text-xl font-black uppercase tracking-tight mb-4 relative z-10">Admin Support</h3>
                         <p className="text-gray-400 text-sm font-bold mb-6 relative z-10 leading-relaxed">
                             Need help managing your store? Contact our technical team for assistance.
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
                             Get Help
                         </button>
                         <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
-                    </div>
+                    </div>*/}
 
                     <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-gray-100">
                         <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6">Inventory Status</h3>

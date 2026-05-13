@@ -126,35 +126,8 @@ export default async function ShopPage({ searchParams }) {
 
         <FilterDrawer>
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-10 md:space-y-12">
-            {/* BRANDS FILTER */}
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest">
-                  Brands
-                </h3>
-                <Link href="/shop" className="text-[12px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
-                  Clear
-                </Link>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                {brands.map((brand, i) => (
-                  <Link
-                    key={i}
-                    href={getToggleUrl("brand", brand)}
-                    className={`text-sm px-5 py-3 rounded-xl border transition-all font-bold ${selectedBrands.includes(brand)
-                      ? "bg-black text-white border-black"
-                      : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
-                      }`}
-                  >
-                    {brand}
-                  </Link>
-                ))}
-              </div>
-            </div>
-            
             {/* PRICE RANGE */}
-            <div className="border-t border-gray-50 pt-10 md:pt-12">
+            <div>
               <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest mb-6">
                 Price Range
               </h3>

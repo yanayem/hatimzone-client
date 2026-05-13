@@ -248,7 +248,7 @@ const AddProductPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Brand</label>
-                  <input name="brand" value={formData.brand} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. Hatim Furniture" />
+                  <input name="brand" value={formData.brand} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. HatimZone" />
                 </div>
                 <div>
                   <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Warranty</label>
