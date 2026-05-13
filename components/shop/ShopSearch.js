@@ -77,8 +77,8 @@ export default function ShopSearch({ initialQuery = "" }) {
                         setShowSuggestions(true);
                     }}
                     onFocus={() => setShowSuggestions(true)}
-                    placeholder="Search for lamps..."
-                    className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-5 py-3.5 md:px-6 md:py-4 text-gray-900 font-bold outline-none transition-all text-xs md:text-sm"
+                    placeholder="Search products..."
+                    className="w-full bg-gray-50 border border-gray-200 focus:border-black rounded-2xl px-5 py-3.5 md:px-6 md:py-4 text-gray-900 font-bold outline-none transition-all text-sm md:text-sm shadow-inner"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     {query && (

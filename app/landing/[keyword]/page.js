@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import { HiOutlineShoppingBag, HiOutlinePhone, HiOutlineLocationMarker, HiCheckCircle, HiArrowRight, HiOutlineSparkles, HiX, HiChevronLeft, HiChevronRight } from "react-icons/hi";
@@ -195,7 +195,7 @@ export default function DynamicLandingPage() {
                </h2>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 md:gap-4">
                {products.length > 0 ? products.map((p) => {
                   const isSelected = selectedProducts.some(sp => sp._id === p._id);
                   return (
@@ -283,23 +283,23 @@ export default function DynamicLandingPage() {
          </section>
 
          {/* ORDER SECTION - SPLIT LAYOUT */}
-         <section ref={formRef} className="max-w-7xl mx-auto px-6 py-20 md:py-32">
-            <div className="bg-white shadow-lg border border-gray-100 p-8 md:p-20 rounded-base md:rounded-3xl">
-               <div className="flex flex-col items-center justify-center gap-4 mb-16 md:mb-24">
-                  <div className="w-20 h-20  flex items-center justify-center ">
-                     <img src="/logo.jpg" alt="HatimZone logo" className="w-20 h-20 md:w-24 md:h-24 object-contain animate-float" alt="HatimZone Icon" />
+         <section ref={formRef} className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-32">
+            <div className="bg-white shadow-xl border border-gray-100 p-5 md:p-20 rounded-3xl">
+               <div className="flex flex-col items-center justify-center gap-4 mb-10 md:mb-24">
+                  <div className="w-16 h-16 md:w-24 md:h-24 flex items-center justify-center">
+                     <img src="/logo.jpg" alt="HatimZone logo" className="w-16 h-16 md:w-24 md:h-24 object-contain animate-float" alt="HatimZone Icon" />
                   </div>
                   <div className="text-center">
-                     <h2 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">অর্ডার নিশ্চিত করুন</h2>
-                     <p className="text-sm text-gray-500 font-medium tracking-wide">সঠিক তথ্য দিয়ে নিচের ফর্মটি পূরণ করুন</p>
+                     <h2 className="text-2xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">অর্ডার নিশ্চিত করুন</h2>
+                     <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-[11px] mt-2">বাকি তথ্যগুলো পূরণ করে অর্ডারটি শেষ করুন</p>
                   </div>
                </div>
 
                <form onSubmit={handleOrder}>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
                      {/* LEFT COLUMN: ORDER FORM */}
-                     <div className="space-y-8">
-                        <div className="bg-gray-50/50 p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
+                     <div className="space-y-6 md:space-y-8">
+                        <div className="bg-gray-50/50 p-5 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
                            <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
                               <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">১</span>
                               আপনার তথ্য
@@ -343,7 +343,7 @@ export default function DynamicLandingPage() {
                            </div>
                         </div>
 
-                        <div className="bg-gray-50/50 p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
+                        <div className="bg-gray-50/50 p-5 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
                            <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
                               <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">২</span>
                               শিপিং পদ্ধতি
@@ -379,7 +379,7 @@ export default function DynamicLandingPage() {
 
                      {/* RIGHT COLUMN: SELECTED PRODUCTS & SUMMARY */}
                      <div className="space-y-8">
-                        <div className="bg-gray-50/50 p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col h-full">
+                        <div className="bg-gray-50/50 p-5 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col h-full">
                            <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
                               <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">৩</span>
                               আপনার নির্বাচন
@@ -433,9 +433,9 @@ export default function DynamicLandingPage() {
                                     <span className="font-black text-gray-900">৳{shippingCharge}</span>
                                  </div>
                               </div>
-                              <div className="flex justify-between items-center bg-black text-white p-8 rounded-3xl shadow-2xl">
-                                 <span className="text-[12px] uppercase tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
-                                 <span className="text-3xl font-black">৳{(totalProductPrice + shippingCharge).toLocaleString()}</span>
+                              <div className="flex justify-between items-center bg-black text-white p-6 md:p-8 rounded-3xl shadow-2xl">
+                                 <span className="text-[10px] md:text-[12px] uppercase tracking-[0.2em] md:tracking-[0.3em] font-black">সর্বমোট পরিশোধযোগ্য</span>
+                                 <span className="text-2xl md:text-3xl font-black">৳{(totalProductPrice + shippingCharge).toLocaleString()}</span>
                               </div>
 
                               <button
@@ -473,11 +473,11 @@ export default function DynamicLandingPage() {
          {showDetail && detailProduct && (
             <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6">
                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowDetail(false)} />
-               <div className="relative bg-white w-full max-w-5xl rounded-3xl md:rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[95vh] border border-gray-100">
+               <div className="relative bg-white w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[92vh] md:max-h-[95vh] border border-gray-100 mx-auto">
 
                   {/* IMAGE SIDE WITH SLIDER */}
                   <div 
-                      className="w-full md:w-[55%] bg-gray-50 h-[350px] md:h-auto overflow-hidden relative group"
+                      className="w-full md:w-[55%] bg-gray-50 h-[300px] sm:h-[400px] md:h-auto overflow-hidden relative group shrink-0"
                       onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
                       onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
                       onTouchEnd={() => {
@@ -507,13 +507,13 @@ export default function DynamicLandingPage() {
                                     {/* Navigation Arrows */}
                                     <button
                                        onClick={() => setActiveSlide((prev) => (prev - 1 + images.length) % images.length)}
-                                       className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white z-20"
+                                       className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black hover:text-white z-20"
                                     >
                                        <HiChevronLeft className="text-xl" />
                                     </button>
                                     <button
                                        onClick={() => setActiveSlide((prev) => (prev + 1) % images.length)}
-                                       className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white z-20"
+                                       className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 shadow-xl opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black hover:text-white z-20"
                                     >
                                        <HiChevronRight className="text-xl" />
                                     </button>
@@ -543,65 +543,65 @@ export default function DynamicLandingPage() {
                   </div>
 
                   {/* INFO SIDE */}
-                  <div className="w-full md:w-[45%] p-8 md:p-16 overflow-y-auto bg-white flex flex-col">
+                  <div className="w-full md:w-[45%] p-6 md:p-16 overflow-y-auto bg-white flex flex-col">
                      <button
                         onClick={() => setShowDetail(false)}
-                        className="absolute top-8 right-8 w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-900 hover:bg-black hover:text-white transition-all shadow-sm z-20"
+                        className="absolute top-4 right-4 md:top-8 md:right-8 w-10 h-10 md:w-12 md:h-12 bg-black/5 md:bg-gray-50 rounded-full flex items-center justify-center text-gray-900 hover:bg-black hover:text-white transition-all shadow-sm z-[210]"
                      >
                         ✕
                      </button>
 
                      <div className="mb-auto">
-                        <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-full mb-8">
-                           <HiOutlineSparkles className="text-sm" />
-                           <span className="text-[12px] font-black uppercase tracking-widest">{detailProduct.brand || "প্রিমিয়াম ব্র্যান্ড"}</span>
+                        <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-3 py-1.5 md:px-4 md:py-2 rounded-full mb-4 md:mb-8">
+                           <HiOutlineSparkles className="text-[10px] md:text-sm" />
+                           <span className="text-[10px] md:text-[12px] font-black uppercase tracking-widest">{detailProduct.brand || "প্রিমিয়াম ব্র্যান্ড"}</span>
                         </div>
-                        <h2 className="text-2xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter mb-8 leading-[0.9]">{detailProduct.name}</h2>
+                        <h2 className="text-xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter mb-4 md:mb-8 leading-tight">{detailProduct.name}</h2>
 
-                        <div className="flex items-center gap-6 mb-12">
-                           <span className="text-3xl md:text-6xl font-black text-gray-900">৳{(detailProduct.discountPrice > 0 ? detailProduct.discountPrice : detailProduct.price).toLocaleString()}</span>
+                        <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-12">
+                           <span className="text-2xl md:text-6xl font-black text-gray-900">৳{(detailProduct.discountPrice > 0 ? detailProduct.discountPrice : detailProduct.price).toLocaleString()}</span>
                            {detailProduct.discountPrice > 0 && (
                               <div className="flex flex-col">
-                                 <span className="text-base text-gray-400 line-through font-medium leading-none mb-1">৳{detailProduct.price.toLocaleString()}</span>
-                                 <span className="text-[12px] bg-red-100 text-red-600 px-3 py-1 rounded-full font-black uppercase tracking-tighter">সেভ ৳{(detailProduct.price - detailProduct.discountPrice).toLocaleString()}</span>
+                                 <span className="text-sm md:text-base text-gray-400 line-through font-medium leading-none mb-1">৳{detailProduct.price.toLocaleString()}</span>
+                                 <span className="text-[10px] md:text-[12px] bg-red-100 text-red-600 px-2 py-0.5 md:px-3 md:py-1 rounded-full font-black uppercase tracking-tighter">সেভ ৳{(detailProduct.price - detailProduct.discountPrice).toLocaleString()}</span>
                               </div>
                            )}
                         </div>
 
-                        <div className="space-y-8 text-sm md:text-base text-gray-500 font-medium mb-12 leading-relaxed">
-                           <p>{detailProduct.description || "এই পণ্যটি সম্পর্কে বিস্তারিত তথ্য শীঘ্রই যোগ করা হবে। আমাদের প্রতিটি পণ্য সর্বোচ্চ গুণমান নিশ্চিত করে তৈরি করা হয়।"}</p>
-                           <div className="grid grid-cols-2 gap-6 pt-6">
-                              <div className="bg-gray-50 p-4 rounded-3xl flex flex-col gap-2">
-                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">কোয়ালিটি</span>
-                                 <span className="text-xs font-black text-gray-900">১০০% অরিজিনাল</span>
+                        <div className="space-y-6 md:space-y-8 text-sm md:text-base text-gray-500 font-medium mb-8 md:mb-12 leading-relaxed">
+                           <p className="line-clamp-4 md:line-clamp-none">{detailProduct.description || "এই পণ্যটি সম্পর্কে বিস্তারিত তথ্য শীঘ্রই যোগ করা হবে।"}</p>
+                           <div className="grid grid-cols-2 gap-3 md:gap-6 pt-4 md:pt-6">
+                              <div className="bg-gray-50 p-3 md:p-4 rounded-3xl flex flex-col gap-1 md:gap-2">
+                                 <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400">কোয়ালিটি</span>
+                                 <span className="text-[10px] md:text-xs font-black text-gray-900">১০০% অরিজিনাল</span>
                               </div>
-                              <div className="bg-gray-50 p-4 rounded-3xl flex flex-col gap-2">
-                                 <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">ডেলিভারি</span>
-                                 <span className="text-xs font-black text-gray-900">ফাস্ট শিপিং</span>
+                              <div className="bg-gray-50 p-3 md:p-4 rounded-3xl flex flex-col gap-1 md:gap-2">
+                                 <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400">ডেলিভারি</span>
+                                 <span className="text-[10px] md:text-xs font-black text-gray-900">ফাস্ট শিপিং</span>
                               </div>
                            </div>
                         </div>
                      </div>
 
-                     <div className="grid grid-cols-1 gap-4 pt-12 border-t border-gray-100">
+                     <div className="grid grid-cols-1 gap-3 md:gap-4 pt-6 md:pt-12 border-t border-gray-100">
                         {(() => {
                            const selected = selectedProducts.find(sp => sp._id === detailProduct._id);
                            return (
                               <>
                                  {selected && (
-                                    <div className="flex items-center justify-center gap-6 mb-4 bg-gray-50 py-4 rounded-3xl border border-gray-100">
+                                    <div className="flex items-center justify-center gap-6 mb-2 md:mb-4 bg-gray-50 py-3 md:py-4 rounded-3xl border border-gray-100">
                                        <button 
                                           type="button" 
                                           onClick={() => updateQuantity(detailProduct._id, -1)}
-                                          className="w-10 h-10 bg-white shadow-sm rounded-3xl flex items-center justify-center font-black text-xl hover:bg-black hover:text-white transition"
+                                          className="w-8 h-8 md:w-10 md:h-10 bg-white shadow-sm rounded-3xl flex items-center justify-center font-black text-lg md:text-xl hover:bg-black hover:text-white transition"
                                        >
                                           -
                                        </button>
-                                       <span className="text-xl font-black">{selected.quantity || 1}</span>
+                                       <span className="text-lg md:text-xl font-black">{selected.quantity || 1}</span>
                                        <button 
                                           type="button" 
                                           onClick={() => updateQuantity(detailProduct._id, 1)}
-                                          className="w-10 h-10 bg-white shadow-sm rounded-3xl flex items-center justify-center font-black text-xl hover:bg-black hover:text-white transition"
+                                          className="w-8 h-8 md:w-10 md:h-10 bg-white shadow-sm rounded-3xl flex items-center justify-center font-black text-lg md:text-xl hover:bg-black hover:text-white transition"
                                        >
                                           +
                                        </button>

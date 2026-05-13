@@ -6,6 +6,7 @@ import Product from "@/models/Product";
 import Link from "next/link";
 import SortSelect from "@/components/SortSelect";
 import ShopSearch from "@/components/shop/ShopSearch";
+import FilterDrawer from "@/components/shop/FilterDrawer";
 
 export default async function ShopPage({ searchParams }) {
   const params = await searchParams;
@@ -109,9 +110,9 @@ export default async function ShopPage({ searchParams }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-black text-gray-900 uppercase tracking-tighter">Lighting Collection</h1>
+              <h1 className="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">Shop Collection</h1>
               <p className="text-gray-500 font-medium mt-2 text-sm md:text-base">
-                Showing <span className="text-black font-bold">{totalProducts}</span> unique lamp designs
+                Found <span className="text-black font-bold">{totalProducts}</span> products
               </p>
             </div>
 
@@ -121,93 +122,64 @@ export default async function ShopPage({ searchParams }) {
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 flex flex-col lg:flex-row gap-8 lg:gap-12">
 
-        {/* FILTER SIDEBAR */}
-        <aside className="w-full lg:w-72 space-y-10">
-
-          {/* CATEGORIES - Commented Out
-          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[11px] font-black uppercase text-gray-400 tracking-widest">
-                Categories
-              </h3>
-              <Link href="/shop" className="text-[11px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
-                Clear
-              </Link>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {categories.map((cat, i) => (
-                <Link
-                  key={i}
-                  href={getToggleUrl("category", cat)}
-                  className={`text-sm px-5 py-3 rounded-xl border transition-all font-bold ${
-                    selectedCategories.includes(cat) 
-                      ? "bg-black text-white border-black" 
-                      : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
-                  }`}
-                >
-                  {cat}
+        <FilterDrawer>
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-10 md:space-y-12">
+            {/* BRANDS FILTER */}
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest">
+                  Brands
+                </h3>
+                <Link href="/shop" className="text-[12px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
+                  Clear
                 </Link>
-              ))}
-            </div>
-          </div>
-          */}
-
-          {/* BRANDS FILTER */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest">
-                Brands
-              </h3>
-              <Link href="/shop" className="text-[12px] text-gray-400 font-bold hover:text-black uppercase tracking-widest">
-                Clear
-              </Link>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {brands.map((brand, i) => (
-                <Link
-                  key={i}
-                  href={getToggleUrl("brand", brand)}
-                  className={`text-sm px-5 py-3 rounded-xl border transition-all font-bold ${selectedBrands.includes(brand)
-                    ? "bg-black text-white border-black"
-                    : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
-                    }`}
-                >
-                  {brand}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* PRICE RANGE */}
-          <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
-            <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest mb-6">
-              Price Range
-            </h3>
-            <form action="/shop" className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  name="minPrice"
-                  defaultValue={minPrice}
-                  placeholder="Min"
-                  className="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 text-sm font-bold outline-none transition"
-                />
-                <input
-                  name="maxPrice"
-                  defaultValue={maxPrice}
-                  placeholder="Max"
-                  className="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 text-sm font-bold outline-none transition"
-                />
               </div>
-              <button className="w-full bg-gray-900 text-white py-3.5 rounded-xl font-black uppercase tracking-widest text-[12px] hover:bg-black transition shadow-lg shadow-gray-100">
-                Update List
-              </button>
-            </form>
+
+              <div className="flex flex-col gap-3">
+                {brands.map((brand, i) => (
+                  <Link
+                    key={i}
+                    href={getToggleUrl("brand", brand)}
+                    className={`text-sm px-5 py-3 rounded-xl border transition-all font-bold ${selectedBrands.includes(brand)
+                      ? "bg-black text-white border-black"
+                      : "bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
+                      }`}
+                  >
+                    {brand}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            
+            {/* PRICE RANGE */}
+            <div className="border-t border-gray-50 pt-10 md:pt-12">
+              <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest mb-6">
+                Price Range
+              </h3>
+              <form action="/shop" className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    name="minPrice"
+                    defaultValue={minPrice}
+                    placeholder="Min"
+                    className="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 text-sm font-bold outline-none transition"
+                  />
+                  <input
+                    name="maxPrice"
+                    defaultValue={maxPrice}
+                    placeholder="Max"
+                    className="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 text-sm font-bold outline-none transition"
+                  />
+                </div>
+                <button className="w-full bg-gray-900 text-white py-3.5 rounded-xl font-black uppercase tracking-widest text-[12px] hover:bg-black transition shadow-lg shadow-gray-100">
+                  Update List
+                </button>
+              </form>
+            </div>
           </div>
-        </aside>
+        </FilterDrawer>
 
         {/* PRODUCTS GRID */}
         <main className="flex-1">
@@ -224,7 +196,7 @@ export default async function ShopPage({ searchParams }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             {products.map((p) => (
               <div key={p._id} className="store-card group flex flex-col">
                 <Link href={`/product/${p.slug || p._id}`} className="block relative aspect-[4/5] bg-gray-50 overflow-hidden m-2 rounded-2xl">
