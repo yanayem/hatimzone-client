@@ -337,7 +337,7 @@ export default function ProductDetailPage() {
 
         {/* DESCRIPTION TAB */}
         <div className="mt-16 md:mt-20 max-w-4xl mx-auto text-center px-4">
-          <h2 className="text-xs md:text-sm font-black text-gray-400 uppercase tracking-[0.3em] mb-4 md:mb-6">Product Information</h2>
+          <h2 className="text-xs md:text-sm font-black text-gray-600 uppercase tracking-[0.3em] mb-4 md:mb-6">Product Information</h2>
           <p className="text-lg md:text-xl lg:text-2xl text-gray-700 font-medium leading-relaxed italic">
             "{product.description}"
           </p>
@@ -371,7 +371,7 @@ export default function ProductDetailPage() {
                     />
                   </Link>
                   <div className="p-6 flex flex-col flex-1 pt-2">
-                    <span className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2">{p.brand}</span>
+                    <span className="text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2">{p.brand}</span>
                     <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-lg mb-4">
                       {p.name}
                     </h3>

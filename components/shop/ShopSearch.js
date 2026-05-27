@@ -84,12 +84,12 @@ export default function ShopSearch({ initialQuery = "" }) {
                     {query && (
                         <button 
                             onClick={() => {setQuery(""); setSuggestions([]);}}
-                            className="text-gray-400 hover:text-black transition"
+                            className="text-gray-600 hover:text-black transition"
                         >
                             <HiOutlineX className="w-4 h-4" />
                         </button>
                     )}
-                    <HiOutlineSearch className="w-5 h-5 text-gray-400" />
+                    <HiOutlineSearch className="w-5 h-5 text-gray-600" />
                 </div>
             </div>
 

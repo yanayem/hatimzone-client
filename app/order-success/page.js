@@ -58,7 +58,7 @@ function OrderSuccessContent() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-50 flex flex-col items-center gap-2">
-          <div className="text-[12px] md:text-xs text-gray-400 font-black uppercase tracking-widest">
+          <div className="text-[12px] md:text-xs text-gray-600 font-black uppercase tracking-widest">
             A confirmation SMS will be sent shortly
           </div>
           <div className="text-[9px] md:text-[12px] text-gray-300 font-bold uppercase tracking-widest">

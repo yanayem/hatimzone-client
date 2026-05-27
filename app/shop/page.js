@@ -128,7 +128,7 @@ export default async function ShopPage({ searchParams }) {
           <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-10 md:space-y-12">
             {/* PRICE RANGE */}
             <div>
-              <h3 className="text-[12px] font-black uppercase text-gray-400 tracking-widest mb-6">
+              <h3 className="text-[12px] font-black uppercase text-gray-600 tracking-widest mb-6">
                 Price Range
               </h3>
               <form action="/shop" className="space-y-4">
@@ -159,12 +159,12 @@ export default async function ShopPage({ searchParams }) {
 
           <div className="mb-6 md:mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white px-5 py-4 rounded-2xl border border-gray-100 shadow-sm gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-[12px] font-black uppercase text-gray-400 tracking-widest">
+              <span className="text-[12px] font-black uppercase text-gray-600 tracking-widest">
                 Sort By
               </span>
               <SortSelect currentSort={sort} />
             </div>
-            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest">
+            <p className="text-[12px] font-black text-gray-600 uppercase tracking-widest">
               {products.length} Items · Page {page}
             </p>
           </div>
@@ -187,7 +187,7 @@ export default async function ShopPage({ searchParams }) {
 
                 <div className="p-4 md:p-6 flex flex-col flex-1 pt-2">
                   <div className="flex justify-between items-center mb-1 md:mb-2">
-                    <span className="text-[12px] font-black text-gray-400 uppercase tracking-widest">{p.brand}</span>
+                    <span className="text-[12px] font-black text-gray-600 uppercase tracking-widest">{p.brand}</span>
                   </div>
 
                   <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-black transition text-sm md:text-lg h-5 md:h-7">

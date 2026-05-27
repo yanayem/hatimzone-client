@@ -123,7 +123,7 @@ const CategoriesAdminPage = () => {
         {/* LIST */}
         <div className="space-y-4">
           {loading ? (
-            <div className="text-center py-10 text-gray-400">Loading...</div>
+            <div className="text-center py-10 text-gray-600">Loading...</div>
           ) : Array.isArray(categories) && categories.length > 0 ? (
             categories.map((cat) => (
               <div key={cat._id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
@@ -141,7 +141,7 @@ const CategoriesAdminPage = () => {
                         <span className="text-sm font-medium text-gray-700">{sub}</span>
                         <button 
                           onClick={() => handleRemoveSubCategory(cat._id, cat.subCategories, sub)}
-                          className="text-gray-400 hover:text-red-500 transition"
+                          className="text-gray-600 hover:text-red-500 transition"
                         >
                           ✕
                         </button>
@@ -172,7 +172,7 @@ const CategoriesAdminPage = () => {
               </div>
             ))
           ) : (
-            <div className="text-center py-10 text-gray-400">No categories found.</div>
+            <div className="text-center py-10 text-gray-600">No categories found.</div>
           )}
         </div>
       </div>

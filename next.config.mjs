@@ -1,7 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   reactCompiler: true,
+  optimizePackageImports: ['react-icons'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'flowbite.com',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

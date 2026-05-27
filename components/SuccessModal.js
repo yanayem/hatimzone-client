@@ -22,7 +22,7 @@ export default function SuccessModal({ isOpen, onClose, orderId }) {
 
                 <button
                     onClick={onClose}
-                    className="absolute top-6 right-6 p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-full transition"
+                    className="absolute top-6 right-6 p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-full transition"
                 >
                     <HiX className="text-2xl" />
                 </button>
@@ -60,7 +60,7 @@ export default function SuccessModal({ isOpen, onClose, orderId }) {
                 </div>
 
                 <div className="mt-10 flex flex-col items-center gap-2">
-                    <span className="text-[12px] font-black uppercase tracking-widest text-gray-400">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-gray-600">
                         HatimZone · Premium Lighting
                     </span>
                 </div>

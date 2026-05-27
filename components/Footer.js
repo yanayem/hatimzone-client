@@ -5,9 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   HiOutlineMail, 
-  HiOutlinePhone, 
-  HiOutlineLocationMarker,
-  HiOutlineExternalLink
+  HiOutlinePhone,
 } from "react-icons/hi";
 
 export default function Footer() {
@@ -34,7 +32,7 @@ export default function Footer() {
 
           {/* Quick Links (Commented out as requested)
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-8">Shop Collection</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-600 mb-8">Shop Collection</h4>
             <ul className="space-y-4">
               <li><Link href="/shop" className="text-sm font-bold text-gray-800 hover:text-green-600 transition">All Lamps</Link></li>
               <li><Link href="/shop?category=Table%20Lamps" className="text-sm font-bold text-gray-800 hover:text-green-600 transition">Table Lamps</Link></li>
@@ -46,7 +44,7 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-8">Customer Care</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-600 mb-8">Customer Care</h4>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-sm font-bold text-gray-800 hover:text-green-600 transition">About Us</Link></li>
               <li><Link href="/contact" className="text-sm font-bold text-gray-800 hover:text-green-600 transition">Contact & Support</Link></li>
@@ -57,19 +55,19 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-8">Get In Touch</h4>
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-gray-600 mb-8">Get In Touch</h4>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <HiOutlinePhone className="text-xl text-green-600 mt-0.5" />
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Call Us</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-gray-600 mb-1">Call Us</p>
                   <a href="tel:01700-000000" className="text-sm font-bold text-gray-800 hover:text-green-600 transition">01700-000000</a>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <HiOutlineMail className="text-xl text-green-600 mt-0.5" />
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Email</p>
+                  <p className="text-xs font-black uppercase tracking-widest text-gray-600 mb-1">Email</p>
                   <a href="mailto:support@hatimzone.com" className="text-sm font-bold text-gray-800 hover:text-green-600 transition">support@hatimzone.com</a>
                 </div>
               </div>
@@ -80,11 +78,11 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 md:pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 text-center md:text-left">
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-600 text-center md:text-left">
             © 2026 HatimZone. All rights reserved.
           </p>
           <div className="flex items-center gap-4 md:gap-6">
-             <Link href="/policies" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-green-600 transition">Privacy & Terms</Link>
+             <Link href="/policies" className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-600 hover:text-green-600 transition">Privacy & Terms</Link>
           </div>
         </div>
       </div>

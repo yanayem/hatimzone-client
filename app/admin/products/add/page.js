@@ -212,7 +212,7 @@ const AddProductPage = () => {
             <p className="text-gray-500 text-xs md:text-sm font-bold">Add a premium product to your inventory</p>
           </div>
           <div className="flex gap-2 md:gap-4 w-full sm:w-auto">
-            <button onClick={() => router.back()} className="flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-3 border-2 border-gray-100 rounded-xl md:rounded-2xl font-bold text-gray-400 hover:text-black hover:border-black transition text-sm md:text-base">Close</button>
+            <button onClick={() => router.back()} className="flex-1 sm:flex-none px-4 md:px-6 py-2 md:py-3 border-2 border-gray-100 rounded-xl md:rounded-2xl font-bold text-gray-600 hover:text-black hover:border-black transition text-sm md:text-base">Close</button>
             <button
               onClick={handleSubmit}
               disabled={loading}
@@ -239,7 +239,7 @@ const AddProductPage = () => {
 
             <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">
                   Product Name <span className="text-red-500">*</span>
                 </label>
                 <input name="name" value={formData.name} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g.table-lamp,stand-lamp....." />
@@ -247,31 +247,31 @@ const AddProductPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                 <div>
-                  <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Brand</label>
+                  <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Brand</label>
                   <input name="brand" value={formData.brand} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. HatimZone" />
                 </div>
                 <div>
-                  <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Warranty</label>
+                  <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Warranty</label>
                   <input name="warranty" value={formData.warranty} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. 5 Years" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">
                   Description
                 </label>
                 <textarea name="description" rows="5" value={formData.description} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="Tell the product's story..."></textarea>
               </div>
 
               <div>
-                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">
                   Video URL (YouTube/Direct)
                 </label>
                 <input name="videoUrl" value={formData.videoUrl} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. https://youtube.com/watch?v=..." />
               </div>
 
               <div>
-                <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">
+                <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">
                   Tags / Keywords (Comma separated)
                 </label>
                 <input name="tags" value={formData.tags} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="e.g. table-lamp,stand-lamp....." />
@@ -289,7 +289,7 @@ const AddProductPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Category</label>
+                        <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Category</label>
                         <select 
                             name="category" 
                             value={formData.category} 
@@ -303,7 +303,7 @@ const AddProductPage = () => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Stock Quantity</label>
+                        <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Stock Quantity</label>
                         <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl md:rounded-3xl px-6 py-4 text-black font-bold outline-none transition" placeholder="0" />
                     </div>
                 </div>
@@ -343,15 +343,15 @@ const AddProductPage = () => {
 
                 <div className="grid grid-cols-3 gap-4">
                     <div>
-                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Length</label>
+                        <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Length</label>
                         <input name="length" value={dimensions.length} onChange={(e) => setDimensions({...dimensions, length: e.target.value})} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-6 py-4 font-bold outline-none transition" placeholder="e.g. 20cm" />
                     </div>
                     <div>
-                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Width</label>
+                        <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Width</label>
                         <input name="width" value={dimensions.width} onChange={(e) => setDimensions({...dimensions, width: e.target.value})} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-6 py-4 font-bold outline-none transition" placeholder="e.g. 10cm" />
                     </div>
                     <div>
-                        <label className="block text-[12px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-2">Height</label>
+                        <label className="block text-[12px] font-black text-gray-600 uppercase tracking-widest mb-2 ml-2">Height</label>
                         <input name="height" value={dimensions.height} onChange={(e) => setDimensions({...dimensions, height: e.target.value})} className="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-6 py-4 font-bold outline-none transition" placeholder="e.g. 30cm" />
                     </div>
                 </div>
@@ -437,15 +437,15 @@ const AddProductPage = () => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 mb-2">
                             <HiOutlineTruck className="text-xl text-blue-500" />
-                            <h4 className="text-[12px] font-black uppercase tracking-widest text-gray-400">Shipping Costs</h4>
+                            <h4 className="text-[12px] font-black uppercase tracking-widest text-gray-600">Shipping Costs</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-[9px] font-black uppercase text-gray-400 mb-1 ml-1">Inside Dhaka</label>
+                                <label className="block text-[9px] font-black uppercase text-gray-600 mb-1 ml-1">Inside Dhaka</label>
                                 <input type="number" name="insideDhaka" value={deliveryCost.insideDhaka} onChange={handleDeliveryChange} className="w-full bg-white border-2 border-gray-100 rounded-xl px-4 py-2 font-bold text-sm" />
                             </div>
                             <div>
-                                <label className="block text-[9px] font-black uppercase text-gray-400 mb-1 ml-1">Outside Dhaka</label>
+                                <label className="block text-[9px] font-black uppercase text-gray-600 mb-1 ml-1">Outside Dhaka</label>
                                 <input type="number" name="outsideDhaka" value={deliveryCost.outsideDhaka} onChange={handleDeliveryChange} className="w-full bg-white border-2 border-gray-100 rounded-xl px-4 py-2 font-bold text-sm" />
                             </div>
                         </div>
@@ -469,7 +469,7 @@ const AddProductPage = () => {
           {/* COVER IMAGE */}
           <div className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-              <h3 className="text-xs md:text-sm font-black uppercase text-gray-400 tracking-widest">
+              <h3 className="text-xs md:text-sm font-black uppercase text-gray-600 tracking-widest">
                 Cover Image <span className="text-red-500">*</span>
               </h3>
               <div className="relative">
@@ -488,7 +488,7 @@ const AddProductPage = () => {
           {/* GALLERY */}
           <div className="bg-white p-6 md:p-8 rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 space-y-6 md:space-y-8">
             <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-              <h3 className="text-xs md:text-sm font-black uppercase text-gray-400 tracking-widest">
+              <h3 className="text-xs md:text-sm font-black uppercase text-gray-600 tracking-widest">
                 Gallery
               </h3>
               <div className="relative">

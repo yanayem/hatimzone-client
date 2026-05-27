@@ -114,7 +114,7 @@ export default function Navbar() {
         <div className="flex items-center gap-1 sm:gap-3 lg:gap-5">
 
           {/* CART */}
-          <Link href="/cart" className="relative p-2 group">
+          <Link href="/cart" className="relative p-2 group" aria-label="Shopping cart">
             <HiOutlineShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 group-hover:text-green-600 transition" />
 
             {cart.length > 0 && (
@@ -134,6 +134,7 @@ export default function Navbar() {
           <button
             onClick={() => setIsMenuOpen(true)}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+            aria-label="Open menu"
           >
             <HiMenu className="w-6 h-6 text-gray-800" />
           </button>
@@ -187,7 +188,9 @@ export default function Navbar() {
           <button
             onClick={() => setIsMenuOpen(false)}
             className="p-2 rounded-full hover:bg-gray-100 transition"
+            aria-label="Close menu"
           >
+          
             <HiX className="w-6 h-6 text-black" />
           </button>
         </div>
@@ -222,7 +225,7 @@ export default function Navbar() {
 
         {/* FOOTER */}
         <div className="border-t border-gray-100 p-5 bg-gray-50/50">
-          <p className="text-[12px] font-black uppercase tracking-widest text-gray-400 text-center">
+          <p className="text-[12px] font-black uppercase tracking-widest text-gray-600 text-center">
             © 2026 HatimZone
           </p>
           <Link

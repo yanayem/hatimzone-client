@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
 
                 <form onSubmit={handleLogin} className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-gray-100 space-y-6">
                     <div>
-                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">Email Address</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-600 mb-2 ml-1">Email Address</label>
                         <input
                             type="email"
                             placeholder="admin@example.com"
@@ -82,7 +82,7 @@ export default function AdminLoginPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">Password</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-600 mb-2 ml-1">Password</label>
                         <input
                             type="password"
                             placeholder="••••••••"
@@ -107,7 +107,7 @@ export default function AdminLoginPage() {
                     )}
                 </form>
 
-                <p className="text-center mt-8 text-gray-400 text-xs font-bold uppercase tracking-widest">
+                <p className="text-center mt-8 text-gray-600 text-xs font-bold uppercase tracking-widest">
                     &copy; {new Date().getFullYear()} HatimZone. All rights reserved.
                 </p>
             </div>

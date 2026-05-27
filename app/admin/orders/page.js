@@ -93,7 +93,7 @@ export default function AdminOrdersPage() {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="relative md:col-span-2">
-            <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+            <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-xl" />
             <input
               type="text"
               placeholder="Search by Order ID, Customer, or Phone..."
@@ -103,7 +103,7 @@ export default function AdminOrdersPage() {
             />
           </div>
           <div className="relative">
-            <HiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+            <HiFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-xl" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -126,12 +126,12 @@ export default function AdminOrdersPage() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-50/50 border-b border-gray-100">
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Order</th>
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Product</th>
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Customer</th>
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Status</th>
-                  <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-600 uppercase tracking-widest">Order</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-600 uppercase tracking-widest">Product</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-600 uppercase tracking-widest">Customer</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-600 uppercase tracking-widest">Amount</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-600 uppercase tracking-widest">Status</th>
+                  <th className="px-8 py-5 text-xs font-black text-gray-600 uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -143,7 +143,7 @@ export default function AdminOrdersPage() {
                   ))
                 ) : filteredOrders.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="px-8 py-20 text-center text-gray-400 font-medium italic">
+                    <td colSpan="6" className="px-8 py-20 text-center text-gray-600 font-medium italic">
                       No orders found matching your filters.
                     </td>
                   </tr>
@@ -171,7 +171,7 @@ export default function AdminOrdersPage() {
                       </td>
                       <td className="px-8 py-6">
                         <p className="text-lg font-black text-gray-900">৳{order.totalPrice}</p>
-                        <p className="text-[12px] font-bold text-gray-400 uppercase">{order.paymentMethod}</p>
+                        <p className="text-[12px] font-bold text-gray-600 uppercase">{order.paymentMethod}</p>
                       </td>
                       <td className="px-8 py-6">
                         <div className={`inline-flex px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>
@@ -209,14 +209,14 @@ export default function AdminOrdersPage() {
                 </div>
               ))
             ) : filteredOrders.length === 0 ? (
-               <div className="p-10 text-center text-gray-400 italic">No orders found.</div>
+               <div className="p-10 text-center text-gray-600 italic">No orders found.</div>
             ) : (
               filteredOrders.map((order) => (
                 <div key={order._id} className="p-6 space-y-4">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-black text-gray-900">#{order.orderId}</p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase">
+                      <p className="text-[10px] font-bold text-gray-600 uppercase">
                         {new Date(order.createdAt).toLocaleDateString()} • {new Date(order.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </p>
                     </div>
@@ -242,12 +242,12 @@ export default function AdminOrdersPage() {
                        <span className="text-xs font-bold text-gray-900">{order.customer.name}</span>
                        <span className="text-xs font-medium text-gray-500">{order.customer.phone}</span>
                     </div>
-                    <p className="text-[11px] text-gray-400 line-clamp-1">{order.customer.address}</p>
+                    <p className="text-[11px] text-gray-600 line-clamp-1">{order.customer.address}</p>
                   </div>
 
                   <div className="flex items-center justify-between gap-4 pt-2">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Amount</span>
+                      <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Total Amount</span>
                       <span className="text-xl font-black text-gray-900">৳{order.totalPrice}</span>
                     </div>
                     <select

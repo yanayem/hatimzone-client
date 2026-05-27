@@ -121,7 +121,7 @@ export default function AdminSettings() {
                 
                 {/* EMAIL */}
                 <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1">Email Address</label>
+                    <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest ml-1 mb-1">Email Address</label>
                     <input
                         type="email"
                         placeholder="Email"
@@ -135,7 +135,7 @@ export default function AdminSettings() {
 
                 {/* PASSWORD */}
                 <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1">New Password</label>
+                    <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest ml-1 mb-1">New Password</label>
                     <input
                         type="password"
                         placeholder="Leave blank to keep current"
@@ -147,7 +147,7 @@ export default function AdminSettings() {
 
                 {/* CONFIRM PASSWORD */}
                 <div className="mb-6">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1">Confirm Password</label>
+                    <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest ml-1 mb-1">Confirm Password</label>
                     <input
                         type="password"
                         placeholder="Confirm new password"

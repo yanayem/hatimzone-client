@@ -66,7 +66,7 @@ export default function WishlistPage() {
                       ৳{product.discountPrice || product.price}
                     </p>
                     {product.discountPrice && (
-                      <p className="text-sm text-gray-400 line-through">
+                      <p className="text-sm text-gray-600 line-through">
                         ৳{product.price}
                       </p>
                     )}

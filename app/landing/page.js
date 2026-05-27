@@ -226,14 +226,14 @@ function LandingPageContent() {
                            )}
                         </div>
                         <div className="p-4 md:p-6 flex flex-col flex-1">
-                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{p.brand || "প্রিমিয়াম ব্র্যান্ড"}</p>
+                           <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">{p.brand || "প্রিমিয়াম ব্র্যান্ড"}</p>
                            <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-2 mb-4 h-10 leading-tight group-hover:text-green-600 transition-colors">{p.name}</h3>
 
                            <div className="mt-auto space-y-3">
                               <div className="flex items-center gap-2 mb-2">
                                  <span className="text-xl font-black text-gray-900">৳{(p.discountPrice > 0 ? p.discountPrice : p.price).toLocaleString()}</span>
                                  {p.discountPrice > 0 && (
-                                    <span className="text-xs text-gray-400 line-through font-medium">৳{p.price.toLocaleString()}</span>
+                                    <span className="text-xs text-gray-600 line-through font-medium">৳{p.price.toLocaleString()}</span>
                                  )}
                               </div>
 
@@ -290,7 +290,7 @@ function LandingPageContent() {
                   </div>
                   <div className="text-center">
                      <h2 className="text-2xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">অর্ডার নিশ্চিত করুন</h2>
-                     <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-[11px] mt-2">বাকি তথ্যগুলো পূরণ করে অর্ডারটি শেষ করুন</p>
+                     <p className="text-gray-600 font-bold uppercase tracking-widest text-[10px] md:text-[11px] mt-2">বাকি তথ্যগুলো পূরণ করে অর্ডারটি শেষ করুন</p>
                   </div>
                </div>
 
@@ -299,13 +299,13 @@ function LandingPageContent() {
                      {/* LEFT COLUMN: ORDER FORM */}
                      <div className="space-y-6 md:space-y-8">
                         <div className="bg-gray-50/50 p-5 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
-                           <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                           <h3 className="text-[12px] font-black text-gray-600 uppercase tracking-widest mb-8 flex items-center gap-2">
                               <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">১</span>
                               আপনার তথ্য
                            </h3>
                            <div className="grid gap-6">
                               <div>
-                                 <label className="block text-[12px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">আপনার নাম</label>
+                                 <label className="block text-[12px] font-black text-gray-600 uppercase tracking-[0.2em] mb-3 ml-2">আপনার নাম</label>
                                  <input
                                     type="text"
                                     required
@@ -317,7 +317,7 @@ function LandingPageContent() {
                               </div>
 
                               <div>
-                                 <label className="block text-[12px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">মোবাইল নম্বর</label>
+                                 <label className="block text-[12px] font-black text-gray-600 uppercase tracking-[0.2em] mb-3 ml-2">মোবাইল নম্বর</label>
                                  <input
                                     type="tel"
                                     required
@@ -329,7 +329,7 @@ function LandingPageContent() {
                               </div>
 
                               <div>
-                                 <label className="block text-[12px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-2">সম্পূর্ণ ঠিকানা</label>
+                                 <label className="block text-[12px] font-black text-gray-600 uppercase tracking-[0.2em] mb-3 ml-2">সম্পূর্ণ ঠিকানা</label>
                                  <textarea
                                     required
                                     rows="3"
@@ -343,7 +343,7 @@ function LandingPageContent() {
                         </div>
 
                         <div className="bg-gray-50/50 p-5 md:p-10 rounded-3xl border border-gray-100 shadow-sm">
-                           <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                           <h3 className="text-[12px] font-black text-gray-600 uppercase tracking-widest mb-8 flex items-center gap-2">
                               <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">২</span>
                               শিপিং পদ্ধতি
                            </h3>
@@ -356,7 +356,7 @@ function LandingPageContent() {
                                     checked={customer.city === "Dhaka"}
                                     onChange={() => setCustomer({ ...customer, city: "Dhaka" })}
                                  />
-                                 <div className={`text-center py-5 rounded-3xl font-black text-[12px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city === "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
+                                 <div className={`text-center py-5 rounded-3xl font-black text-[12px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city === "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-600 group-hover:border-gray-200"}`}>
                                     ঢাকা সিটি (৳{settings.shippingInsideDhaka})
                                  </div>
                               </label>
@@ -368,7 +368,7 @@ function LandingPageContent() {
                                     checked={customer.city !== "Dhaka"}
                                     onChange={() => setCustomer({ ...customer, city: "Outside" })}
                                  />
-                                 <div className={`text-center py-5 rounded-3xl font-black text-[12px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city !== "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-400 group-hover:border-gray-200"}`}>
+                                 <div className={`text-center py-5 rounded-3xl font-black text-[12px] uppercase tracking-widest border-2 transition-all shadow-sm ${customer.city !== "Dhaka" ? "bg-black border-black text-white" : "bg-white border-gray-100 text-gray-600 group-hover:border-gray-200"}`}>
                                     ঢাকার বাইরে (৳{settings.shippingOutsideDhaka})
                                  </div>
                               </label>
@@ -379,7 +379,7 @@ function LandingPageContent() {
                      {/* RIGHT COLUMN: SELECTED PRODUCTS & SUMMARY */}
                      <div className="space-y-8">
                         <div className="bg-gray-50/50 p-5 md:p-10 rounded-3xl border border-gray-100 shadow-sm flex flex-col h-full">
-                           <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                           <h3 className="text-[12px] font-black text-gray-600 uppercase tracking-widest mb-8 flex items-center gap-2">
                               <span className="w-6 h-6 bg-black text-white rounded-full flex items-center justify-center text-[12px]">৩</span>
                               আপনার নির্বাচন
                            </h3>
@@ -413,7 +413,7 @@ function LandingPageContent() {
                               </div>
                            ) : (
                               <div className="bg-white border border-dashed border-gray-200 p-12 rounded-[2rem] text-center flex-1 mb-8 flex items-center justify-center">
-                                 <p className="text-gray-400 font-bold text-sm leading-relaxed">এখনো কোনো পণ্য নির্বাচন করা হয়নি।</p>
+                                 <p className="text-gray-600 font-bold text-sm leading-relaxed">এখনো কোনো পণ্য নির্বাচন করা হয়নি।</p>
                               </div>
                            )}
 
@@ -440,7 +440,7 @@ function LandingPageContent() {
                               >
                                  {orderLoading ? "অর্ডার সম্পন্ন হচ্ছে..." : "অর্ডার নিশ্চিত করুন"}
                               </button>
-                              <div className="flex items-center justify-center gap-3 text-[11px] text-gray-400 font-black uppercase tracking-widest">
+                              <div className="flex items-center justify-center gap-3 text-[11px] text-gray-600 font-black uppercase tracking-widest">
                                  <HiCheckCircle className="text-green-500 text-xl" />
                                  ক্যাশ অন ডেলিভারি (পণ্য হাতে পেয়ে টাকা দিন)
                               </div>
@@ -556,7 +556,7 @@ function LandingPageContent() {
                            <span className="text-2xl md:text-6xl font-black text-gray-900">৳{(detailProduct.discountPrice > 0 ? detailProduct.discountPrice : detailProduct.price).toLocaleString()}</span>
                            {detailProduct.discountPrice > 0 && (
                               <div className="flex flex-col">
-                                 <span className="text-sm md:text-base text-gray-400 line-through font-medium leading-none mb-1">৳{detailProduct.price.toLocaleString()}</span>
+                                 <span className="text-sm md:text-base text-gray-600 line-through font-medium leading-none mb-1">৳{detailProduct.price.toLocaleString()}</span>
                                  <span className="text-[10px] md:text-[12px] bg-red-100 text-red-600 px-2 py-0.5 md:px-3 md:py-1 rounded-full font-black uppercase tracking-tighter">সেভ ৳{(detailProduct.price - detailProduct.discountPrice).toLocaleString()}</span>
                               </div>
                            )}
@@ -566,11 +566,11 @@ function LandingPageContent() {
                            <p className="line-clamp-4 md:line-clamp-none">{detailProduct.description || "এই পণ্যটি সম্পর্কে বিস্তারিত তথ্য শীঘ্রই যোগ করা হবে।"}</p>
                            <div className="grid grid-cols-2 gap-3 md:gap-6 pt-4 md:pt-6">
                               <div className="bg-gray-50 p-3 md:p-4 rounded-3xl flex flex-col gap-1 md:gap-2">
-                                 <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400">কোয়ালিটি</span>
+                                 <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-600">কোয়ালিটি</span>
                                  <span className="text-[10px] md:text-xs font-black text-gray-900">১০০% অরিজিনাল</span>
                               </div>
                               <div className="bg-gray-50 p-3 md:p-4 rounded-3xl flex flex-col gap-1 md:gap-2">
-                                 <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400">ডেলিভারি</span>
+                                 <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-600">ডেলিভারি</span>
                                  <span className="text-[10px] md:text-xs font-black text-gray-900">ফাস্ট শিপিং</span>
                               </div>
                            </div>

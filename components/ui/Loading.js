@@ -18,7 +18,7 @@ export default function Loading() {
 
       <div className="mt-12 text-center">
         <h2 className="text-xs md:text-sm font-black uppercase tracking-[0.4em] text-gray-900 mb-2">HatimZone</h2>
-        <p className="text-[9px] md:text-[12px] font-bold uppercase tracking-widest text-gray-400 animate-pulse">
+        <p className="text-[9px] md:text-[12px] font-bold uppercase tracking-widest text-gray-600 animate-pulse">
           Lighting up your space...
         </p>
       </div>

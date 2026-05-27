@@ -5,12 +5,10 @@ import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Link from "next/link";
 import {
-  HiOutlineCollection,
   HiOutlineStar,
   HiOutlineTrendingUp,
   HiArrowRight,
   HiOutlineSparkles,
-  HiPlus
 } from "react-icons/hi";
 
 export default async function HomePage() {
@@ -44,7 +42,7 @@ export default async function HomePage() {
 
 
   return (
-    <div className="bg-gray-100 text-slate-950 min-h-screen selection:bg-zinc-200">
+    <div className="bg-gray-50 text-slate-950 min-h-screen selection:bg-zinc-200">
 
       {/* HERO: FEATURING YOUR SELECTED LAMP */}
       <section className="relative h-[85vh] md:h-[100vh] flex items-center overflow-hidden bg-zinc-100">
@@ -189,7 +187,7 @@ function ProductCard({ product }) {
 
       <div className="flex flex-col flex-1 p-4">
         <div className="flex justify-between items-start mb-2">
-          <p className="text-[12px] font-bold text-zinc-400 uppercase tracking-widest">
+          <p className="text-[12px] font-semibold text-zinc-400 uppercase tracking-widest">
             {product.brand || 'Premium Lighting'}
           </p>
           <p className="text-sm font-black text-slate-950">

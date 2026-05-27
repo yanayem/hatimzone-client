@@ -98,7 +98,7 @@ export default function AccountPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="relative">
-              <HiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+              <HiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 text-lg" />
               <input
                 required
                 type="tel"
@@ -132,7 +132,7 @@ export default function AccountPage() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">Hello Lighting Fan!</h1>
-              <p className="text-xs md:text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">{phone}</p>
+              <p className="text-xs md:text-sm text-gray-600 font-bold uppercase tracking-widest mt-1">{phone}</p>
             </div>
           </div>
           <button
@@ -148,13 +148,13 @@ export default function AccountPage() {
           {/* Orders List */}
           <div className="lg:col-span-2 space-y-6">
             <h2 className="text-lg md:text-xl font-black uppercase tracking-tighter flex items-center gap-3 mb-6">
-              <HiClipboardList className="text-gray-400" />
+              <HiClipboardList className="text-gray-600" />
               My Lamp Orders
             </h2>
 
             {orders.length === 0 ? (
               <div className="bg-white p-10 md:p-16 rounded-[2rem] md:rounded-[2.5rem] text-center border-2 border-dashed border-gray-100">
-                <p className="text-gray-400 font-bold uppercase tracking-widest text-[12px] md:text-xs">You haven't ordered any lamps yet.</p>
+                <p className="text-gray-600 font-bold uppercase tracking-widest text-[12px] md:text-xs">You haven't ordered any lamps yet.</p>
                 <Link href="/shop" className="bg-black text-white px-8 py-3.5 rounded-xl font-black uppercase tracking-widest text-[12px] mt-6 inline-block hover:bg-gray-800 transition">Shop New Lamps</Link>
               </div>
             ) : (
@@ -162,7 +162,7 @@ export default function AccountPage() {
                 <div key={order._id} className="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                   <div className="p-5 md:p-6 border-b border-gray-50 flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-1">Order ID</p>
+                      <p className="text-[12px] font-black text-gray-600 uppercase tracking-widest mb-1">Order ID</p>
                       <p className="font-black text-gray-900 text-sm">#{order.orderId}</p>
                     </div>
                     <div className={`px-4 py-1.5 rounded-full border text-[12px] font-black uppercase tracking-widest ${getStatusColor(order.status)}`}>
@@ -178,7 +178,7 @@ export default function AccountPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-bold truncate text-gray-900">{item.name}</p>
-                          <p className="text-[12px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{item.quantity} x ৳{item.price.toLocaleString()}</p>
+                          <p className="text-[12px] md:text-xs font-bold text-gray-600 uppercase tracking-widest">{item.quantity} x ৳{item.price.toLocaleString()}</p>
                         </div>
                       </div>
                     ))}
@@ -186,11 +186,11 @@ export default function AccountPage() {
 
                   <div className="p-5 md:p-6 bg-gray-50/50 flex items-center justify-between">
                     <div>
-                      <p className="text-[12px] text-gray-400 font-black uppercase tracking-widest mb-1">Order Date</p>
+                      <p className="text-[12px] text-gray-600 font-black uppercase tracking-widest mb-1">Order Date</p>
                       <p className="text-sm font-bold">{new Date(order.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[12px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Paid</p>
+                      <p className="text-[12px] text-gray-600 font-black uppercase tracking-widest mb-1">Total Paid</p>
                       <p className="text-xl font-black text-black">৳{order.totalPrice.toLocaleString()}</p>
                     </div>
                   </div>
@@ -227,7 +227,7 @@ export default function AccountPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold truncate text-gray-900 group-hover:text-blue-600 transition">{p.name}</p>
-                      <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mt-0.5">৳{p.price.toLocaleString()}</p>
+                      <p className="text-[12px] font-black text-gray-600 uppercase tracking-widest mt-0.5">৳{p.price.toLocaleString()}</p>
                     </div>
                   </Link>
                 ))}
@@ -237,7 +237,7 @@ export default function AccountPage() {
                   </Link>
                 )}
                 {wishlist.length === 0 && (
-                  <p className="text-[12px] text-gray-400 font-bold uppercase tracking-widest italic text-center py-4">Your saved list is empty</p>
+                  <p className="text-[12px] text-gray-600 font-bold uppercase tracking-widest italic text-center py-4">Your saved list is empty</p>
                 )}
               </div>
             </div>
@@ -245,7 +245,7 @@ export default function AccountPage() {
             <div className="bg-black p-6 md:p-8 rounded-[2rem] shadow-2xl text-white relative overflow-hidden group">
               <div className="relative z-10">
                 <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter mb-2">Need Help?</h2>
-                <p className="text-gray-400 text-xs md:text-sm mb-6 font-medium">Our support team is here to help you light up your home.</p>
+                <p className="text-gray-600 text-xs md:text-sm mb-6 font-medium">Our support team is here to help you light up your home.</p>
                 <a href="tel:+880123456789" className="flex items-center gap-3 text-lg md:text-xl font-black hover:text-green-400 transition-colors">
                   <HiPhone className="text-green-400 text-2xl" />
                   +880 123 456 789

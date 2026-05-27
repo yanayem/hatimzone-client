@@ -46,7 +46,7 @@ export default function CartPage() {
             Your Lighting Cart
           </h1>
 
-          <span className="text-xs md:text-sm text-gray-400 font-bold uppercase tracking-widest">
+          <span className="text-xs md:text-sm text-gray-600 font-bold uppercase tracking-widest">
             {cart.length} lights selected
           </span>
         </div>
@@ -73,13 +73,13 @@ export default function CartPage() {
 
                 {/* INFO */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">{item.brand || 'Premium Lighting'}</p>
+                  <p className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-1">{item.brand || 'Premium Lighting'}</p>
                   <h3 className="text-gray-900 font-bold text-lg md:text-xl leading-tight mb-2">
                     {item.name}
                   </h3>
 
                   {item.variant && (
-                    <p className="text-xs text-gray-400 font-medium">
+                    <p className="text-xs text-gray-600 font-medium">
                       {item.variant.size} {item.variant.color} {item.variant.material}
                     </p>
                   )}
@@ -96,7 +96,7 @@ export default function CartPage() {
                     onClick={() =>
                       removeFromCart(item._id, item.variant)
                     }
-                    className="text-gray-400 hover:text-red-500 transition p-2 hover:bg-red-50 rounded-lg order-2 sm:order-1"
+                    className="text-gray-600 hover:text-red-500 transition p-2 hover:bg-red-50 rounded-lg order-2 sm:order-1"
                   >
                     <HiTrash className="text-xl" />
                   </button>
@@ -140,7 +140,7 @@ export default function CartPage() {
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-black mt-8 font-bold uppercase tracking-widest text-[11px] transition-colors"
+              className="inline-flex items-center gap-2 text-gray-600 hover:text-black mt-8 font-bold uppercase tracking-widest text-[11px] transition-colors"
             >
               <HiArrowLeft />
               Continue Shopping
@@ -187,7 +187,7 @@ export default function CartPage() {
                 Proceed to Checkout
               </Link>
 
-              <p className="text-[11px] text-gray-400 text-center font-bold uppercase tracking-widest pt-4">
+              <p className="text-[11px] text-gray-600 text-center font-bold uppercase tracking-widest pt-4">
                 Secure Lighting Checkout
               </p>
 

@@ -83,7 +83,7 @@ export default function SimpleForgotPassword() {
                 )}
 
                 <div className="mt-8 text-center border-t pt-6">
-                    <Link href="/admin" className="text-sm text-gray-400 font-bold hover:text-black transition-all">
+                    <Link href="/admin" className="text-sm text-gray-600 font-bold hover:text-black transition-all">
                         ← BACK TO LOGIN
                     </Link>
                 </div>
