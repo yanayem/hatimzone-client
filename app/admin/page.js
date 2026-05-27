@@ -39,14 +39,16 @@ export default function AdminLoginPage() {
             const res = await fetch("/api/admin/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ identifier, password }),
             });
 
             const data = await res.json();
 
             if (data.success) {
-                localStorage.setItem("adminToken", data.token);
-                router.push("/admin/dashboard");
+                // Cookie is set by the server automatically (httpOnly)
+                // No need for localStorage — redirect to dashboard
+                router.replace("/admin/dashboard");
             } else {
                 setMessage(data.message);
             }

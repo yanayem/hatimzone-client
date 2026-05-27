@@ -74,7 +74,6 @@ export async function POST(req) {
         return NextResponse.json({
             success: true,
             passwordChanged: admin.passwordChanged,
-            token,
         });
     } catch (error) {
         console.error("CRITICAL LOGIN ERROR:", error);

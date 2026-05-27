@@ -2,9 +2,6 @@
 const nextConfig = {
   reactCompiler: true,
   output: 'standalone',
-  experimental: {
-    optimizePackageImports: ['react-icons'],
-  },
   images: {
     remotePatterns: [
       {
