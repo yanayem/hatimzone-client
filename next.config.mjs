@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
-  optimizePackageImports: ['react-icons'],
+  output: 'standalone',
+  experimental: {
+    optimizePackageImports: ['react-icons'],
+  },
   images: {
     remotePatterns: [
       {

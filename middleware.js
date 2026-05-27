@@ -1,9 +1,7 @@
-// proxy.js
-
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-export async function proxy(request) {
+export async function middleware(request) {
   const token = request.cookies.get("adminToken")?.value;
   const { pathname } = request.nextUrl;
 
@@ -17,7 +15,9 @@ export async function proxy(request) {
   ) {
     // No token
     if (!token) {
-      return NextResponse.redirect(new URL("/admin", request.url));
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/admin";
+      return NextResponse.redirect(loginUrl);
     }
 
     try {
@@ -33,10 +33,9 @@ export async function proxy(request) {
       console.error("JWT Verify Error:", error);
 
       // Remove invalid cookie
-      const response = NextResponse.redirect(
-        new URL("/admin", request.url)
-      );
-
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/admin";
+      const response = NextResponse.redirect(loginUrl);
       response.cookies.delete("adminToken");
 
       return response;
