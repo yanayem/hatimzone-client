@@ -23,7 +23,7 @@ export async function middleware(request) {
     try {
       // Verify JWT
       const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET || "fallback_secret"
       );
 
       await jwtVerify(token, secret);

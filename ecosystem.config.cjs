@@ -4,13 +4,14 @@ module.exports = {
       name: "hatimzone-client",
       script: "server.js",
       cwd: "./.next/standalone",
-      instances: "max",
-      exec_mode: "cluster",
+      instances: 1,
+      exec_mode: "fork",
       env: {
         NODE_ENV: "production",
         PORT: 3000,
         HOSTNAME: "0.0.0.0"
-      }
+      },
+      env_file: "../../.env"
     }
   ]
 };
